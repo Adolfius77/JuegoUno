@@ -75,4 +75,5 @@ public class Mazo {
         }
         return cartasEntregables;
     }
+    //falta el metodo esta vacio
 }

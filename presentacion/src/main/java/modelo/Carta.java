@@ -6,13 +6,12 @@ package modelo;
 
 import modelo.enums.Color;
 
-
-
 /**
  *
  * @author LABCISCO-PC080
  */
 public class Carta {
+
     protected String id;
     protected Color color;
 
@@ -20,26 +19,23 @@ public class Carta {
         this.id = id;
         this.color = color;
     }
-    
-        
-        
-    public boolean esJugable(Carta carta){
-    
-        return true;
-    }
-    
-    public boolean aplicarEfecto(){
-    
+
+    public boolean esJugable(Carta carta) {
+
         return true;
     }
 
-    public  String getId() {
+    public boolean aplicarEfecto() {
+
+        return true;
+    }
+
+    public String getId() {
         return id;
     }
 
     public Color getColor() {
         return color;
     }
-    
-    
+
 }

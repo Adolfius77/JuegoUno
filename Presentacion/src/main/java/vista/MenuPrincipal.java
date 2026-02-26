@@ -4,11 +4,13 @@
  */
 package vista;
 
+import observador.IObserver;
+
 /**
  *
  * @author emiim
  */
-public class MenuPrincipal extends javax.swing.JFrame {
+public class MenuPrincipal extends javax.swing.JFrame implements IObserver{
 
     /**
      * Creates new form NewJFrame
@@ -206,4 +208,9 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actualizar() {
+    
+    }
 }

@@ -4,11 +4,13 @@
  */
 package vista;
 
+import observador.IObserver;
+
 /**
  *
  * @author emiim
  */
-public class CrearPartida extends javax.swing.JFrame {
+public class CrearPartida extends javax.swing.JFrame implements IObserver{
 
     /**
      * Creates new form CrearPartida
@@ -304,4 +306,9 @@ public class CrearPartida extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JTextField txtFldNombreSala;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actualizar() {
+        
+    }
 }

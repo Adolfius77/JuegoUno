@@ -4,11 +4,13 @@
  */
 package vista;
 
+import observador.IObserver;
+
 /**
  *
  * @author emiim
  */
-public class LobbyPartida extends javax.swing.JFrame {
+public class LobbyPartida extends javax.swing.JFrame implements IObserver{
 
     /**
      * Creates new form LobbyPartida
@@ -356,4 +358,9 @@ public class LobbyPartida extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actualizar() {
+        
+    }
 }
