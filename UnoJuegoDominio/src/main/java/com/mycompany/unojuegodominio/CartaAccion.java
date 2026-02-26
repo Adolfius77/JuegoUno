@@ -5,6 +5,7 @@
 package com.mycompany.unojuegodominio;
 
 import com.mycompany.unojuegodominio.enums.Color;
+import com.mycompany.unojuegodominio.enums.TipoAccion;
 
 /**
  *

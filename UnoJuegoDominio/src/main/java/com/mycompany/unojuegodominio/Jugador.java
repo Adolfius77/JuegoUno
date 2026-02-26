@@ -4,6 +4,8 @@
  */
 package com.mycompany.unojuegodominio;
 
+import java.util.List;
+
 /**
  *
  * @author santi
@@ -22,6 +24,12 @@ public class Jugador {
     }
     
    
+    public Mano entregarCartas(List<Carta> cartasIniciales){
+        for (Carta cartasInicial : cartasIniciales) {
+            mano.agregarCarta(cartasInicial);
+        }
+        return mano;
+    }
    
     
 }
