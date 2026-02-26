@@ -2,14 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
  */
-package com.mycompany.unojuegodominio.enums;
+package modelo.enums;
 
 /**
  *
- * @author santi
+ * @author LABCISCO-PC080
  */
-public enum EstadoPartida {
-    ESPERANDO,
-    EN_CURSO,
-    FINALIZADA
+public enum Color {
+    AZUL, 
+    ROJO,
+    VERDE,
+    AMARILLO
 }

@@ -2,10 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.unojuegodominio;
+package modelo;
 
-import com.mycompany.unojuegodominio.enums.Color;
-import com.mycompany.unojuegodominio.enums.TipoAccion;
+import modelo.Carta;
+import modelo.enums.Color;
+import modelo.enums.TipoAccion;
+
 
 /**
  *
