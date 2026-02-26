@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package vista;
 
 import java.awt.Color;
@@ -12,26 +8,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 
-/**
- *
- * @author adoil
- */
 public class botonCircular extends JButton {
 
     private boolean over;
-    private Color color;
-    private Color colorOver;
-    private Color colorClick;
-    private Color borderColor;
-    private int radius;
+
+    private Color color = Color.WHITE;
+    private Color colorOver = new Color(179, 250, 160);
+    private Color colorClick = new Color(152, 184, 144);
+    private Color borderColor = new Color(30, 136, 56);
+    private int radius = 20;
 
     public botonCircular() {
-        setColor(Color.WHITE);
-        colorOver = new Color(179, 250, 160);
-        colorClick = new Color(152, 184, 144);
-        borderColor = new Color(30, 136, 56);
-        setRadius(20);
 
+        setColor(color);
         setContentAreaFilled(false);
 
         addMouseListener(new MouseAdapter() {
@@ -61,7 +50,6 @@ public class botonCircular extends JButton {
                 }
             }
         });
-
     }
 
     public boolean isOver() {
