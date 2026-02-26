@@ -32,6 +32,13 @@ public class Jugador {
         }
         return mano;
     }
-   
-    
+    public Mano getMano(){
+        return this.mano;
+    }
+    public void setDijoUno(){
+       this.dijoUno = dijoUno;
+    }
+    public boolean isDijoUno(){
+        return this.dijoUno;
+    }
 }

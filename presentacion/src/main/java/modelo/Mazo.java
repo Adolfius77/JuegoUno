@@ -75,5 +75,7 @@ public class Mazo {
         }
         return cartasEntregables;
     }
-    //falta el metodo esta vacio
+    public boolean estaVacio(){
+        return listaCartas.isEmpty();
+    }
 }

@@ -10,6 +10,7 @@ import observador.IObserver;
  *
  * @author emiim
  */
+//cc
 public class CrearPartida extends javax.swing.JFrame implements IObserver{
 
     /**

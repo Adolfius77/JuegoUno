@@ -19,7 +19,7 @@ import modelo.enums.TipoAccion;
  *
  * @author santi
  */
-
+//cc
 public class PanelCarta extends JPanel {
 
     private Carta carta;
