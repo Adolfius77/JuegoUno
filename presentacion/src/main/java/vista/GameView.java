@@ -483,6 +483,7 @@ public class GameView extends javax.swing.JFrame implements IObserver{
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new GameView().setVisible(true);
             }

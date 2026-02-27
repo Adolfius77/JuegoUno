@@ -25,6 +25,7 @@ public class PanelFondo extends JPanel{
           this.repaint();
       }  
     }
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
