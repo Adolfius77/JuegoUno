@@ -11,8 +11,8 @@ import vista.DiseñosExtras.PanelFondo;
  *
  * @author USER
  */
-public class JuegoFrame extends JFrame{
-    public JuegoFrame(){
+public class GameView extends JFrame{
+    public GameView(){
         PanelFondo panelPrincipal = new PanelFondo();
         
         panelPrincipal.setImagen("/img/juegoUno (2).jpg");

@@ -5,44 +5,90 @@
 package vista;
 
 import java.awt.FlowLayout;
+import java.util.Random;
 import modelo.Carta;
+import modelo.CartaAccion;
 import modelo.CartaNumerica;
+import modelo.cartaComodin;
 import modelo.enums.Color;
+import modelo.enums.TipoAccion;
 import vista.DiseñosExtras.PanelCarta;
+import modelo.Mazo;
+import observador.IObserver;
 
 /**
  *
  * @author USER
  */
-public class GameView extends javax.swing.JFrame {
+public class GameView extends javax.swing.JFrame implements IObserver{
 
     /**
      * Creates new form GameView
      */
-   
-    public GameView(){
-   
+    public GameView() {
+
         initComponents();
         panelFondo2.setImagen("/img/juegoUno (2).jpg");
-        PanelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+        PanelJugadorPrincipal.removeAll();
+        PanelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
         PanelJugadorPrincipal.setOpaque(false);
-        
-        
+
         CartaNumerica carta1 = new CartaNumerica("N5", Color.ROJO, 5);
-        agregarCarta(carta1);
+        CartaNumerica carta2 = new CartaNumerica("N5", Color.ROJO, 6);
+        CartaNumerica carta3 = new CartaNumerica("N5", Color.VERDE, 9);
+        CartaAccion carta4 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
+        CartaAccion carta5 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
+        cartaComodin carta6 = new cartaComodin(Color.AMARILLO, rootPaneCheckingEnabled, "i", Color.NEGRO);
         
+//        agregarCarta(carta1);
+//        agregarCarta(carta2);
+//        agregarCarta(carta3);
+//        agregarCarta(carta4);
+//        agregarCarta(carta5);
+//        agregarCarta(carta6);
+          
+
+        DarCartas();
+
         setLocationRelativeTo(null);
-   }
+
+    }
+    Mazo maso = new Mazo();
+    //metodo en proceso xd
+    //reparte 7 cartas y las agrega al panel
+    public void DarCartas(){
+        Random random = new Random();
+        Color[] colores = Color.values();
+        
+        for(int i = 0; i < 7; i++ ){
+             Color colorRandom = colores[random.nextInt(colores.length)];
+             int numeroRandom = random.nextInt(10);
+             CartaNumerica cartaRandom = new CartaNumerica("n" + numeroRandom, colorRandom,numeroRandom);
+             agregarCarta(cartaRandom);
+        }
+    }
+    //estos metodos son de prueba 
     public void agregarCarta(Carta cartaL){
-        PanelCarta carta = new PanelCarta(cartaL);
-        PanelJugadorPrincipal.add(carta);
+        PanelCarta cartaVisual = new PanelCarta(cartaL);
+        
+        cartaVisual.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() - 20); 
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() + 20); 
+            }
+        });
+        
+        PanelJugadorPrincipal.add(cartaVisual, 0);
         
         PanelJugadorPrincipal.revalidate();
         PanelJugadorPrincipal.repaint();
     }
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,7 +166,7 @@ public class GameView extends javax.swing.JFrame {
         panelFondo2.setBackground(new java.awt.Color(255, 255, 255));
 
         PanelJugadorPrincipal.setBackground(new java.awt.Color(0, 0, 0));
-        PanelJugadorPrincipal.setPreferredSize(new java.awt.Dimension(400, 120));
+        PanelJugadorPrincipal.setPreferredSize(new java.awt.Dimension(400, 125));
 
         jPanel5.setPreferredSize(new java.awt.Dimension(400, 120));
 
@@ -370,7 +416,7 @@ public class GameView extends javax.swing.JFrame {
                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFondo2Layout.createSequentialGroup()
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -463,4 +509,9 @@ public class GameView extends javax.swing.JFrame {
     private vista.DiseñosExtras.PanelFondo panelFondo1;
     private vista.DiseñosExtras.PanelFondo panelFondo2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actualizar() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
