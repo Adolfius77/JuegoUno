@@ -4,7 +4,10 @@
  */
 package vista;
 
+import java.awt.FlowLayout;
 import modelo.Carta;
+import modelo.CartaNumerica;
+import modelo.enums.Color;
 import vista.DiseñosExtras.PanelCarta;
 
 /**
@@ -21,9 +24,22 @@ public class GameView extends javax.swing.JFrame {
    
         initComponents();
         panelFondo2.setImagen("/img/juegoUno (2).jpg");
+        PanelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        PanelJugadorPrincipal.setOpaque(false);
+        
+        
+        CartaNumerica carta1 = new CartaNumerica("N5", Color.ROJO, 5);
+        agregarCarta(carta1);
+        
         setLocationRelativeTo(null);
    }
-    
+    public void agregarCarta(Carta cartaL){
+        PanelCarta carta = new PanelCarta(cartaL);
+        PanelJugadorPrincipal.add(carta);
+        
+        PanelJugadorPrincipal.revalidate();
+        PanelJugadorPrincipal.repaint();
+    }
     
     
     
