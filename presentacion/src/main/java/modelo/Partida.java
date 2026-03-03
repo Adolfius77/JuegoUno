@@ -4,7 +4,6 @@
  */
 package modelo;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import modelo.enums.EstadoPartida;
@@ -16,7 +15,8 @@ import observador.IObserver;
  *
  * @author santi
  */
-public class Partida implements IObservable{
+public class Partida implements IObservable {
+
     private String id;
     private EstadoPartida estado;
     private Sentido sentido = Sentido.HORARIO;
@@ -25,37 +25,44 @@ public class Partida implements IObservable{
     private PilaCartas pilaCartas;
     private Boolean saltarTurno = false;
     private List<IObserver> observadores;
-    
+
     //falta turno
     //cartas pendientes a tomar
-    
-    public Partida(){
-       mazo = new Mazo();
-       pilaCartas = new PilaCartas();
-       jugadores = new ArrayList<Jugador>();
-       estado = EstadoPartida.ESPERANDO;
+    public Partida() {
+        mazo = new Mazo();
+        pilaCartas = new PilaCartas();
+        jugadores = new ArrayList<Jugador>();
+        estado = EstadoPartida.ESPERANDO;
     }
-    
-    public Jugador agregarJugador(Jugador jugador){
-        jugadores.add(jugador);
-        return jugador;
-    }
-    
-    public void iniciar(){
-        
+
+    public void iniciar() {
+
         for (Jugador jugador : jugadores) {
             jugador.entregarCartas(mazo.entregarCartas());
         }
         estado = EstadoPartida.EN_CURSO;
         pilaCartas.agregarCarta(mazo.tomarCarta());
-    
+
     }
-    //metodos que faltan
-    //agregar jugador
-    //verificar ganador
-    //jugar carta
-    //tomar carta
-    //
+
+    public Jugador agregarJugador(Jugador jugador) {
+        jugadores.add(jugador);
+        return jugador;
+    }
+    
+    public static void crear(){
+        
+    }
+    
+    public void verificarGanador(){
+        
+    }
+    public void jugarCarta(){
+        
+    }
+    public void tomarCarta(){
+        
+    }
     @Override
     public void agregarObservador(IObserver obs) {
         this.observadores.add(obs);
@@ -68,11 +75,9 @@ public class Partida implements IObservable{
 
     @Override
     public void notificarObservador(String evento) {
-        for(IObserver obs: observadores){
+        for (IObserver obs : observadores) {
             obs.actualizar();
         }
     }
-    
-    
-    
+
 }

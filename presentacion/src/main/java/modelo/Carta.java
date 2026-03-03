@@ -10,7 +10,7 @@ import modelo.enums.Color;
  *
  * @author LABCISCO-PC080
  */
-public class Carta {
+public abstract class Carta {
 
     protected String id;
     protected Color color;
@@ -20,15 +20,10 @@ public class Carta {
         this.color = color;
     }
 
-    public boolean esJugable(Carta carta) {
+    public abstract boolean esJugable(Carta cartaTablero) ;
 
-        return true;
-    }
+    public abstract boolean aplicarEfecto(Partida partida) ;
 
-    public boolean aplicarEfecto() {
-
-        return true;
-    }
 
     public String getId() {
         return id;

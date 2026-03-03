@@ -89,7 +89,7 @@ public class PanelCarta extends JPanel {
 
     private String obtenerTextoCarta() {
         if (carta instanceof CartaNumerica) {
-            return String.valueOf(((CartaNumerica) carta).getNumero());
+            return String.valueOf(((CartaNumerica) carta).getValor());
         }
         if (carta instanceof CartaAccion) {
             TipoAccion accion = ((CartaAccion) carta).getAccion();
@@ -100,7 +100,7 @@ public class PanelCarta extends JPanel {
             }
         }
         if (carta instanceof cartaComodin) {
-            if (((cartaComodin) carta).isTomarCuatro()) {
+            if (((cartaComodin) carta).esMasCuatro()) {
                 return "+4";
             }
             return "W";

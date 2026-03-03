@@ -14,25 +14,37 @@ import modelo.enums.Color;
  */
 public class CartaNumerica extends Carta {
     
-    private int numero;
-    
-    public CartaNumerica(String id, Color color, int numero) {
+    private int valor;
+
+    public CartaNumerica(int valor, String id, Color color) {
         super(id, color);
-        this.numero=numero;
+        this.valor = valor;
     }
 
-    public int getNumero() {
-        return numero;
+    public int getValor() {
+        return valor;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public Color getColor() {
-        return color;
+    public void setValor(int valor) {
+        this.valor = valor;
     }
     
     
+
+    @Override
+    public boolean esJugable(Carta cartaTablero) {
+        if(this.color == cartaTablero.getColor()) return true;
+        
+        if(cartaTablero instanceof CartaNumerica){
+            return this.valor == ((CartaNumerica)cartaTablero).getValor();
+            
+        }
+        return false;
+    }
+
+    @Override
+    public boolean aplicarEfecto(Partida partida) {
+        return true;
+    }
     
 }

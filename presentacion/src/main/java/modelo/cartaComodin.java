@@ -13,30 +13,38 @@ import modelo.enums.Color;
  * @author LABCISCO-PC080
  */
 public class cartaComodin extends Carta{
-    private Color colorElegido; 
-    private boolean tomarCuatro;
+    private final boolean EsMasCuatro;
 
-    public cartaComodin(Color colorElegido, boolean tomarCuatro, String id, Color color) {
-        super(id, color);
-        this.colorElegido = colorElegido;
-        this.tomarCuatro = tomarCuatro;
+    public cartaComodin(boolean EsMasCuatro, String id, Color color) {
+        super(id, color.NEGRO);
+        this.EsMasCuatro = EsMasCuatro;
     }
-
-    public Color getColorElegido() {
-        return colorElegido;
-    }
-
-    public boolean isTomarCuatro() {
-        return tomarCuatro;
-    }
-
+    
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public Color getColor() {
         return color;
     }
-    
+
+    @Override
+    public boolean esJugable(Carta cartaTablero) {
+        return true;
+    }
+
+    @Override
+    public boolean aplicarEfecto(Partida partida) {
+        if(this.EsMasCuatro){
+            partida.acomularCartas(4);
+            partida.saltarTurno();
+        }
+        return true;
+    }
+    public boolean esMasCuatro(){
+        return EsMasCuatro;
+    }
     
 }

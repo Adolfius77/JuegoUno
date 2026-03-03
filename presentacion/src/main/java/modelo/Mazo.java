@@ -29,8 +29,8 @@ public class Mazo {
           for (Color color : Color.values()) {
 
             for (int numero = 0; numero <= 9; numero++) {
-                listaCartas.add(new CartaNumerica("N" + numero, color, numero));
-                listaCartas.add(new CartaNumerica("N" + numero, color, numero));
+                listaCartas.add(new CartaNumerica(numero,"n1", color));
+                listaCartas.add(new CartaNumerica(numero, "n2",color));
             }
 
             for (int i = 0; i < 2; i++) {
@@ -41,11 +41,11 @@ public class Mazo {
         }
 
         for (int i = 0; i < 4; i++) {
-            listaCartas.add(new cartaComodin(null, false, "COMODIN", null));
+            listaCartas.add(new cartaComodin(false, "comodin", Color.NEGRO));
         }
 
         for (int i = 0; i < 2; i++) {
-            listaCartas.add(new cartaComodin(null, true, "MAS4", null));
+            listaCartas.add(new cartaComodin(true, "MAS4", Color.NEGRO));
         }
         
         barajear();

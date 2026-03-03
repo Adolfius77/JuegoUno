@@ -7,6 +7,7 @@ package modelo;
 import modelo.CartaNumerica;
 import modelo.Carta;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,13 +36,17 @@ public class Mano {
         
         return carta;
     }
+    public List<Carta> getCartas(){
+        return Collections.unmodifiableList(cartas);
+    }
     
-    public List<Carta> cartasJugables(Carta cartaActiva){
-        if (cartaActiva instanceof  CartaNumerica) {
-         return cartas;   
+    public List<Carta> ObtenerCartasJugables(Carta cartaActiva){
+        List<Carta> jugables = new ArrayList<>();
+        for(Carta c : cartas){
+            if(c.esJugable(cartaActiva)){
+                jugables.add(c);
+            }
         }
-        else{
-         return cartas;
-        }       
+        return jugables;
     }
 }

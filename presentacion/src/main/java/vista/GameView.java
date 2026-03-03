@@ -34,12 +34,11 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         PanelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
         PanelJugadorPrincipal.setOpaque(false);
 
-        CartaNumerica carta1 = new CartaNumerica("N5", Color.ROJO, 5);
-        CartaNumerica carta2 = new CartaNumerica("N5", Color.ROJO, 6);
-        CartaNumerica carta3 = new CartaNumerica("N5", Color.VERDE, 9);
-        CartaAccion carta4 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
-        CartaAccion carta5 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
-        cartaComodin carta6 = new cartaComodin(Color.AMARILLO, rootPaneCheckingEnabled, "i", Color.NEGRO);
+        CartaNumerica carta1 = new CartaNumerica(1, "n1", Color.ROJO);
+       
+        CartaAccion carta2 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
+        CartaAccion carta3 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
+        cartaComodin carta4 = new cartaComodin(true, "b1", Color.ROJO);
         
 //        agregarCarta(carta1);
 //        agregarCarta(carta2);
@@ -64,7 +63,7 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         for(int i = 0; i < 7; i++ ){
              Color colorRandom = colores[random.nextInt(colores.length)];
              int numeroRandom = random.nextInt(10);
-             CartaNumerica cartaRandom = new CartaNumerica("n" + numeroRandom, colorRandom,numeroRandom);
+             CartaNumerica cartaRandom = new CartaNumerica(1, "n", colorRandom);
              agregarCarta(cartaRandom);
         }
     }
