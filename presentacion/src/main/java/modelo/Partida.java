@@ -35,6 +35,10 @@ public class Partida implements IObservable {
         estado = EstadoPartida.ESPERANDO;
     }
 
+    public Partida(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+    }
+
     public void iniciar() {
 
         for (Jugador jugador : jugadores) {
@@ -58,14 +62,32 @@ public class Partida implements IObservable {
 
     }
 
-    public void jugarCarta() {
-
+    public void jugarCarta(Carta carta, Jugador jugador) {
+        Carta carta1 = pilaCartas.obtenerUltimaCarta();
+        if (carta.esJugable(carta1)) {
+            jugador.getMano().eliminarCarta(carta);
+            pilaCartas.agregarCarta(carta);
+            carta.aplicarEfecto(this);
+            pasarTurno();
+            notificarObservador("CARTA_JUGADA");
+        } else {
+            throw new IllegalArgumentException("La carta no coincide con  el color o el numero que esta encima.");
+        }
     }
 
-    public void tomarCarta() {
-
+    public void tomarCarta(Jugador jugador) {
+        if (mazo.estaVacio()) {
+            mazo.recargar(pilaCartas);
+        }
+        Carta cartaNueva = mazo.tomarCarta();
+        jugador.recibirCarta(cartaNueva);
+        notificarObservador("CARTA_TOMADA");
     }
 
+    public Jugador getJugadorActual(){
+        return jugadores.get(turnoActual);
+    }
+            
     public void saltarTurno() {
 
     }
@@ -88,6 +110,15 @@ public class Partida implements IObservable {
 
     public void avanzarSiguienteIndice() {
 
+    }
+
+    
+    public void setMazo(Mazo mazo) {
+        this.mazo = mazo;
+    }
+
+    public Mazo getMazo() {
+        return mazo;
     }
 
     @Override

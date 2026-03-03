@@ -14,15 +14,15 @@ import vista.DiseñosExtras.GameView;
  */
 //public class MVCFactory {
 //    public static GameController fabricarJuego(){
-////        Partida modelo = new Partida();
-////        GameView vista = new GameView();
-////        
-////        GameController controlador = new GameController(modelo,vista);
-////        
-////        //vista.setControlador(controlador);
-////        
-////        //modelo.agregarObservador(vista);
-////        
-////        return controlador;
-////    }
+//        Partida modelo = new Partida();
+//        GameView vista = new GameView();
+//        
+//        GameController controlador = new GameController(modelo,vista);
+//        
+//        vista.setControlador(controlador);
+//        
+//        modelo.agregarObservador(vista);
+//        
+//        return controlador;
+//    }
 //}

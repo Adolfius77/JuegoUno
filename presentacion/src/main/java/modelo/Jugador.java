@@ -20,6 +20,11 @@ public class Jugador {
     private Boolean dijoUno;
     private int puntaje;
 
+    public Jugador(String id, String nombre) {
+        this.Id = id;
+        this.nombre = nombre;
+    }
+     
     public Carta recibirCarta(Carta carta) {
         return mano.agregarCarta(carta);
 

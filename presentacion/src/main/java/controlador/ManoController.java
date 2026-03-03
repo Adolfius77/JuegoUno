@@ -9,5 +9,7 @@ package controlador;
  * @author USER
  */
 public class ManoController {
+//    private final ManoView mano;
     
+    // metodo: mostrar cartas, seleccionar cartas y cartas jugables
 }
