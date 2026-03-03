@@ -20,9 +20,9 @@ public abstract class Carta {
         this.color = color;
     }
 
-    public abstract boolean esJugable(Carta cartaTablero) ;
+    public abstract boolean esJugable(Carta cartaTablero);
 
-    public abstract boolean aplicarEfecto(Partida partida) ;
+    public abstract boolean aplicarEfecto(Partida partida);
 
     public String getId() {
         return id;
@@ -39,8 +39,5 @@ public abstract class Carta {
     public void setColor(Color color) {
         this.color = color;
     }
-
-
-   
 
 }

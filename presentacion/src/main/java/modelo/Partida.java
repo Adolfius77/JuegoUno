@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import controlador.Factorys.MazoFactory;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.enums.EstadoPartida;
@@ -28,7 +29,7 @@ public class Partida implements IObservable {
     private List<IObserver> observadores;
 
     public Partida() {
-        mazo = new Mazo();
+        Mazo mazoPartida = MazoFactory.generarMazo();
         pilaCartas = new PilaCartas();
         jugadores = new ArrayList<Jugador>();
         estado = EstadoPartida.ESPERANDO;

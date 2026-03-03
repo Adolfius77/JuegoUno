@@ -4,6 +4,7 @@
  */
 package vista;
 
+import controlador.Factorys.MazoFactory;
 import java.awt.FlowLayout;
 import java.util.Random;
 import modelo.Carta;
@@ -35,6 +36,7 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         PanelJugadorPrincipal.setOpaque(false);
 
         CartaNumerica carta1 = new CartaNumerica(1, "n1", Color.ROJO);
+       
         CartaAccion carta2 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
         CartaAccion carta3 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
         cartaComodin carta4 = new cartaComodin(true, "b1", Color.ROJO);
@@ -52,7 +54,7 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         setLocationRelativeTo(null);
 
     }
-    Mazo maso = new Mazo();
+    
     //metodo en proceso xd
     //reparte 7 cartas y las agrega al panel
     public void DarCartas(){

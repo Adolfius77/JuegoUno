@@ -4,8 +4,7 @@
  */
 package modelo;
 
-
-
+import controlador.Factorys.CartaFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,57 +16,31 @@ import modelo.enums.TipoAccion;
  * @author santi
  */
 public class Mazo {
-    
+
     private List<Carta> listaCartas;
-    
-    public Mazo(){
-        inicializar();
-    }
-    
-    public void inicializar(){
-        listaCartas = new ArrayList<Carta>();
-          for (Color color : Color.values()) {
 
-            for (int numero = 0; numero <= 9; numero++) {
-                listaCartas.add(new CartaNumerica(numero,"n1", color));
-                listaCartas.add(new CartaNumerica(numero, "n2",color));
-            }
-
-            for (int i = 0; i < 2; i++) {
-                listaCartas.add(new CartaAccion(TipoAccion.REVERSA, "REV", color));
-                listaCartas.add(new CartaAccion(TipoAccion.SALTAR, "SAL", color));
-                listaCartas.add(new CartaAccion(TipoAccion.MAS_2, "MAS2", color));
-            }
-        }
-
-        for (int i = 0; i < 4; i++) {
-            listaCartas.add(new cartaComodin(false, "comodin", Color.NEGRO));
-        }
-
-        for (int i = 0; i < 2; i++) {
-            listaCartas.add(new cartaComodin(true, "MAS4", Color.NEGRO));
-        }
-        
+    public Mazo(List<Carta> listaCartas) {
+        this.listaCartas = listaCartas;
         barajear();
     }
-    
-    public List<Carta> barajear(){
+
+    public List<Carta> barajear() {
         Collections.shuffle(listaCartas);
         return listaCartas;
     }
-    
-    public Carta tomarCarta(){
-         Carta ultimaCarta = listaCartas.getLast();
-         listaCartas.removeLast();
-         return ultimaCarta;
+
+    public Carta tomarCarta() {
+        Carta ultimaCarta = listaCartas.getLast();
+        listaCartas.removeLast();
+        return ultimaCarta;
     }
-    
-    public List<Carta> recargar(PilaCartas pilaCartas){
+
+    public List<Carta> recargar(PilaCartas pilaCartas) {
         listaCartas.addAll(pilaCartas.vaciar());
         return listaCartas;
     }
-    
-    public List<Carta> entregarCartas(){
+
+    public List<Carta> entregarCartas() {
         List<Carta> cartasEntregables = new ArrayList<Carta>();
         for (int i = 0; i < 7; i++) {
             cartasEntregables.add(listaCartas.getLast());
@@ -75,7 +48,8 @@ public class Mazo {
         }
         return cartasEntregables;
     }
-    public boolean estaVacio(){
+
+    public boolean estaVacio() {
         return listaCartas.isEmpty();
     }
 }
