@@ -35,7 +35,6 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         PanelJugadorPrincipal.setOpaque(false);
 
         CartaNumerica carta1 = new CartaNumerica(1, "n1", Color.ROJO);
-       
         CartaAccion carta2 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
         CartaAccion carta3 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
         cartaComodin carta4 = new cartaComodin(true, "b1", Color.ROJO);

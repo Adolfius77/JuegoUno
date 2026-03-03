@@ -4,10 +4,18 @@
  */
 package controlador;
 
+import modelo.Partida;
+import vista.DiseñosExtras.GameView;
+
 /**
  *
  * @author USER
  */
 public class GameController {
+
+    public GameController(Partida modelo, GameView vista) {
+    }
+
+    
     
 }

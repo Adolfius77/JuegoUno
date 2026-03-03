@@ -24,13 +24,23 @@ public abstract class Carta {
 
     public abstract boolean aplicarEfecto(Partida partida) ;
 
-
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Color getColor() {
         return color;
     }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+
+   
 
 }

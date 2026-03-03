@@ -24,10 +24,9 @@ public class Partida implements IObservable {
     private Mazo mazo;
     private PilaCartas pilaCartas;
     private Boolean saltarTurno = false;
+    private int turnoActual = 0;
     private List<IObserver> observadores;
 
-    //falta turno
-    //cartas pendientes a tomar
     public Partida() {
         mazo = new Mazo();
         pilaCartas = new PilaCartas();
@@ -49,20 +48,47 @@ public class Partida implements IObservable {
         jugadores.add(jugador);
         return jugador;
     }
-    
-    public static void crear(){
-        
+
+    public static void crear() {
+
     }
-    
-    public void verificarGanador(){
-        
+
+    public void verificarGanador() {
+
     }
-    public void jugarCarta(){
-        
+
+    public void jugarCarta() {
+
     }
-    public void tomarCarta(){
-        
+
+    public void tomarCarta() {
+
     }
+
+    public void saltarTurno() {
+
+    }
+
+    public void cambiarSentido() {
+
+    }
+
+    public void acomularCartas(int cantidad) {
+
+    }
+
+    public void pasarTurno() {
+
+    }
+
+    public void calcularSiguienteIndice() {
+
+    }
+
+    public void avanzarSiguienteIndice() {
+
+    }
+
     @Override
     public void agregarObservador(IObserver obs) {
         this.observadores.add(obs);
