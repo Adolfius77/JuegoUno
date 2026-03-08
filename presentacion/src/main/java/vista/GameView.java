@@ -16,6 +16,7 @@ import modelo.enums.Color;
 import modelo.enums.TipoAccion;
 import vista.DiseñosExtras.PanelCarta;
 import modelo.Mazo;
+import modelo.Partida;
 import observador.IObserver;
 
 /**
@@ -24,9 +25,7 @@ import observador.IObserver;
  */
 public class GameView extends javax.swing.JFrame implements IVista {
 
-    /**
-     * Creates new form GameView
-     */
+    private Partida modeloPartida;
     public GameView() {
 
         initComponents();
@@ -52,6 +51,9 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
         setLocationRelativeTo(null);
 
+    }
+    public void setModelo(Partida modelo){
+        this.modeloPartida = modelo;
     }
 
     //metodo en proceso xd

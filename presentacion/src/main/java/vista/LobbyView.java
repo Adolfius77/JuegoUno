@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import modelo.Lobby;
 import observador.IObserver;
 
 /**
@@ -14,13 +15,13 @@ import observador.IObserver;
 //cc
 public class LobbyView extends javax.swing.JFrame implements IVista{
 
-    /**
-     * Creates new form LobbyPartida
-     */
+    private Lobby modeloLobby;
     public LobbyView() {
         initComponents();
     }
-
+    public void setModelo(Lobby modelo){
+        this.modeloLobby = modelo;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

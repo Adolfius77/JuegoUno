@@ -1,10 +1,40 @@
 package controlador.Factorys;
 
+import controlador.GameController;
+import controlador.LobbyController;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import modelo.Jugador;
+import modelo.Lobby;
+import modelo.Partida;
+import vista.GameView;
 import vista.LobbyView;
 
 public class MVCFactory {
-//    public static ILobbyView crearLobbyView(){
-//        return new LobbyView();
-//
-//    }
+
+    public static LobbyController construirLobby() {
+        Lobby modeloLobby = new Lobby();
+
+        LobbyView vistaLobby = new LobbyView();
+        vistaLobby.setModelo(modeloLobby);
+
+        LobbyController controlador = new LobbyController(vistaLobby, modeloLobby);
+        return controlador;
+    }
+
+    public static GameController construirJuego(List<String> nombreJugadores) {
+        List<Jugador> jugadores = new ArrayList<>();
+        for (String nombre : nombreJugadores) {
+            jugadores.add(new Jugador(UUID.randomUUID().toString(), nombre));
+
+        }
+
+        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores);
+        GameView vistaJuego = new GameView();
+        vistaJuego.setModelo(modeloJuego);
+
+        GameController controlador = new GameController(modeloJuego, vistaJuego, nombreJugadores);
+        return controlador;
+    }
 }
