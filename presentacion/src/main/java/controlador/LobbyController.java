@@ -8,6 +8,7 @@ import Interfaces.IVista;
 
 import java.util.ArrayList;
 import java.util.List;
+import modelo.Lobby;
 
 /**
  *
@@ -16,32 +17,25 @@ import java.util.List;
 public class LobbyController {
 
     private final IVista vista;
-    private final List<String> nombreJugadores ;
+    private final Lobby modelo;
 
-    public LobbyController(IVista vista, List<String> nombreJugadores) {
+    public LobbyController(IVista vista, Lobby modelo) {
         this.vista = vista;
-        this.nombreJugadores = nombreJugadores;
+        this.modelo = modelo;
     }
 
     public void agregarJugador(String nombreJugador) {
-        if (nombreJugadores.size() < 4 && !nombreJugador.trim().isEmpty()) {
-            nombreJugadores.add(nombreJugador);
-            // falta actualizar la lista de jugadores desde la vista
-        } else {
-            System.out.println("Sala llena o nombre invalido.");
-        }
-    }
-
-    public void eliminarJugador(String nombreJugador) {
-        if (nombreJugadores.remove(nombreJugador)) {
-            System.out.println("jugador" + nombreJugador + "eliminado");
+        try {
+            modelo.agregarJugador(nombreJugador);
+        } catch (Exception e) {
+            vista.mostrarMensaje(e.getMessage());
         }
     }
 
     public void iniciarPartida() {
-        if (nombreJugadores.size() >= 2) {
+        if (modelo.getNombreJugadores().size() >= 2) {
             vista.cerrarVista();
-        }else{
+        } else {
             vista.mostrarMensaje("No hay jugadores partida");
         }
     }
