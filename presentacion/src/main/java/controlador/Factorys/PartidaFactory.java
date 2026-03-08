@@ -10,22 +10,19 @@ import java.util.UUID;
 import modelo.Jugador;
 import modelo.Mazo;
 import modelo.Partida;
+import modelo.PilaCartas;
 
 /**
  *
  * @author emiim
  */
 public class PartidaFactory {
-    public static Partida fabricadorPartida(List<String> nombreJugadores){
-        List<Jugador> jugadores = new ArrayList<>();
-        for (String nombre: nombreJugadores) {
-            String id = UUID.randomUUID().toString();
-            jugadores.add(new Jugador(id, nombre));
-        }
-        
-        Partida partida = new Partida(jugadores); 
-        Mazo mazo = MazoFactory.generarMazo();
-        partida.setMazo(mazo);
+
+    public static Partida fabricadorPartida(List<Jugador> jugadores) {
+        Mazo mazoNuevo = MazoFactory.generarMazo();
+        PilaCartas pilaNueva = new PilaCartas();
+
+        Partida partida = new Partida(jugadores, mazoNuevo, pilaNueva);
         return partida;
     }
 }

@@ -28,18 +28,18 @@ public class Partida implements IObservable {
     private int turnoActual = 0;
     private List<IObserver> observadores;
 
-    public Partida(String id, EstadoPartida estado, List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas) {
-        this.id = id;
-        this.estado = estado.ESPERANDO;
+    public Partida(List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas) {
         this.jugadores = jugadores != null ? jugadores : new ArrayList<>();
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
+        
+        this.estado = EstadoPartida.ESPERANDO;
+        this.id = java.util.UUID.randomUUID().toString(); 
+        this.sentido = Sentido.HORARIO;
+        this.turnoActual = 0;
+        this.saltarTurno = false;
         this.observadores = new ArrayList<>();
     }
-
-    
-
-   
 
     public void iniciar() {
 
@@ -86,10 +86,10 @@ public class Partida implements IObservable {
         notificarObservador("CARTA_TOMADA");
     }
 
-    public Jugador getJugadorActual(){
+    public Jugador getJugadorActual() {
         return jugadores.get(turnoActual);
     }
-            
+
     public void saltarTurno() {
 
     }
@@ -114,7 +114,6 @@ public class Partida implements IObservable {
 
     }
 
-    
     public void setMazo(Mazo mazo) {
         this.mazo = mazo;
     }
