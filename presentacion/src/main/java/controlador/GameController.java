@@ -37,7 +37,7 @@ public class GameController {
             Jugador jugadorActual = modelo.getJugadorActual();
             if (jugador.equals(jugadorActual)) {
                 modelo.jugarCarta(carta, jugadorActual);
-            }else{
+            } else {
                 System.out.println("no es turno de este jugador");
             }
 
@@ -50,16 +50,18 @@ public class GameController {
         Jugador jugadorActual = modelo.getJugadorActual();
         modelo.tomarCarta(jugadorActual);
     }
-    public void decirUno(Jugador jugador){
-        if(jugador.getMano().getCartas().size() == 1){
+
+    public void decirUno(Jugador jugador) {
+        if (jugador.getMano().getCartas().size() == 1) {
             System.out.println("el jugador " + jugador + "a dicho UNO");
-        }else{
+        } else {
             System.out.println("no grito uno se le dan 2 cartas");
             modelo.tomarCarta(jugador);
             modelo.tomarCarta(jugador);
         }
     }
-    public void pasarrTurno(){
+
+    public void pasarrTurno() {
         modelo.pasarTurno();
     }
 }

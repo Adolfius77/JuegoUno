@@ -41,9 +41,7 @@ public class LobbyController {
     public void iniciarPartida() {
         if (nombreJugadores.size() >= 2) {
             lobby.dispose();
-            
-            
-           
+
         }
     }
 
