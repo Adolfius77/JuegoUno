@@ -42,7 +42,11 @@ public class Jugador {
     public Mano getMano() {
         return this.mano;
     }
-
+    public void removerCarta(Carta carta){
+        if(this.mano != null){
+            this.mano.eliminarCarta(carta);
+        }
+    }
     public void setDijoUno() {
         this.dijoUno = dijoUno;
     }
@@ -50,4 +54,5 @@ public class Jugador {
     public boolean isDijoUno() {
         return this.dijoUno;
     }
+
 }

@@ -65,7 +65,7 @@ public class Partida implements IObservable {
     public void jugarCarta(Carta carta, Jugador jugador) {
         Carta carta1 = pilaCartas.obtenerUltimaCarta();
         if (carta.esJugable(carta1)) {
-            jugador.getMano().eliminarCarta(carta);
+            jugador.removerCarta(carta);
             pilaCartas.agregarCarta(carta);
             carta.aplicarEfecto(this);
             pasarTurno();
