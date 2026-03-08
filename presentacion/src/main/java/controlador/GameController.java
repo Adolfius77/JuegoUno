@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import Interfaces.IVista;
 import controlador.Factorys.PartidaFactory;
 import java.util.List;
 import modelo.Carta;
@@ -18,10 +19,10 @@ import vista.DiseñosExtras.GameView;
 public class GameController {
 
     private final Partida modelo;
-    private final GameView vista;
+    private final IVista vista;
     private final List<String> nombreJugadores;
 
-    public GameController(Partida modelo, GameView vista, List<String> nombreJugadores) {
+    public GameController(Partida modelo, IVista vista, List<String> nombreJugadores) {
         this.modelo = modelo;
         this.vista = vista;
         this.nombreJugadores = nombreJugadores;
@@ -29,7 +30,7 @@ public class GameController {
 
     public void inicarJuego() {
         modelo.iniciar();
-        vista.setVisible(true);
+        vista.mostrarVista();
     }
 
     public void jugarCarta(Jugador jugador, Carta carta) {
