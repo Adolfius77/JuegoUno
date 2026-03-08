@@ -14,15 +14,16 @@ import vista.LobbyView;
  * @author USER
  */
 public class LobbyController {
+
     private final LobbyView lobby;
     private final List<String> nombreJugadores;
-    
+
     public LobbyController(LobbyView lobby) {
         this.lobby = lobby;
-        this.nombreJugadores =  new ArrayList<>();
+        this.nombreJugadores = new ArrayList<>();
     }
-    
-    public void agregarJugador(String nombreJugador){
+
+    public void agregarJugador(String nombreJugador) {
         if (nombreJugadores.size() < 4 && !nombreJugador.trim().isEmpty()) {
             nombreJugadores.add(nombreJugador);
             // falta actualizar la lista de jugadores desde la vista
@@ -30,16 +31,20 @@ public class LobbyController {
             System.out.println("Sala llena o nombre invalido.");
         }
     }
-    
-    public void eliminarJugador(){
-        // pendiente
-    }
-    
-    public void iniciarPartida(){
-        if (nombreJugadores.size() >= 2) {
-            lobby.dispose();
-//            GameController gc = MVCFactory
+
+    public void eliminarJugador(String nombreJugador) {
+        if (nombreJugadores.remove(nombreJugador)) {
+            System.out.println("jugador" + nombreJugador + "eliminado");
         }
     }
-    
+
+    public void iniciarPartida() {
+        if (nombreJugadores.size() >= 2) {
+            lobby.dispose();
+            
+            
+           
+        }
+    }
+
 }
