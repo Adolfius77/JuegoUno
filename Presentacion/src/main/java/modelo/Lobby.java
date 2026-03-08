@@ -7,14 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lobby implements IObservable {
+
     private final List<String> nombreJugadores = new ArrayList<>();
     private List<IObserver> observadores = new ArrayList<>();
 
-    public void agregarJugador(String nombre){
-        if(nombreJugadores.size() < 4 && !nombre.trim().isEmpty()){
+    public void agregarJugador(String nombre) {
+        if (nombreJugadores.size() < 4 && !nombre.trim().isEmpty()) {
             nombreJugadores.add(nombre);
             notificarObservador("LISTA_ACTUALIZADA");
-        }else{
+        } else {
             throw new IllegalArgumentException("sala llena o nombre invalido");
         }
     }
@@ -35,8 +36,8 @@ public class Lobby implements IObservable {
 
     @Override
     public void notificarObservador(String evento) {
-            for(IObserver obs : observadores){
-                obs.actualizar();
-            }
+        for (IObserver obs : observadores) {
+            obs.actualizar();
+        }
     }
 }

@@ -4,6 +4,7 @@
  */
 package vista;
 
+import Interfaces.IVista;
 import observador.IObserver;
 
 /**
@@ -11,7 +12,7 @@ import observador.IObserver;
  * @author emiim
  */
 //cc
-public class SeleccionPartida extends javax.swing.JFrame implements IObserver{
+public class SeleccionPartida extends javax.swing.JFrame implements IVista{
 
     /**
      * Creates new form SeleccionPartida
@@ -250,5 +251,20 @@ public class SeleccionPartida extends javax.swing.JFrame implements IObserver{
     @Override
     public void actualizar() {
         //aqui iran los metodos de pintar o mostrar cosas
+    }
+
+    @Override
+    public void mostrarVista() {
+        
+    }
+
+    @Override
+    public void cerrarVista() {
+        
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje) {
+        
     }
 }

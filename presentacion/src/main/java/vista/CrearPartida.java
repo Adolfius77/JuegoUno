@@ -4,6 +4,7 @@
  */
 package vista;
 
+import Interfaces.IVista;
 import observador.IObserver;
 
 /**
@@ -11,7 +12,7 @@ import observador.IObserver;
  * @author emiim
  */
 //cc
-public class CrearPartida extends javax.swing.JFrame implements IObserver{
+public class CrearPartida extends javax.swing.JFrame implements IVista{
 
     /**
      * Creates new form CrearPartida
@@ -310,6 +311,21 @@ public class CrearPartida extends javax.swing.JFrame implements IObserver{
 
     @Override
     public void actualizar() {
+        
+    }
+
+    @Override
+    public void mostrarVista() {
+        
+    }
+
+    @Override
+    public void cerrarVista() {
+        
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje) {
         
     }
 }

@@ -4,6 +4,7 @@
  */
 package vista;
 
+import Interfaces.IVista;
 import controlador.Factorys.MazoFactory;
 import java.awt.FlowLayout;
 import java.util.Random;
@@ -21,7 +22,7 @@ import observador.IObserver;
  *
  * @author USER
  */
-public class GameView extends javax.swing.JFrame implements IObserver{
+public class GameView extends javax.swing.JFrame implements IVista {
 
     /**
      * Creates new form GameView
@@ -36,56 +37,55 @@ public class GameView extends javax.swing.JFrame implements IObserver{
         PanelJugadorPrincipal.setOpaque(false);
 
         CartaNumerica carta1 = new CartaNumerica(1, "n1", Color.ROJO);
-       
+
         CartaAccion carta2 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
         CartaAccion carta3 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
         cartaComodin carta4 = new cartaComodin(true, "b1", Color.ROJO);
-        
+
 //        agregarCarta(carta1);
 //        agregarCarta(carta2);
 //        agregarCarta(carta3);
 //        agregarCarta(carta4);
 //        agregarCarta(carta5);
 //        agregarCarta(carta6);
-          
-
         DarCartas();
 
         setLocationRelativeTo(null);
 
     }
-    
+
     //metodo en proceso xd
     //reparte 7 cartas y las agrega al panel
-    public void DarCartas(){
+    public void DarCartas() {
         Random random = new Random();
         Color[] colores = Color.values();
-        
-        for(int i = 0; i < 7; i++ ){
-             Color colorRandom = colores[random.nextInt(colores.length)];
-             int numeroRandom = random.nextInt(10);
-             CartaNumerica cartaRandom = new CartaNumerica(1, "n", colorRandom);
-             agregarCarta(cartaRandom);
+
+        for (int i = 0; i < 7; i++) {
+            Color colorRandom = colores[random.nextInt(colores.length)];
+            int numeroRandom = random.nextInt(10);
+            CartaNumerica cartaRandom = new CartaNumerica(1, "n", colorRandom);
+            agregarCarta(cartaRandom);
         }
     }
+
     //estos metodos son de prueba 
-    public void agregarCarta(Carta cartaL){
+    public void agregarCarta(Carta cartaL) {
         PanelCarta cartaVisual = new PanelCarta(cartaL);
-        
+
         cartaVisual.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() - 20); 
+                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() - 20);
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() + 20); 
+                cartaVisual.setLocation(cartaVisual.getX(), cartaVisual.getY() + 20);
             }
         });
-        
+
         PanelJugadorPrincipal.add(cartaVisual, 0);
-        
+
         PanelJugadorPrincipal.revalidate();
         PanelJugadorPrincipal.repaint();
     }
@@ -513,6 +513,21 @@ public class GameView extends javax.swing.JFrame implements IObserver{
 
     @Override
     public void actualizar() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+    }
+
+    @Override
+    public void mostrarVista() {
+        
+    }
+
+    @Override
+    public void cerrarVista() {
+        
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje) {
+
     }
 }
