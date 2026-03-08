@@ -22,6 +22,7 @@ public class LobbyController {
     public LobbyController(IVista vista, Lobby modelo) {
         this.vista = vista;
         this.modelo = modelo;
+        this.modelo.agregarObservador(this.vista);
     }
 
     public void agregarJugador(String nombreJugador) {

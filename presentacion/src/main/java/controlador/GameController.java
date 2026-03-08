@@ -20,12 +20,12 @@ public class GameController {
 
     private final Partida modelo;
     private final IVista vista;
-    private final List<String> nombreJugadores;
 
     public GameController(Partida modelo, IVista vista, List<String> nombreJugadores) {
         this.modelo = modelo;
         this.vista = vista;
-        this.nombreJugadores = nombreJugadores;
+        this.modelo.agregarObservador(this.vista);
+
     }
 
     public void inicarJuego() {
@@ -39,17 +39,22 @@ public class GameController {
             if (jugador.equals(jugadorActual)) {
                 modelo.jugarCarta(carta, jugadorActual);
             } else {
-                System.out.println("no es turno de este jugador");
+                vista.mostrarMensaje("no es turno de este jugador");
             }
 
         } catch (Exception e) {
-            System.err.println("a ocurrido un error inesperado " + e.getMessage());
+            vista.mostrarMensaje("a ocurrido un error inesperado " + e.getMessage());
         }
     }
 
     public void tomarCarta() {
-        Jugador jugadorActual = modelo.getJugadorActual();
-        modelo.tomarCarta(jugadorActual);
+        try {
+            Jugador jugadorActual = modelo.getJugadorActual();
+            modelo.tomarCarta(jugadorActual);
+        } catch (Exception e) {
+            vista.mostrarMensaje(e.getMessage());
+        }
+
     }
 
     public void decirUno(Jugador jugador) {

@@ -28,16 +28,18 @@ public class Partida implements IObservable {
     private int turnoActual = 0;
     private List<IObserver> observadores;
 
-    public Partida() {
-        Mazo mazoPartida = MazoFactory.generarMazo();
-        pilaCartas = new PilaCartas();
-        jugadores = new ArrayList<Jugador>();
-        estado = EstadoPartida.ESPERANDO;
+    public Partida(String id, EstadoPartida estado, List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas) {
+        this.id = id;
+        this.estado = estado.ESPERANDO;
+        this.jugadores = jugadores != null ? jugadores : new ArrayList<>();
+        this.mazo = mazo;
+        this.pilaCartas = pilaCartas;
+        this.observadores = new ArrayList<>();
     }
 
-    public Partida(List<Jugador> jugadores) {
-        this.jugadores = jugadores;
-    }
+    
+
+   
 
     public void iniciar() {
 
