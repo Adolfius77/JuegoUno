@@ -4,10 +4,10 @@
  */
 package controlador;
 
+import Interfaces.IVista;
+
 import java.util.ArrayList;
 import java.util.List;
-import modelo.Jugador;
-import vista.LobbyView;
 
 /**
  *
@@ -15,12 +15,12 @@ import vista.LobbyView;
  */
 public class LobbyController {
 
-    private final LobbyView lobby;
-    private final List<String> nombreJugadores;
+    private final IVista vista;
+    private final List<String> nombreJugadores ;
 
-    public LobbyController(LobbyView lobby) {
-        this.lobby = lobby;
-        this.nombreJugadores = new ArrayList<>();
+    public LobbyController(IVista vista, List<String> nombreJugadores) {
+        this.vista = vista;
+        this.nombreJugadores = nombreJugadores;
     }
 
     public void agregarJugador(String nombreJugador) {
@@ -40,8 +40,9 @@ public class LobbyController {
 
     public void iniciarPartida() {
         if (nombreJugadores.size() >= 2) {
-            lobby.dispose();
-
+            vista.cerrarVista();
+        }else{
+            vista.mostrarMensaje("No hay jugadores partida");
         }
     }
 
