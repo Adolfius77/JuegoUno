@@ -4,6 +4,7 @@
  */
 package controlador.Factorys;
 
+import Interfaces.ICartaFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,8 +19,8 @@ import modelo.PilaCartas;
  */
 public class PartidaFactory {
 
-    public static Partida fabricadorPartida(List<Jugador> jugadores) {
-        Mazo mazoNuevo = MazoFactory.generarMazo();
+    public static Partida fabricadorPartida(List<Jugador> jugadores , ICartaFactory cartaFactory) {
+        Mazo mazoNuevo = MazoFactory.generarMazo(cartaFactory);
         PilaCartas pilaNueva = new PilaCartas();
 
         Partida partida = new Partida(jugadores, mazoNuevo, pilaNueva);

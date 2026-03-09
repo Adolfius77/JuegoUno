@@ -4,6 +4,7 @@
  */
 package controlador.Factorys;
 
+import Interfaces.ICartaFactory;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.Carta;
@@ -16,24 +17,24 @@ import modelo.enums.TipoAccion;
  * @author USER
  */
 public class MazoFactory {
-    public static Mazo generarMazo(){
+    public static Mazo generarMazo(ICartaFactory cartaFactory){
         List<Carta> cartasNuevas = new ArrayList();
         for (Color color : Color.values()) {
             if (color == Color.NEGRO) continue;
             //cartas numericas wey
             for (int numero = 0; numero <= 9; numero++) {
-                cartasNuevas.add(CartaFactory.crearNumerica("n1" + numero, color, numero));
+                cartasNuevas.add(cartaFactory.crearNumerica("n1" + numero, color, numero));
             }
             //cartas de accion bro
-            cartasNuevas.add(CartaFactory.crearAccion("reversa", color, TipoAccion.REVERSA));
-            cartasNuevas.add(CartaFactory.crearAccion("saltar", color, TipoAccion.SALTAR));
-            cartasNuevas.add(CartaFactory.crearAccion("mas2", color, TipoAccion.MAS_2));
+            cartasNuevas.add(cartaFactory.crearAccion("reversa", color, TipoAccion.REVERSA));
+            cartasNuevas.add(cartaFactory.crearAccion("saltar", color, TipoAccion.SALTAR));
+            cartasNuevas.add(cartaFactory.crearAccion("mas2", color, TipoAccion.MAS_2));
 
         }
         //comodines bro
         for (int i = 0; i < 4; i++) {
-            cartasNuevas.add(CartaFactory.crearComodin("comodin", Color.NEGRO, false));
-            cartasNuevas.add(CartaFactory.crearComodin("mas4", Color.NEGRO, true));
+            cartasNuevas.add(cartaFactory.crearComodin("comodin", Color.NEGRO, false));
+            cartasNuevas.add(cartaFactory.crearComodin("mas4", Color.NEGRO, true));
 
         }
 

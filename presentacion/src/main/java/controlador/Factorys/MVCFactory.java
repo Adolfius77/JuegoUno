@@ -1,5 +1,6 @@
 package controlador.Factorys;
 
+import Interfaces.ICartaFactory;
 import controlador.GameController;
 import controlador.LobbyController;
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class MVCFactory {
         return controlador;
     }
 
-    public static GameController construirJuego(List<String> nombreJugadores) {
+    public static GameController construirJuego(List<String> nombreJugadores, ICartaFactory cartaFactory) {
         List<Jugador> jugadores = new ArrayList<>();
         for (String nombre : nombreJugadores) {
             jugadores.add(new Jugador(UUID.randomUUID().toString(), nombre));
 
         }
 
-        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores);
+        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores, cartaFactory);
         GameView vistaJuego = new GameView();
         vistaJuego.setModelo(modeloJuego);
 

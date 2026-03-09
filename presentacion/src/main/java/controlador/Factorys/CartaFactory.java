@@ -4,6 +4,7 @@
  */
 package controlador.Factorys;
 
+import Interfaces.ICartaFactory;
 import modelo.Carta;
 import modelo.CartaAccion;
 import modelo.CartaNumerica;
@@ -15,14 +16,17 @@ import modelo.enums.TipoAccion;
  *
  * @author USER
  */
-public class CartaFactory {
-    public static Carta crearNumerica(String id, Color color, int numero){
+public class CartaFactory implements ICartaFactory{
+    @Override
+    public Carta crearNumerica(String id, Color color, int numero){
         return new CartaNumerica(numero, id, color);
     }
-    public static Carta crearAccion(String id, Color color, TipoAccion accion){
+    @Override
+    public Carta crearAccion(String id, Color color, TipoAccion accion){
         return  new CartaAccion(accion, id, color);
     }
-    public static Carta crearComodin(String id, Color color, boolean esMasCuatro){
+    @Override
+    public Carta crearComodin(String id, Color color, boolean esMasCuatro){
         return new cartaComodin(esMasCuatro, id, color);
     }
 }
