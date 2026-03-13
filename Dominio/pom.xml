@@ -6,7 +6,7 @@
         <artifactId>JuegoUno</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>Dominio</artifactId>
+    <artifactId>Componente-Dominio</artifactId>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
