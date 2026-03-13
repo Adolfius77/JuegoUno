@@ -2,14 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelo;
+package Entidades;
 
-import controlador.Factorys.CartaFactory;
+
+import Entidades.Carta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import modelo.enums.Color;
-import modelo.enums.TipoAccion;
+import Entidades.enums.Color;
+import Entidades.enums.TipoAccion;
 
 /**
  *

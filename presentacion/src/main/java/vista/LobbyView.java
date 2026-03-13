@@ -4,8 +4,8 @@
  */
 package vista;
 
+import Entidades.Lobby;
 import Interfaces.IVista;
-import modelo.Lobby;
 import observador.IObserver;
 
 /**

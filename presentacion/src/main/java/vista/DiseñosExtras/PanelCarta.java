@@ -1,13 +1,14 @@
 package vista.DiseñosExtras;
 
+import Entidades.Carta;
+import Entidades.CartaAccion;
+import Entidades.CartaNumerica;
+import Entidades.cartaComodin;
+import Entidades.enums.TipoAccion;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import modelo.Carta;
-import modelo.CartaAccion;
-import modelo.CartaNumerica;
-import modelo.cartaComodin;
-import modelo.enums.TipoAccion;
+
 
 public class PanelCarta extends JPanel {
 
@@ -108,7 +109,7 @@ public class PanelCarta extends JPanel {
         return "";
     }
 
-    private java.awt.Color obtenerColorSwing(modelo.enums.Color color) {
+    private java.awt.Color obtenerColorSwing(Entidades.enums.Color color) {
         if (color == null) return java.awt.Color.BLACK; // Para los comodines
 
         switch (color) {

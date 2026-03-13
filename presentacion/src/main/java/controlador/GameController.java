@@ -4,12 +4,14 @@
  */
 package controlador;
 
+import Entidades.Carta;
+import Entidades.Jugador;
 import Interfaces.IVista;
-import controlador.Factorys.PartidaFactory;
+import Logica.Partida;
+
 import java.util.List;
-import modelo.Carta;
-import modelo.Jugador;
-import modelo.Partida;
+
+
 import vista.DiseñosExtras.GameView;
 
 /**

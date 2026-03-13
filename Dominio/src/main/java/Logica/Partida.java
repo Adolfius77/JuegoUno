@@ -2,13 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelo;
+package Logica;
 
-import controlador.Factorys.MazoFactory;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.enums.EstadoPartida;
-import modelo.enums.Sentido;
+import Entidades.Carta;
+import Entidades.Carta;
+import Entidades.Jugador;
+import Entidades.Jugador;
+import Entidades.Mazo;
+import Entidades.Mazo;
+import Entidades.PilaCartas;
+import Entidades.enums.EstadoPartida;
+import Entidades.enums.Sentido;
 import observador.IObservable;
 import observador.IObserver;
 

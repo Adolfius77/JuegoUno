@@ -1,14 +1,17 @@
 package controlador.Factorys;
 
-import Interfaces.ICartaFactory;
+
+import Entidades.Jugador;
+import Entidades.Lobby;
+import Logica.Partida;
+import fabricas.PartidaFactory;
+import fabricas.ICartaFactory;
 import controlador.GameController;
 import controlador.LobbyController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import modelo.Jugador;
-import modelo.Lobby;
-import modelo.Partida;
+
 import vista.GameView;
 import vista.LobbyView;
 

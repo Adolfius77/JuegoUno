@@ -4,20 +4,21 @@
  */
 package vista;
 
+import Entidades.Carta;
+import Entidades.CartaAccion;
+import Entidades.CartaNumerica;
+import Entidades.cartaComodin;
+import Entidades.enums.Color;
+import Entidades.enums.TipoAccion;
 import Interfaces.IVista;
-import controlador.Factorys.MazoFactory;
+import Logica.Partida;
+
 import java.awt.FlowLayout;
 import java.util.Random;
-import modelo.Carta;
-import modelo.CartaAccion;
-import modelo.CartaNumerica;
-import modelo.cartaComodin;
-import modelo.enums.Color;
-import modelo.enums.TipoAccion;
-import vista.DiseñosExtras.PanelCarta;
-import modelo.Mazo;
-import modelo.Partida;
+
+
 import observador.IObserver;
+import vista.DiseñosExtras.PanelCarta;
 
 /**
  *

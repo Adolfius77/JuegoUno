@@ -1,4 +1,4 @@
-package modelo;
+package Entidades;
 
 import observador.IObservable;
 import observador.IObserver;

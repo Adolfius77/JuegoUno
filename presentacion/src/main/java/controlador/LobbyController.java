@@ -4,11 +4,12 @@
  */
 package controlador;
 
+import Entidades.Lobby;
 import Interfaces.IVista;
 
 import java.util.ArrayList;
 import java.util.List;
-import modelo.Lobby;
+
 
 /**
  *
