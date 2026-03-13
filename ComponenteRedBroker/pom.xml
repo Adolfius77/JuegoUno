@@ -6,17 +6,10 @@
         <artifactId>JuegoUno</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>Dominio</artifactId>
+    <artifactId>ComponenteRedBroker</artifactId>
     <packaging>jar</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Observer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
-        <exec.mainClass>org.itson.dominio.Dominio</exec.mainClass>
+        <exec.mainClass>org.itson.componenteredbroker.ComponenteRedBroker</exec.mainClass>
     </properties>
 </project>
