@@ -1,16 +1,21 @@
 package fabricas;
 
+import Estados.EstadoEsperando;
+import Estados.EstadoFinalizada;
+import Estados.EstadoJugando;
+import Estados.IEstadoPartida;
+
 public class EstadoFactory {
-    public static Estados.IEstadoPartida crearEstadoEsperando() {
-        return new Estados.EstadoEsperando();
+    public static IEstadoPartida crearEstadoEsperando() {
+        return new EstadoEsperando();
     }
 
-    public static Estados.IEstadoPartida crearEstadoJugando() {
-        return new Estados.EstadoJugando();
+    public static IEstadoPartida crearEstadoJugando() {
+        return new EstadoJugando();
     }
 
-    public static Estados.IEstadoPartida crearEstadoFinalizada() {
-        return new Estados.EstadoFinalizada();
+    public static IEstadoPartida crearEstadoFinalizada() {
+        return new EstadoFinalizada();
     }
 
 }
