@@ -7,14 +7,12 @@ package Logica;
 import java.util.ArrayList;
 import java.util.List;
 import Entidades.Carta;
-import Entidades.Carta;
 import Entidades.Jugador;
-import Entidades.Jugador;
-import Entidades.Mazo;
 import Entidades.Mazo;
 import Entidades.PilaCartas;
 import Entidades.enums.EstadoPartida;
 import Entidades.enums.Sentido;
+import Estados.EstadoJugando;
 import observador.IObservable;
 import observador.IObserver;
 
@@ -119,6 +117,18 @@ public class Partida implements IObservable {
     public void avanzarSiguienteIndice() {
 
     }
+    //Getters y setters
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public EstadoPartida getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPartida estado) {
+        this.estado = estado;
+    }
 
     public void setMazo(Mazo mazo) {
         this.mazo = mazo;
@@ -126,6 +136,14 @@ public class Partida implements IObservable {
 
     public Mazo getMazo() {
         return mazo;
+    }
+
+    public PilaCartas getPilaCartas() {
+        return pilaCartas;
+    }
+
+    public void setPilaCartas(PilaCartas pilaCartas) {
+        this.pilaCartas = pilaCartas;
     }
 
     @Override

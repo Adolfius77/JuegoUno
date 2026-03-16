@@ -54,5 +54,49 @@ public class Jugador {
     public boolean isDijoUno() {
         return this.dijoUno;
     }
+    //getters y setters
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setMano(Mano mano) {
+        this.mano = mano;
+    }
+
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
+    }
+
+    public Boolean getDijoUno() {
+        return dijoUno;
+    }
+
+    public void setDijoUno(Boolean dijoUno) {
+        this.dijoUno = dijoUno;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
+    public int getPuntaje() {
+        return puntaje;
+    }
+
+    public void setPuntaje(int puntaje) {
+        this.puntaje = puntaje;
+    }
 }
