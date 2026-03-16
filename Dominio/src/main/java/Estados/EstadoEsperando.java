@@ -3,6 +3,7 @@ package Estados;
 import Entidades.Carta;
 import Entidades.Jugador;
 import Logica.Partida;
+import fabricas.EstadoFactory;
 
 public class EstadoEsperando implements  IEstadoPartida{
     @Override
@@ -15,7 +16,7 @@ public class EstadoEsperando implements  IEstadoPartida{
     public void iniciarPartida(Partida partida) {
         if(partida.getJugadores().size() >= 2){
             System.out.println("la partida a comenzado se estan repartiendo las cartas...");
-            partida.setEstado(new EstadoJugando());
+            partida.setEstado(EstadoFactory.crearEstadoJugando());
         }else{
             System.out.println("no hay suficientes jugadores para iniciar la partida");
         }

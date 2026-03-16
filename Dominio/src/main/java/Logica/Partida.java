@@ -10,9 +10,10 @@ import Entidades.Carta;
 import Entidades.Jugador;
 import Entidades.Mazo;
 import Entidades.PilaCartas;
-import Entidades.enums.EstadoPartida;
 import Entidades.enums.Sentido;
+import Estados.EstadoEsperando;
 import Estados.EstadoJugando;
+import Estados.IEstadoPartida;
 import observador.IObservable;
 import observador.IObserver;
 
@@ -23,7 +24,7 @@ import observador.IObserver;
 public class Partida implements IObservable {
 
     private String id;
-    private EstadoPartida estado;
+    private IEstadoPartida estado;
     private Sentido sentido = Sentido.HORARIO;
     private List<Jugador> jugadores;
     private Mazo mazo;
@@ -37,7 +38,7 @@ public class Partida implements IObservable {
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
         
-        this.estado = EstadoPartida.ESPERANDO;
+        this.estado = new EstadoEsperando();
         this.id = java.util.UUID.randomUUID().toString(); 
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
@@ -50,7 +51,7 @@ public class Partida implements IObservable {
         for (Jugador jugador : jugadores) {
             jugador.entregarCartas(mazo.entregarCartas());
         }
-        estado = EstadoPartida.EN_CURSO;
+        estado = new EstadoJugando();
         pilaCartas.agregarCarta(mazo.tomarCarta());
 
     }
@@ -122,12 +123,12 @@ public class Partida implements IObservable {
         return jugadores;
     }
 
-    public EstadoPartida getEstado() {
-        return estado;
+    public IEstadoPartida getEstado() {
+        return this.estado;
     }
 
-    public void setEstado(EstadoPartida estado) {
-        this.estado = estado;
+    public void setEstado(IEstadoPartida nuevoEstado) {
+        this.estado = nuevoEstado;
     }
 
     public void setMazo(Mazo mazo) {
