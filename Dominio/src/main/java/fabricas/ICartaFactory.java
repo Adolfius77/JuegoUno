@@ -14,6 +14,7 @@ import Entidades.enums.TipoAccion;
  *
  * @author USER
  */
+//familia de objetos lo hice como un abstrat factory
 public interface ICartaFactory {
     Carta crearNumerica(String id, Color color, int numero);
     Carta crearAccion(String id, Color color, TipoAccion accion);

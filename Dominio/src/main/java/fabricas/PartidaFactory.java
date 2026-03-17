@@ -18,11 +18,10 @@ import java.util.List;
  */
 public class PartidaFactory {
 
-    public static Partida fabricadorPartida(List<Jugador> jugadores , ICartaFactory cartaFactory) {
-        Mazo mazoNuevo = MazoFactory.generarMazo(cartaFactory);
+    public static Partida fabricadorPartida(List<Jugador> jugadores , ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
+        Mazo mazoNuevo = mazoFactory.crearMazo(cartaFactory);
         PilaCartas pilaNueva = new PilaCartas();
 
-        Partida partida = new Partida(jugadores, mazoNuevo, pilaNueva);
-        return partida;
+        return new Partida(null, mazoNuevo, pilaNueva);
     }
 }

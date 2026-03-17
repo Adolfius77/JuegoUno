@@ -41,6 +41,21 @@ public class PilaCartas {
     public Carta obtenerUltimaCarta(){
         return listaCartas.getLast();
     }
-    
-    
+    //getters y setters
+
+    public List<Carta> getListaCartas() {
+        return listaCartas;
+    }
+
+    public void setListaCartas(List<Carta> listaCartas) {
+        this.listaCartas = listaCartas;
+    }
+
+    public Color getColorActivo() {
+        return colorActivo;
+    }
+
+    public void setColorActivo(Color colorActivo) {
+        this.colorActivo = colorActivo;
+    }
 }

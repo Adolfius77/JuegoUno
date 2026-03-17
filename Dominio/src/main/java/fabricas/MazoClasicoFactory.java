@@ -17,8 +17,10 @@ import java.util.List;
  *
  * @author USER
  */
-public class MazoFactory {
-    public static Mazo generarMazo(ICartaFactory cartaFactory){
+public class MazoClasicoFactory implements IMazoFactory {
+
+    @Override
+    public Mazo crearMazo(ICartaFactory cartaFactory) {
         List<Carta> cartasNuevas = new ArrayList();
         for (Color color : Color.values()) {
             if (color == Color.NEGRO) continue;
