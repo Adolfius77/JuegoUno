@@ -4,6 +4,7 @@ package controlador.Factorys;
 import Entidades.Jugador;
 import Entidades.Lobby;
 import Logica.Partida;
+import fabricas.IMazoFactory;
 import fabricas.PartidaFactory;
 import fabricas.ICartaFactory;
 import controlador.GameController;
@@ -27,14 +28,14 @@ public class MVCFactory {
         return controlador;
     }
 
-    public static GameController construirJuego(List<String> nombreJugadores, ICartaFactory cartaFactory) {
+    public static GameController construirJuego(List<String> nombreJugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
         List<Jugador> jugadores = new ArrayList<>();
         for (String nombre : nombreJugadores) {
             jugadores.add(new Jugador(UUID.randomUUID().toString(), nombre));
 
         }
 
-        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores, cartaFactory);
+        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores, cartaFactory,mazoFactory );
         GameView vistaJuego = new GameView();
         vistaJuego.setModelo(modeloJuego);
 
