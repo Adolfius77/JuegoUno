@@ -14,6 +14,7 @@ import Entidades.enums.Sentido;
 import Estados.EstadoEsperando;
 import Estados.EstadoJugando;
 import Estados.IEstadoPartida;
+import fabricas.EstadoFactory;
 import observador.IObservable;
 import observador.IObserver;
 
@@ -38,7 +39,7 @@ public class Partida implements IObservable {
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
         
-        this.estado = new EstadoEsperando();
+        this.estado = EstadoFactory.crearEstadoEsperando();
         this.id = java.util.UUID.randomUUID().toString(); 
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
