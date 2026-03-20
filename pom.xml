@@ -9,7 +9,8 @@
         <module>Observer</module>
         <module>Presentacion</module>
         <module>Dominio</module>
-        <module>ComponenteRedBroker</module>
+        <module>ComponenteRed</module>
+        <module>DTOS</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
