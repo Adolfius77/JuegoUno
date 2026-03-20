@@ -1,5 +1,9 @@
 package red;
 
+import factorys.ClienteHiloFactory;
+import factorys.SocketFactory;
+import factorys.StreamFactory;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,9 +18,9 @@ public class Cliente {
             Socket socket = new Socket("127.0.0.1", 5000);
 
             //datos entrada
-            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataInputStream in = StreamFactory.crearInputStream(socket);
             //datos de salida
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataOutputStream out = StreamFactory.crearOutputStream(socket);
 
             String mensaje = in.readUTF();
             System.out.println(mensaje);
@@ -24,7 +28,7 @@ public class Cliente {
             String nombre = scanner.next();
             out.writeUTF(nombre);
 
-            ClienteHilo hilo = new ClienteHilo(out,in);
+            ClienteHilo hilo = ClienteHiloFactory.crearHilo(out, in);
             hilo.start();
             hilo.join();
 
