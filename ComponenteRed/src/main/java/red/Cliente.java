@@ -13,7 +13,9 @@ public class Cliente {
             scanner.useDelimiter("\n");
             Socket socket = new Socket("127.0.0.1", 5000);
 
+            //datos entrada
             DataInputStream in = new DataInputStream(socket.getInputStream());
+            //datos de salida
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             String mensaje = in.readUTF();

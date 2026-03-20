@@ -18,7 +18,9 @@ public class Servidor {
             while(true){
                 socket = server.accept();
 
+                //datos de entrada
                 DataInputStream in = new DataInputStream(socket.getInputStream());
+                //datos de salida
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
 
