@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="DTOS" />
         <module name="Presentacion" />
+        <module name="ComponenteRed" />
         <module name="Dominio" />
         <module name="Observer" />
       </profile>
