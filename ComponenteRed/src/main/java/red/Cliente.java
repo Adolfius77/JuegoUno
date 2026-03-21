@@ -22,7 +22,7 @@ public class Cliente {
             ObjectOutputStream out = StreamFactory.crearOutputStream(socket);
 
             System.out.println("Introduce tu nombre de usuario: ");
-            String nombre = scanner.next();
+            String nombre = scanner.nextLine();
 
             MensajeRegistroDTO registro = new MensajeRegistroDTO(nombre, "avatar_default.png");
             out.writeObject(registro);
