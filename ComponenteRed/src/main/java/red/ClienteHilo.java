@@ -30,13 +30,15 @@ public class ClienteHilo extends Thread {
             }
         } catch (Exception e) {
             System.out.println("Conexión perdida con el servidor.");
+            e.printStackTrace();
         }
     }
 
     public void procesarNotificacion(MensajeNotificacionDTO msg) {
         if (msg.getTextoMensaje().equals("Registro exitoso")) {
-            vistaRegistro.dispose();
-
+           if(vistaRegistro != null) {
+               vistaRegistro.dispose();
+           }
             java.awt.EventQueue.invokeLater(() -> {
                 new vista.LobbyView().setVisible(true);
             });

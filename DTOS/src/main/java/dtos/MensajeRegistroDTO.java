@@ -3,11 +3,12 @@ package dtos;
 import java.io.Serializable;
 
 public class MensajeRegistroDTO extends MensajeDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String nombre;
     private String nombreAvatar;
 
     public MensajeRegistroDTO(String nombre, String nombreAvatar) {
-        super();
+        super("SERVIDOR");
         this.nombre = nombre;
         this.nombreAvatar = nombreAvatar;
     }

@@ -1,6 +1,8 @@
 package red;
 
 import Entidades.Lobby;
+import factorys.StreamFactory;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,8 +25,11 @@ public class Servidor {
             while (true) {
                 Socket socket = server.accept();
 
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+                //entrada
+                ObjectInputStream in = StreamFactory.crearInputStream(socket);
+                //salida
+                ObjectOutputStream out = StreamFactory.crearOutputStream(socket);
 
                 ServidorHilo hilo = new ServidorHilo(in, out, lobbyGlobal);
 
