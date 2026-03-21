@@ -1,12 +1,9 @@
 package red;
 
+import dtos.MensajeRegistroDTO;
 import factorys.ClienteHiloFactory;
-import factorys.SocketFactory;
-import factorys.StreamFactory;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -17,23 +14,22 @@ public class Cliente {
             scanner.useDelimiter("\n");
             Socket socket = new Socket("127.0.0.1", 5000);
 
-            //datos entrada
-            DataInputStream in = StreamFactory.crearInputStream(socket);
-            //datos de salida
-            DataOutputStream out = StreamFactory.crearOutputStream(socket);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-            String mensaje = in.readUTF();
-            System.out.println(mensaje);
-
+            System.out.println("Introduce tu nombre de usuario: ");
             String nombre = scanner.next();
-            out.writeUTF(nombre);
 
-            ClienteHilo hilo = ClienteHiloFactory.crearHilo(out, in);
+            MensajeRegistroDTO registro = new MensajeRegistroDTO(nombre, "avatar_default.png");
+            out.writeObject(registro);
+            out.flush();
+
+            ClienteHilo hilo = ClienteHiloFactory.crearHilo(in, out, null);
             hilo.start();
             hilo.join();
 
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error en la conexión: " + e.getMessage());
         }
 
     }

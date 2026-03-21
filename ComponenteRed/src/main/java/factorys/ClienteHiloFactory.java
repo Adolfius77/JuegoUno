@@ -1,12 +1,12 @@
 package factorys;
 
 import red.ClienteHilo;
+import vista.MenuPrincipal;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 
 public class ClienteHiloFactory {
-    public static ClienteHilo crearHilo(DataOutputStream out, DataInputStream in){
-        return new ClienteHilo(out,in);
+    public static ClienteHilo crearHilo(ObjectInputStream in, ObjectOutputStream out, MenuPrincipal vista) throws IOException {
+        return new ClienteHilo(in, out, vista);
     }
 }

@@ -1,6 +1,7 @@
 package red;
 
 import Entidades.Lobby;
+import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
 import java.io.*;
@@ -10,7 +11,7 @@ public class ServidorHilo extends Thread {
     private ObjectOutputStream out;
     private Lobby lobby;
 
-    public ServidorHilo(DataInputStream in, DataOutputStream out, String lobby) {
+    public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
         this.out = out;
         this.lobby = lobby;
@@ -33,14 +34,27 @@ public class ServidorHilo extends Thread {
     }
 
     private void validarNombre(MensajeRegistroDTO dto) throws IOException {
-        boolean nombreExistente = lobby.getNombreJugadores().stream()
-                .anyMatch(j -> j.equalsIgnoreCase(dto.getNombre()));
+        boolean nombreExistente = lobby.getNombreJugadores().stream().anyMatch(j -> j.equalsIgnoreCase(dto.getNombre()));
         if (nombreExistente) {
             out.writeObject(new MensajeNotificacionDTO("Error: El nombre '" + dto.getNombre() + "' ya está en uso."));
         } else {
             lobby.agregarJugador(dto.getNombre());
             out.writeObject(new MensajeNotificacionDTO("Registro exitoso"));
+            difundirLista();
         }
         out.flush();
+    }
+
+    private void difundirLista() {
+        MensajeListaJugadoresDTO msgLista = new MensajeListaJugadoresDTO(lobby.getNombreJugadores());
+
+        for (ServidorHilo cliente : Servidor.hilosConectados){
+            try{
+                cliente.out.writeObject(msgLista);
+                cliente.out.flush();
+            } catch (IOException e) {
+                System.out.println("Error al escribir lista de jugadores.");
+            }
+        }
     }
 }

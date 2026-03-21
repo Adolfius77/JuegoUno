@@ -19,22 +19,28 @@ public class ClienteHilo extends Thread {
     }
 
     @Override
-    public void run(){
+    public void run() {
         try {
-            Object object = in.readObject();
-            if (object instanceof MensajeNotificacionDTO){
-                MensajeNotificacionDTO msg = (MensajeNotificacionDTO) object;
-                procesarNotificacion(msg);
+            while (true) {
+                Object object = in.readObject();
+                if (object instanceof MensajeNotificacionDTO) {
+                    MensajeNotificacionDTO msg = (MensajeNotificacionDTO) object;
+                    procesarNotificacion(msg);
+                }
             }
-        } catch (Exception e)  {
-            System.out.println("Conexion perdida con el servidor.");
+        } catch (Exception e) {
+            System.out.println("Conexión perdida con el servidor.");
         }
     }
 
-    public void  procesarNotificacion(MensajeNotificacionDTO msg){
-        if (msg.getTextoMensaje().equals("Registro exitoso")){
+    public void procesarNotificacion(MensajeNotificacionDTO msg) {
+        if (msg.getTextoMensaje().equals("Registro exitoso")) {
             vistaRegistro.dispose();
-            System.out.println("Cambiando al lobby...");
+
+            java.awt.EventQueue.invokeLater(() -> {
+                new vista.LobbyView().setVisible(true);
+            });
+
         } else {
             JOptionPane.showMessageDialog(vistaRegistro, msg.getTextoMensaje(), "Error de registro", JOptionPane.ERROR_MESSAGE);
         }

@@ -1,41 +1,41 @@
 package red;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import Entidades.Lobby;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Servidor {
+    public static List<ServidorHilo> hilosConectados = new ArrayList<>();
     public static void main(String[] args) {
-        try{
+        try {
             ServerSocket server = new ServerSocket(5000);
-            Socket socket;
+            Lobby lobbyGlobal = new Lobby();
 
-            System.out.println("Servidor iniciado");
-            while(true){
-                socket = server.accept();
+            System.out.println("Servidor de UNO iniciado en puerto 5000...");
 
-                //datos de entrada
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                //datos de salida
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            while (true) {
+                Socket socket = server.accept();
 
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-                out.writeUTF("Escribe tu nombre:");
-                String nombre = in.readUTF();
+                ServidorHilo hilo = new ServidorHilo(in, out, lobbyGlobal);
 
-                ServidorHilo hilo = new ServidorHilo(in, out, nombre);
+                hilosConectados.add(hilo);
                 hilo.start();
 
-                System.out.println("Creada la conexion con el cliente " + nombre);
-
+                System.out.println("Nueva conexión añadida a la lista de difusion.");
             }
 
-        }catch (IOException ex){
-            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, "Error en el servidor", ex);
         }
     }
 }
