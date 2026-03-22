@@ -1,8 +1,8 @@
 package red;
 
+
 import dtos.MensajeNotificacionDTO;
 import vista.MenuPrincipal;
-
 import javax.swing.*;
 import java.io.*;
 

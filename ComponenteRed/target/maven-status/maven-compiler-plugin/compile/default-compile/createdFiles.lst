@@ -1,0 +1,7 @@
+red\Cliente.class
+red\Servidor.class
+factorys\StreamFactory.class
+red\ClienteHilo.class
+red\ServidorHilo.class
+factorys\SocketFactory.class
+factorys\ClienteHiloFactory.class

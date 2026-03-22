@@ -1,0 +1,10 @@
+dtos\MensajePasarTurnoDTO.class
+dtos\CartaDTO.class
+dtos\MensajeNotificacionDTO.class
+dtos\MensajeEstadoPartidaDTO.class
+dtos\MensajeGritarUnoDTO.class
+dtos\MensajeJugarCartaDTO.class
+dtos\MensajeRobarCartaDTO.class
+dtos\MensajeDTO.class
+dtos\MensajeRegistroDTO.class
+dtos\MensajeListaJugadoresDTO.class
