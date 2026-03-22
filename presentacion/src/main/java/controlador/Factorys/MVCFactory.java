@@ -16,7 +16,10 @@ import java.util.UUID;
 import vista.GameView;
 import vista.LobbyView;
 
-public class MVCFactory {
+public final class MVCFactory {
+
+    private MVCFactory() {
+    }
 
     public static LobbyController construirLobby() {
         Lobby modeloLobby = new Lobby();
@@ -35,7 +38,7 @@ public class MVCFactory {
 
         }
 
-        Partida modeloJuego = PartidaFactory.fabricadorPartida(jugadores, cartaFactory,mazoFactory );
+        Partida modeloJuego = PartidaFactory.crearPartida(jugadores, cartaFactory, mazoFactory);
         GameView vistaJuego = new GameView();
         vistaJuego.setModelo(modeloJuego);
 

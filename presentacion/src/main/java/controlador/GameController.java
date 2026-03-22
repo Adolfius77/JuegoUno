@@ -1,75 +1,103 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controlador;
 
 import Entidades.Carta;
 import Entidades.Jugador;
 import Interfaces.IVista;
 import Logica.Partida;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-
-import vista.DiseñosExtras.GameView;
-
-/**
- *
- * @author USER
- */
 public class GameController {
 
     private final Partida modelo;
     private final IVista vista;
+    private final List<String> nombreJugadores;
 
     public GameController(Partida modelo, IVista vista, List<String> nombreJugadores) {
+        if (modelo == null || vista == null) {
+            throw new IllegalArgumentException("modelo y vista son obligatorios");
+        }
         this.modelo = modelo;
         this.vista = vista;
+        this.nombreJugadores = nombreJugadores == null
+                ? new ArrayList<>()
+                : new ArrayList<>(nombreJugadores);
         this.modelo.agregarObservador(this.vista);
-
     }
 
-    public void inicarJuego() {
+    public void iniciarJuego() {
         modelo.iniciar();
         vista.mostrarVista();
     }
 
-    public void jugarCarta(Jugador jugador, Carta carta) {
-        try {
-            Jugador jugadorActual = modelo.getJugadorActual();
-            if (jugador.equals(jugadorActual)) {
-                modelo.jugarCarta(carta, jugadorActual);
-            } else {
-                vista.mostrarMensaje("no es turno de este jugador");
-            }
+    // Compatibilidad con llamadas existentes.
+    public void inicarJuego() {
+        iniciarJuego();
+    }
 
-        } catch (Exception e) {
-            vista.mostrarMensaje("a ocurrido un error inesperado " + e.getMessage());
+    public void jugarCarta(Jugador jugador, Carta carta) {
+        if (jugador == null || carta == null) {
+            vista.mostrarMensaje("jugador y carta son obligatorios");
+            return;
         }
+
+        Jugador jugadorActual = modelo.getJugadorActual();
+        if (!esMismoJugador(jugador, jugadorActual)) {
+            vista.mostrarMensaje("no es turno de este jugador");
+            return;
+        }
+
+        modelo.jugarCarta(carta, jugadorActual);
     }
 
     public void tomarCarta() {
-        try {
-            Jugador jugadorActual = modelo.getJugadorActual();
-            modelo.tomarCarta(jugadorActual);
-        } catch (Exception e) {
-            vista.mostrarMensaje(e.getMessage());
+        Jugador jugadorActual = modelo.getJugadorActual();
+        if (jugadorActual == null) {
+            vista.mostrarMensaje("no hay jugador activo");
+            return;
         }
-
+        modelo.tomarCarta(jugadorActual);
     }
 
     public void decirUno(Jugador jugador) {
-        if (jugador.getMano().getCartas().size() == 1) {
-            System.out.println("el jugador " + jugador + "a dicho UNO");
-        } else {
-            System.out.println("no grito uno se le dan 2 cartas");
-            modelo.tomarCarta(jugador);
-            modelo.tomarCarta(jugador);
+        if (jugador == null || jugador.getMano() == null) {
+            vista.mostrarMensaje("jugador invalido");
+            return;
         }
+
+        if (jugador.getMano().getCartas().size() == 1) {
+            vista.mostrarMensaje("el jugador " + jugador.getNombre() + " dijo UNO");
+            return;
+        }
+
+        vista.mostrarMensaje("no grito UNO, se le dan 2 cartas");
+        modelo.tomarCarta(jugador);
+        modelo.tomarCarta(jugador);
     }
 
-    public void pasarrTurno() {
+    public void pasarTurno() {
         modelo.pasarTurno();
+    }
+
+    // Compatibilidad con llamadas existentes.
+    public void pasarrTurno() {
+        pasarTurno();
+    }
+
+    public List<String> getNombreJugadores() {
+        return Collections.unmodifiableList(nombreJugadores);
+    }
+
+    private boolean esMismoJugador(Jugador jugadorA, Jugador jugadorB) {
+        if (jugadorA == null || jugadorB == null) {
+            return false;
+        }
+        if (jugadorA.equals(jugadorB)) {
+            return true;
+        }
+        String idA = jugadorA.getId();
+        String idB = jugadorB.getId();
+        return idA != null && idA.equals(idB);
     }
 }
