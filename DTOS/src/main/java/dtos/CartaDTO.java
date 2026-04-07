@@ -7,6 +7,9 @@ public class CartaDTO implements Serializable {
     private String color;
     private String valor;
 
+    public CartaDTO() {
+    }
+
     public CartaDTO(String color, String valor) {
         this.color = color;
         this.valor = valor;

@@ -20,6 +20,9 @@ public class Jugador {
     private Boolean dijoUno;
     private int puntaje;
 
+    public Jugador() {
+    }
+
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
