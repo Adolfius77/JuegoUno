@@ -9,12 +9,16 @@
         <module name="DTOS" />
         <module name="Presentacion" />
         <module name="ComponenteRed" />
-        <module name="Dominio" />
+        <module name="Serializador" />
         <module name="Observer" />
+        <module name="Cliente-proxy" />
+        <module name="Server-proxy" />
+        <module name="Dominio" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ComponenteRedBroker" target="21" />
+      <module name="Protocolo" target="23" />
     </bytecodeTargetLevel>
   </component>
 </project>

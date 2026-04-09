@@ -11,7 +11,11 @@
         <module>Dominio</module>
         <module>ComponenteRed</module>
         <module>DTOS</module>
-        
+        <module>Broker</module>
+        <module>Cliente-proxy</module>
+        <module>Server-proxy</module>
+        <module>Serializador</module>
+
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
