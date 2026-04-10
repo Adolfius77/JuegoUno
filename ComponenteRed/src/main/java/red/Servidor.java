@@ -1,7 +1,10 @@
 package red;
 
 import Entidades.Lobby;
+import broker.EnrutadorBroker;
+import factorys.SocketFactory;
 import factorys.StreamFactory;
+import interfaces.IReceptorMensajes;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,33 +17,32 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Servidor {
-    public static List<ServidorHilo> hilosConectados = new ArrayList<>();
-    public static void main(String[] args) {
-        try {
-            ServerSocket server = new ServerSocket(5000);
-            Lobby lobbyGlobal = new Lobby();
+    private final int puerto;
+    private final IReceptorMensajes receptor;
+    private boolean escuchando;
 
-            System.out.println("Servidor de UNO iniciado en puerto 5000...");
+    public Servidor(int puerto, IReceptorMensajes receptor) {
+        this.puerto = puerto;
+        this.receptor = receptor;
+        this.escuchando = true;
+    }
+    public void iniciar() {
+        try(ServerSocket serverSocket = new ServerSocket(puerto)) {
+            System.out.println("servidor iniciado en el puerto: " + puerto);
 
-            while (true) {
-                Socket socket = server.accept();
-
-
-                //entrada
-                ObjectInputStream in = StreamFactory.crearInputStream(socket);
-                //salida
-                ObjectOutputStream out = StreamFactory.crearOutputStream(socket);
-
-                ServidorHilo hilo = new ServidorHilo(in, out, lobbyGlobal);
-
-                hilosConectados.add(hilo);
-                hilo.start();
-
-                System.out.println("Nueva conexión añadida a la lista de difusion.");
+            while(escuchando) {
+                Socket socketCliente = serverSocket.accept();
+                System.out.println("[Servidor Red] Nueva conexión aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
+                ServidorHilo nuevoHilo = new ServidorHilo(socketCliente, (EnrutadorBroker) this.receptor);
+                nuevoHilo.start();
             }
-
-        } catch (IOException ex) {
-            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, "Error en el servidor", ex);
+        }catch (IOException e){
+            System.err.println("error en el servidor en el puerto: " + puerto);
+            e.printStackTrace();
         }
+    }
+    public void apagar(){
+        this.escuchando = false;
+        System.out.println("apagando servidor.....");
     }
 }

@@ -6,11 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Broker" />
         <module name="DTOS" />
         <module name="Presentacion" />
         <module name="ComponenteRed" />
-        <module name="Dominio" />
+        <module name="Serializador" />
         <module name="Observer" />
+        <module name="Dominio" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

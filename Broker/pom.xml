@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ComponenteRed</artifactId>
+    <artifactId>Broker</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,24 +19,13 @@
     <dependencies>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>Dominio</artifactId>
+            <artifactId>ComponenteRed</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>Presentacion</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>DTOS</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>Broker</artifactId>
+            <artifactId>Serializador</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
