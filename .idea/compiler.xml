@@ -6,9 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Aplicacion_cliente" />
         <module name="red-comunicacion" />
         <module name="DTOS" />
+        <module name="APLICACION-CLIENTE" />
         <module name="Cliente-proxy" />
         <module name="Server-proxy" />
       </profile>

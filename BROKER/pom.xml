@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Broker</artifactId>
+    <artifactId>BROKER</artifactId>
     <packaging>pom</packaging>
     <modules>
 
