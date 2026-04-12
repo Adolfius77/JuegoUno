@@ -13,6 +13,7 @@
         <module>DTOS</module>
         <module>Serializador</module>
         <module>Broker</module>
+        <module>Eventos</module>
 
     </modules>
     <properties>
