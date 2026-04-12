@@ -6,15 +6,14 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>Observer</module>
-        <module>Presentacion</module>
-        <module>Dominio</module>
-        <module>ComponenteRed</module>
+        <module>red-comunicacion</module>
         <module>DTOS</module>
         <module>Broker</module>
         <module>Cliente-proxy</module>
         <module>Server-proxy</module>
         <module>Serializador</module>
+        <module>Aplicacion_cliente</module>
+        <module>serializador</module>
 
     </modules>
     <properties>

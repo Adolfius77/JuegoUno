@@ -6,19 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Aplicacion_cliente" />
+        <module name="red-comunicacion" />
         <module name="DTOS" />
-        <module name="Presentacion" />
-        <module name="ComponenteRed" />
-        <module name="Serializador" />
-        <module name="Observer" />
         <module name="Cliente-proxy" />
         <module name="Server-proxy" />
-        <module name="Dominio" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ComponenteRedBroker" target="21" />
+      <module name="Dominio" target="21" />
+      <module name="mvc" target="21" />
+      <module name="Observer" target="21" />
       <module name="Protocolo" target="23" />
+      <module name="Serializador" target="23" />
     </bytecodeTargetLevel>
   </component>
 </project>

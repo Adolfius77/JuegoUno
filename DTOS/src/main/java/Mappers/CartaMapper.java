@@ -7,8 +7,6 @@ import Entidades.cartaComodin;
 import Entidades.enums.Color;
 import Entidades.enums.TipoAccion;
 import dtos.CartaDTO;
-import fabricas.CartaFactory;
-import fabricas.CartaFactory.*;
 import fabricas.ICartaFactory;
 
 public class CartaMapper {
