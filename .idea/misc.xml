@@ -9,6 +9,7 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/APP-CLIENTE/pom.xml" />
         <option value="$PROJECT_DIR$/Dominio/pom.xml" />
         <option value="$PROJECT_DIR$/Observer/pom.xml" />
         <option value="$PROJECT_DIR$/Serializador/pom.xml" />
