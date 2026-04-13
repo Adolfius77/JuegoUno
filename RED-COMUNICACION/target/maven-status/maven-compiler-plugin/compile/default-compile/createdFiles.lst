@@ -1,3 +1,4 @@
+interfaces\IReceptorMensajes.class
 red\Cliente.class
 red\Servidor.class
 factorys\StreamFactory.class

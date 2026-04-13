@@ -12,6 +12,10 @@ public abstract class MensajeDTO{
     public MensajeDTO() {
     }
 
+    public MensajeDTO(String remitente) {
+        this(null, remitente);
+    }
+
     public MensajeDTO(String tipo,String remitente) {
         this.tipo = tipo;
         this.remitente = remitente;

@@ -1,10 +1,14 @@
-dtos\MensajePasarTurnoDTO.class
+Mappers\jugadorMapper.class
 dtos\CartaDTO.class
-dtos\MensajeNotificacionDTO.class
 dtos\MensajeEstadoPartidaDTO.class
 dtos\MensajeGritarUnoDTO.class
+dtos\paqueteRedDTO.class
 dtos\MensajeJugarCartaDTO.class
 dtos\MensajeRobarCartaDTO.class
 dtos\MensajeDTO.class
 dtos\MensajeRegistroDTO.class
 dtos\MensajeListaJugadoresDTO.class
+dtos\JugadorDTO.class
+dtos\MensajePasarTurnoDTO.class
+Mappers\CartaMapper.class
+dtos\MensajeNotificacionDTO.class
