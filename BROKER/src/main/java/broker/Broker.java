@@ -43,9 +43,9 @@ public class Broker implements IBroker {
 
                 System.out.println("cliente conectado desde " + ipCliente);
                 clientesConectados.add(clienteSocket);
-
-                Thread threadCliente = new Thread();
-
+                ManejadorCliente manejador = new ManejadorCliente(this,clienteSocket);
+                Thread threadCliente = new Thread(manejador);
+                threadCliente.start();
             }catch (IOException e){
                 System.out.println("eror aceptando clientes" + e.getMessage());
             }
@@ -57,7 +57,7 @@ public class Broker implements IBroker {
             System.out.println("servidor iniciado en el puerto " + puerto);
             System.out.println(" maximo de jugadores: " + MAX_JUGADORES);
             System.out.println("minimo de jugadores para iniciar: " + MIN_JUGADORES);
-            hiloAceptarClientes = new Thread();
+            hiloAceptarClientes = new Thread(this::aceptarClientes);
             hiloAceptarClientes.setName("aceptarClientes");
             hiloAceptarClientes.setDaemon(true);
             hiloAceptarClientes.start();
@@ -68,16 +68,22 @@ public class Broker implements IBroker {
 
     @Override
     public void subscribirse(String tipoEvento, Consumer<MensajeDTO> manejador) {
-
+            suscriptores.computeIfAbsent(tipoEvento, k -> new ArrayList<>()).add(manejador);
     }
 
     @Override
     public void desuscribirse(String tipoEvento, Consumer<MensajeDTO> manejador) {
-
+            List<Consumer<MensajeDTO>> manejadores = suscriptores.get(tipoEvento);
+            if (manejadores != null) {
+                manejadores.remove(manejador);
+            }
     }
 
     @Override
     public void publicar(String tipoEvento, MensajeDTO mensaje) {
-
+            List<Consumer<MensajeDTO>> interesados = suscriptores.getOrDefault(tipoEvento, new ArrayList<>());
+            for (Consumer<MensajeDTO> consumidor : interesados) {
+                consumidor.accept(mensaje);
+            }
     }
 }
