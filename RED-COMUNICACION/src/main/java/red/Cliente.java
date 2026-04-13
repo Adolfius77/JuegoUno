@@ -28,7 +28,7 @@ public class Cliente {
             out.writeObject(registro);
             out.flush();
 
-            ClienteHilo hilo = ClienteHiloFactory.crearHilo(in, out, null);
+            ClienteHilo hilo = ClienteHiloFactory.crearHilo(in);
             hilo.start();
             hilo.join();
 

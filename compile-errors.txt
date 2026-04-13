@@ -1,0 +1,2 @@
+Note: C:\Users\USER\Documents\GitHub\JuegoUno\DOMINIO\src\main\java\Entidades\fabricas\MazoClasicoFactory.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.

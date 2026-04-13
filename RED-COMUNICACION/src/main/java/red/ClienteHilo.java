@@ -2,20 +2,14 @@ package red;
 
 
 import dtos.MensajeNotificacionDTO;
-import vista.MenuPrincipal;
-import javax.swing.*;
 import java.io.*;
 
 
 public class ClienteHilo extends Thread {
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
-    private MenuPrincipal vistaRegistro;
+    private final ObjectInputStream in;
 
-    public ClienteHilo(ObjectInputStream in, ObjectOutputStream out, MenuPrincipal vistaRegistro) {
+    public ClienteHilo(ObjectInputStream in) {
         this.in = in;
-        this.out = out;
-        this.vistaRegistro = vistaRegistro;
     }
 
     @Override
@@ -36,15 +30,9 @@ public class ClienteHilo extends Thread {
 
     public void procesarNotificacion(MensajeNotificacionDTO msg) {
         if (msg.getTextoMensaje().equals("Registro exitoso")) {
-           if(vistaRegistro != null) {
-               vistaRegistro.dispose();
-           }
-            java.awt.EventQueue.invokeLater(() -> {
-                new vista.LobbyView().setVisible(true);
-            });
-
+            System.out.println("[Cliente] Registro exitoso");
         } else {
-            JOptionPane.showMessageDialog(vistaRegistro, msg.getTextoMensaje(), "Error de registro", JOptionPane.ERROR_MESSAGE);
+            System.err.println("[Cliente] Error de registro: " + msg.getTextoMensaje());
         }
     }
 }
