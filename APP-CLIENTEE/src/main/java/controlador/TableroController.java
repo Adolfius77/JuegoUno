@@ -1,8 +1,8 @@
 package controlador;
 
-import modelo.Entidades.Carta;
-import modelo.Entidades.PilaCartas;
-import modelo.Entidades.enums.Color;
+import Entidades.Carta;
+import Entidades.PilaCartas;
+import Entidades.enums.Color;
 
 public class TableroController {
 

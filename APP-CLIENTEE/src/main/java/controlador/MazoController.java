@@ -1,8 +1,8 @@
 package controlador;
 
-import modelo.Entidades.Carta;
-import modelo.Entidades.Mazo;
-import modelo.Entidades.PilaCartas;
+import Entidades.Carta;
+import Entidades.Mazo;
+import Entidades.PilaCartas;
 import java.util.List;
 
 public class MazoController {

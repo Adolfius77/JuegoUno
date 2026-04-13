@@ -1,7 +1,7 @@
 package controlador;
 
-import modelo.Entidades.Carta;
-import modelo.Entidades.Mano;
+import Entidades.Carta;
+import Entidades.Mano;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -2,8 +2,8 @@ package Entidades;
 
 
 
-import observador.IObservable;
-import observador.IObserver;
+import Observer.IObservable;
+import Observer.IObserver;
 
 import java.util.ArrayList;
 import java.util.List;

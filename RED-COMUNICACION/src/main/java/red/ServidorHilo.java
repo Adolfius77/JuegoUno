@@ -1,6 +1,6 @@
 package red;
 
-import modelo.Entidades.Lobby;
+import Entidades.Lobby;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;

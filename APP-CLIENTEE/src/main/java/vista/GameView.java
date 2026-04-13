@@ -5,6 +5,7 @@
 package vista;
 
 import Entidades.CartaAccion;
+import Entidades.Carta;
 import Entidades.CartaNumerica;
 import Entidades.Logica.Partida;
 import Entidades.cartaComodin;

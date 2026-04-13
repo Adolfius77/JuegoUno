@@ -11,8 +11,8 @@ import Entidades.Jugador;
 import Entidades.Mazo;
 import Entidades.PilaCartas;
 import Entidades.enums.Sentido;
-import Estados.IEstadoPartida;
-import fabricas.EstadoFactory;
+import Entidades.Estados.IEstadoPartida;
+import Entidades.fabricas.EstadoFactory;
 import Observer.IObservable;
 import Observer.IObserver;
 

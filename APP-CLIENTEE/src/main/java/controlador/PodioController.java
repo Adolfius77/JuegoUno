@@ -1,6 +1,6 @@
 package controlador;
 
-import modelo.Entidades.Jugador;
+import Entidades.Jugador;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

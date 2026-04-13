@@ -3,10 +3,10 @@ package controlador.Factorys;
 
 import Entidades.Jugador;
 import Entidades.Lobby;
-import Logica.Partida;
-import fabricas.IMazoFactory;
-import fabricas.PartidaFactory;
-import fabricas.ICartaFactory;
+import Entidades.Logica.Partida;
+import Entidades.fabricas.IMazoFactory;
+import Entidades.fabricas.PartidaFactory;
+import Entidades.fabricas.ICartaFactory;
 import controlador.GameController;
 import controlador.LobbyController;
 import java.util.ArrayList;

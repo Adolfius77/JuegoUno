@@ -2,7 +2,7 @@ package Entidades.Estados;
 
 import Entidades.Carta;
 import Entidades.Jugador;
-import modelo.Entidades.Logica.Partida;
+import Entidades.Logica.Partida;
 import Entidades.fabricas.EstadoFactory;
 
 public class EstadoJugando implements IEstadoPartida {

@@ -1,19 +1,27 @@
 package red;
 
+import Entidades.Lobby;
 import interfaces.IReceptorMensajes;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Servidor {
+    public static final List<ServidorHilo> hilosConectados = new CopyOnWriteArrayList<>();
     private final int puerto;
     private final IReceptorMensajes receptor;
+    private final Lobby lobby;
     private boolean escuchando;
 
     public Servidor(int puerto, IReceptorMensajes receptor) {
         this.puerto = puerto;
         this.receptor = receptor;
+        this.lobby = new Lobby();
         this.escuchando = true;
     }
     public void iniciar() {
@@ -23,7 +31,11 @@ public class Servidor {
             while(escuchando) {
                 Socket socketCliente = serverSocket.accept();
                 System.out.println("[Servidor Red] Nueva conexión aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
-                ServidorHilo nuevoHilo = new ServidorHilo(socketCliente, (EnrutadorBroker) this.receptor);
+                ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
+                out.flush();
+                ObjectInputStream in = new ObjectInputStream(socketCliente.getInputStream());
+                ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
+                hilosConectados.add(nuevoHilo);
                 nuevoHilo.start();
             }
         }catch (IOException e){

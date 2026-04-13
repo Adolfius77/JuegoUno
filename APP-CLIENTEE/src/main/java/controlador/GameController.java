@@ -1,9 +1,9 @@
 package controlador;
 
-import modelo.Entidades.Carta;
-import modelo.Entidades.Jugador;
+import Entidades.Carta;
+import Entidades.Jugador;
 import Interfaces.IVista;
-import modelo.Entidades.Logica.Partida;
+import Entidades.Logica.Partida;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

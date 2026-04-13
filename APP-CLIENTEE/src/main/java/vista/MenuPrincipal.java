@@ -39,8 +39,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        botonCircular1 = new presentacion.botonCircular();
-        textFieldRedondo1 = new presentacion.TextFieldRedondo();
+        botonCircular1 = new vista.DiseñosExtras.botonCircular();
+        textFieldRedondo1 = new vista.DiseñosExtras.TextFieldRedondo();
 
         jTextField1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -204,7 +204,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private presentacion.botonCircular botonCircular1;
+    private vista.DiseñosExtras.botonCircular botonCircular1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -215,7 +215,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
-    private presentacion.TextFieldRedondo textFieldRedondo1;
+    private vista.DiseñosExtras.TextFieldRedondo textFieldRedondo1;
     // End of variables declaration//GEN-END:variables
 
     @Override

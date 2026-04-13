@@ -1,9 +1,9 @@
 package Entidades.fabricas;
 
-import Estados.EstadoEsperando;
-import Estados.EstadoFinalizada;
-import Estados.EstadoJugando;
-import Estados.IEstadoPartida;
+import Entidades.Estados.EstadoEsperando;
+import Entidades.Estados.EstadoFinalizada;
+import Entidades.Estados.EstadoJugando;
+import Entidades.Estados.IEstadoPartida;
 
 public class EstadoFactory {
     public static IEstadoPartida crearEstadoEsperando() {

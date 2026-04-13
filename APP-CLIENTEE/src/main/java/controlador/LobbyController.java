@@ -1,6 +1,6 @@
 package controlador;
 
-import modelo.Entidades.Lobby;
+import Entidades.Lobby;
 import Interfaces.IVista;
 import java.util.Collections;
 import java.util.List;
