@@ -11,9 +11,9 @@
         <module>BROKER</module>
         <module>CLIENTE-PROXY</module>
         <module>SERVER-PROXY</module>
-        <module>SERIALIZADOR</module>
         <module>APP-CLIENTEE</module>
         <module>DOMINIO</module>
+        <module>SEREALIZADOR</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -3,7 +3,7 @@ package broker;
 import dtos.MensajeDTO;
 
 import java.net.Socket;
-
+//esta clase servira para notificar al broker cuando se registra  y se desconecta tambien recibir mensajes del broker
 public class ManejadorCliente implements Runnable {
     private Socket socket;
     private Broker broker;
