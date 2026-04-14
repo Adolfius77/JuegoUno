@@ -17,6 +17,20 @@ public class PartidaDTO implements Serializable {
     public PartidaDTO() {
     }
 
+    public PartidaDTO(String id, List<JugadorDTO> jugadores, CartaDTO cartaCentro,
+                      String turnoJugadorId, boolean enCurso, String colorActual,
+                      boolean sentidoHorario, int mazoTamano, String mensajeEstado) {
+        this.id = id;
+        this.jugadores = jugadores;
+        this.cartaCentro = cartaCentro;
+        this.turnoJugadorId = turnoJugadorId;
+        this.enCurso = enCurso;
+        this.colorActual = colorActual;
+        this.sentidoHorario = sentidoHorario;
+        this.mazoTamano = mazoTamano;
+        this.mensajeEstado = mensajeEstado;
+    }
+
     public String getId() {
         return id;
     }

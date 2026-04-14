@@ -131,6 +131,22 @@ public class Partida implements IObservable {
         this.pilaCartas = pilaCartas;
     }
 
+    public Sentido getSentido() {
+        return sentido;
+    }
+
+    public void setSentido(Sentido sentido) {
+        this.sentido = sentido;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public void agregarObservador(IObserver obs) {
         this.observadores.add(obs);
