@@ -10,32 +10,36 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Cliente {
-    public static void main(String[] args) {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            scanner.useDelimiter("\n");
-            Socket socket = SocketFactory.crearSocket("127.0.0.1", 5000);
-
-            //entrada de datos
-            ObjectInputStream in = StreamFactory.crearInputStream(socket);
-            //salida de datos
-            ObjectOutputStream out = StreamFactory.crearOutputStream(socket);
-
-            System.out.println("Introduce tu nombre de usuario: ");
-            String nombre = scanner.nextLine();
-
-            MensajeRegistroDTO registro = new MensajeRegistroDTO(nombre, "avatar_default.png");
-            out.writeObject(registro);
-            out.flush();
-
-            ClienteHilo hilo = ClienteHiloFactory.crearHilo(in);
-            hilo.start();
-            hilo.join();
-
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Error en la conexión: " + e.getMessage());
-        }
-
+private Socket socket;
+private ObjectOutputStream out;
+private ObjectInputStream in;
+private ClienteHilo hilo;
+//metodo para estableces la conexion :p
+public void conectar(String ip, int puerto) throws IOException {
+    this.socket = SocketFactory.crearSocket(ip, puerto);
+    this.out = StreamFactory.crearOutputStream(socket);
+    this.out.flush();
+    this.in = StreamFactory.crearInputStream(socket);
+}
+//con este metodo se inicia el hilo que escucha al servidor
+public void iniciar() throws IOException {
+    if(this.in != null){
+        this.hilo = ClienteHiloFactory.crearHilo(in);
+        this.hilo.start();
     }
-
+}
+//servira para enviar jugadas
+public ObjectOutputStream getOut() {
+    return out;
+}
+public void desconectar() {
+    try{
+       if(socket != null && !socket.isClosed()){
+           socket.close();
+       }
+    }catch (IOException e){
+        System.out.printf("Error al desconectar el servidor\n" + e.getMessage());
+        e.printStackTrace();
+    }
+}
 }

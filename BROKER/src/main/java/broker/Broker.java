@@ -3,6 +3,7 @@ package broker;
 
 import Entidades.Jugador;
 import dtos.MensajeDTO;
+import fabricas.ManejadorClienteFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,7 +44,7 @@ public class Broker implements IBroker {
 
                 System.out.println("cliente conectado desde " + ipCliente);
                 clientesConectados.add(clienteSocket);
-                ManejadorCliente manejador = new ManejadorCliente(this,clienteSocket);
+                ManejadorCliente manejador = ManejadorClienteFactory.crearManjadorCliente(this, clienteSocket);
                 Thread threadCliente = new Thread(manejador);
                 threadCliente.start();
             }catch (IOException e){

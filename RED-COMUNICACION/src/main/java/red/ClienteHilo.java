@@ -1,6 +1,7 @@
 package red;
 
 
+import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import java.io.*;
 
@@ -20,6 +21,10 @@ public class ClienteHilo extends Thread {
                 if (object instanceof MensajeNotificacionDTO) {
                     MensajeNotificacionDTO msg = (MensajeNotificacionDTO) object;
                     procesarNotificacion(msg);
+                }
+                else if(object instanceof MensajeListaJugadoresDTO){
+                    MensajeListaJugadoresDTO msgLista = (MensajeListaJugadoresDTO) object;
+                    System.out.println("lista actualizada de los jugadores: " + msgLista.getJugadores());
                 }
             }
         } catch (Exception e) {
