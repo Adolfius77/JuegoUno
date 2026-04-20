@@ -17,57 +17,27 @@ public class serializador implements ISerializador {
 
     private static final Gson gson = new Gson();
 
-    private Socket socket;
-    private PrintWriter escritor;
-    private BufferedReader lector;
-
-    public serializador(Socket socket) throws IOException {
-        if(socket == null || socket.isClosed()) {
-            throw new IOException("Socket no valido");
-        }
-        this.socket = socket;
-        this.escritor = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-        this.lector = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-    }
 
     @Override
-    public void enviarMensaje(MensajeDTO mensaje) throws IOException {
-        try {
-
-            String mensajeJson = gson.toJson(mensaje);
-            escritor.println(mensajeJson);
-            System.out.println("JSON enviado (" + mensajeJson.length() + " bytes) - Tipo: " + mensaje.getTipo());
-        } catch (Exception e) {
-            throw new IOException("Error al enviar el mensaje", e);
+    public String  serealizar(MensajeDTO mensaje) {
+        if(mensaje == null){
+            return null;
+        }else{
+            return gson.toJson(mensaje);
         }
     }
 
     @Override
-    public MensajeDTO recibirMensaje(MensajeDTO mensaje) throws IOException {
-        try {
-
-            String mensajeJson = lector.readLine();
-
-            if (mensajeJson == null) {
-                throw new IOException("Conexión cerrada por el otro extremo");
-            }
-
-            
-            return gson.fromJson(mensajeJson, MensajeDTO.class);
-
-        } catch (JsonSyntaxException e) {
-            throw new IOException("Error de formato JSON", e);
+    public MensajeDTO desearealizar(String json) {
+        if(json == null || json.trim().isEmpty()){
+            return null;
         }
-    }
+        try{
+            return gson.fromJson(json, MensajeDTO.class);
 
-    @Override
-    public void cerrarConexion() {
-        try {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-            }
-        } catch (IOException e) {
-            System.err.println("Error al intentar cerrar el socket: " + e.getMessage());
+        }catch(JsonSyntaxException e){
+            System.err.println("Error al deserializar: " + e.getMessage());
+            return null;
         }
     }
 }

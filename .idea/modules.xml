@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ComponenteRedBroker/ComponenteRedBroker.iml" filepath="$PROJECT_DIR$/ComponenteRedBroker/ComponenteRedBroker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SERVER-PROXY/SERVER-PROXY.iml" filepath="$PROJECT_DIR$/SERVER-PROXY/SERVER-PROXY.iml" />
     </modules>
   </component>
 </project>

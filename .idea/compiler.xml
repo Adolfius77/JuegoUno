@@ -25,6 +25,7 @@
       <module name="Protocolo" target="21" />
       <module name="Serializador" target="21" />
       <module name="serializador" target="21" />
+      <module name="SERVER-PROXY" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
