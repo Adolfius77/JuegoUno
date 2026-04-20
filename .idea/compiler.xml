@@ -12,7 +12,7 @@
         <module name="SEREALIZADOR" />
         <module name="Cliente-proxy" />
         <module name="DOMINIO" />
-        <module name="Server-proxy" />
+        <module name="SERVER-PROXY" />
         <module name="APP-CLIENTEE" />
       </profile>
     </annotationProcessing>
@@ -25,7 +25,7 @@
       <module name="Protocolo" target="21" />
       <module name="Serializador" target="21" />
       <module name="serializador" target="21" />
-      <module name="SERVER-PROXY" target="21" />
+      <module name="Server-proxy" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

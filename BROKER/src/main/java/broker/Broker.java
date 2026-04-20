@@ -4,6 +4,7 @@ package broker;
 import Server.ServerProxy;
 import dtos.MensajeDTO;
 import fabricas.ServerProxyFactory;
+import interfaces.ISerializador;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -27,14 +28,16 @@ public class Broker implements IBroker {
     private boolean partidaEnCurso;
     //nodos conectados
     private List<ServerProxy>NodosConectados;
+    private ISerializador serializador;
 
 
-    public Broker(int puerto, int maximoJugadores) {
+    public Broker(int puerto, int maximoJugadores, ISerializador serializador) {
         this.puerto = puerto;
         this.clientesConectados = new ArrayList<>();
         this.suscriptores = new HashMap<>();
         this.socketsJugadores = new HashMap<>();
         this.partidaEnCurso = false;
+        this.serializador = serializador;
     }
     private void aceptarClientes(){
         while(true){
@@ -44,7 +47,7 @@ public class Broker implements IBroker {
 
                 System.out.println("cliente conectado desde " + ipCliente);
                 clientesConectados.add(clienteSocket);
-                ServerProxy manejador = ServerProxyFactory.crearManjadorCliente(this, clienteSocket);
+                ServerProxy manejador = ServerProxyFactory.crearManjadorCliente(this, clienteSocket,serializador);
                 Thread threadCliente = new Thread(manejador);
                 threadCliente.start();
             }catch (IOException e){

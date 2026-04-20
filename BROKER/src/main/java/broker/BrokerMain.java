@@ -3,10 +3,14 @@ package broker;
 
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
+import interfaces.ISerializador;
+
 
 public class BrokerMain {
+    private static ISerializador serializador;
     public static void main(String[] args) {
-        Broker broker = new Broker(8080,4);
+
+        Broker broker = new Broker(8080,4,serializador);
         broker.iniciarServidor();
 
         broker.subscribirse("INICIO_JUEGO", msg ->{

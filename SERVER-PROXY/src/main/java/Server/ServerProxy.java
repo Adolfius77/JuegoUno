@@ -29,9 +29,9 @@ public class ServerProxy implements IServerProxy {
     @Override
     public void run() {
         try {
-           this.entrada = socket.getInputStream();
-           this.salida = socket.getOutputStream();
-           BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            this.entrada = socket.getInputStream();
+            this.salida = socket.getOutputStream();
+            BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
 
             System.out.println("escuchando a jugador desde:" + socket.getInetAddress() + ":" + socket.getPort());
@@ -52,8 +52,8 @@ public class ServerProxy implements IServerProxy {
     public void enviarMensaje(MensajeDTO mensaje) {
         try{
             PrintWriter escritor = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-           String json =  serializador.serealizar(mensaje);
-           escritor.println(json);
+            String json =  serializador.serealizar(mensaje);
+            escritor.println(json);
         }catch (Exception e){
             System.out.println("error enviando los datos" + e.getMessage());
             e.printStackTrace();
