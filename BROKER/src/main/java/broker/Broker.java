@@ -1,6 +1,7 @@
 package broker;
 
 
+import Interfacez.IBroker;
 import Server.ServerProxy;
 import dtos.MensajeDTO;
 import fabricas.ServerProxyFactory;

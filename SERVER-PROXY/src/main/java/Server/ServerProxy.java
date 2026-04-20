@@ -1,7 +1,7 @@
 package Server;
 
 import Interfacez.IServerProxy;
-import broker.Broker;
+import Interfacez.IBroker;
 import dtos.MensajeDTO;
 import interfaces.ISerializador;
 import serealizador.serializador;
@@ -12,14 +12,14 @@ import java.nio.charset.StandardCharsets;
 
 public class ServerProxy implements IServerProxy {
     private Socket socket;
-    private Broker broker;
+    private IBroker broker;
     private String nombreJugador;
     private ISerializador serializador;
 
     private InputStream entrada;
     private OutputStream salida;
 
-    public ServerProxy(Broker broker, Socket socket, ISerializador serializador) {
+    public ServerProxy(IBroker broker, Socket socket, ISerializador serializador) {
         this.broker = broker;
         this.socket = socket;
         this.nombreJugador = null;

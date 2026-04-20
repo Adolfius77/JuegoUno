@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="BROKER" />
         <module name="red-comunicacion" />
+        <module name="INTERFACEZ" />
         <module name="DTOS" />
         <module name="SEREALIZADOR" />
         <module name="Cliente-proxy" />

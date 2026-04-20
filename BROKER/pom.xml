@@ -14,6 +14,12 @@
     <dependencies>
         <dependency>
             <groupId>org.itson</groupId>
+            <artifactId>INTERFACEZ</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.itson</groupId>
             <artifactId>DTOS</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
