@@ -41,6 +41,8 @@ public class ServerProxy implements IServerProxy {
                     break;
                 }
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
+                broker.publicar(mensaje.getTipo(), mensaje);
+                System.out.println("mensaje recibido" + mensaje.getTipo());
 
             }
         }catch (Exception e) {
