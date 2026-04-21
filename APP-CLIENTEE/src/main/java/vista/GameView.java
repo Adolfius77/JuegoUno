@@ -61,7 +61,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
         Random random = new Random();
         Color[] colores = Color.values();
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 11; i++) {
             Color colorRandom = colores[random.nextInt(colores.length)];
             int numeroRandom = random.nextInt(10);
             CartaNumerica cartaRandom = new CartaNumerica(1, "n", colorRandom);

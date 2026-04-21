@@ -1,8 +1,11 @@
 package broker;
 
 
-import Entidades.Jugador;
+import Interfacez.IBroker;
+import Server.ServerProxy;
 import dtos.MensajeDTO;
+import fabricas.ServerProxyFactory;
+import interfaces.ISerializador;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,20 +23,22 @@ public class Broker implements IBroker {
     private List<Socket> clientesConectados;
     private Thread hiloAceptarClientes;
     private Map<String, List<Consumer<MensajeDTO>>> suscriptores;
-    private List<Jugador> jugadores;
     private Map<String , Socket> socketsJugadores;
     private static final int MAX_JUGADORES = 4;
     private static final int MIN_JUGADORES = 2;
     private boolean partidaEnCurso;
+    //nodos conectados
+    private List<ServerProxy>NodosConectados;
+    private ISerializador serializador;
 
 
-    public Broker(int puerto, int maximoJugadores) {
+    public Broker(int puerto, int maximoJugadores, ISerializador serializador) {
         this.puerto = puerto;
         this.clientesConectados = new ArrayList<>();
         this.suscriptores = new HashMap<>();
-        this.jugadores = new ArrayList<>();
         this.socketsJugadores = new HashMap<>();
         this.partidaEnCurso = false;
+        this.serializador = serializador;
     }
     private void aceptarClientes(){
         while(true){
@@ -43,7 +48,7 @@ public class Broker implements IBroker {
 
                 System.out.println("cliente conectado desde " + ipCliente);
                 clientesConectados.add(clienteSocket);
-                ManejadorCliente manejador = new ManejadorCliente(this,clienteSocket);
+                ServerProxy manejador = ServerProxyFactory.crearManjadorCliente(this, clienteSocket,serializador);
                 Thread threadCliente = new Thread(manejador);
                 threadCliente.start();
             }catch (IOException e){

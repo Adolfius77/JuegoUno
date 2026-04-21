@@ -8,6 +8,7 @@
     <modules>
         <module>RED-COMUNICACION</module>
         <module>DTOS</module>
+        <module>INTERFACEZ</module>
         <module>BROKER</module>
         <module>CLIENTE-PROXY</module>
         <module>SERVER-PROXY</module>

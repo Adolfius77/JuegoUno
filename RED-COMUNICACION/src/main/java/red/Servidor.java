@@ -24,6 +24,7 @@ public class Servidor {
         this.lobby = new Lobby();
         this.escuchando = true;
     }
+    //metodo para iniciar el servidors
     public void iniciar() {
         try(ServerSocket serverSocket = new ServerSocket(puerto)) {
             System.out.println("servidor iniciado en el puerto: " + puerto);
@@ -43,6 +44,7 @@ public class Servidor {
             e.printStackTrace();
         }
     }
+    //metodo para apagar el servidor
     public void apagar(){
         this.escuchando = false;
         System.out.println("apagando servidor.....");
