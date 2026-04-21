@@ -3,6 +3,8 @@ package Server;
 import Interfacez.IProxy;
 import Interfacez.IBroker;
 import dtos.MensajeDTO;
+import dtos.MensajeNotificacionDTO;
+import dtos.MensajeRegistroDTO;
 import interfaces.ISerializador;
 
 import java.io.*;
@@ -30,22 +32,40 @@ public class ServerProxy implements IProxy {
         try {
             this.entrada = socket.getInputStream();
             this.salida = socket.getOutputStream();
-            BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader lector = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8));
 
+            System.out.println("Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
 
-            System.out.println("escuchando a jugador desde:" + socket.getInetAddress() + ":" + socket.getPort());
             while(true){
                 String jsonRecibido = lector.readLine();
                 if(jsonRecibido == null){
                     break;
                 }
-                MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
-                broker.publicar(mensaje.getTipo(), mensaje);
-                System.out.println("mensaje recibido" + mensaje.getTipo());
 
+                MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
+
+                if (mensaje instanceof MensajeRegistroDTO) {
+                    MensajeRegistroDTO peticionRegistro = (MensajeRegistroDTO) mensaje;
+                    String nombreSolicitado = peticionRegistro.getNombre();
+
+                    boolean exito = broker.registrarJugador(nombreSolicitado, this.socket);
+
+                    if (exito) {
+                        this.nombreJugador = nombreSolicitado;
+                        MensajeNotificacionDTO respuesta = new MensajeNotificacionDTO("SERVIDOR", false, "EXITO: Registro completado");
+                        this.enviarMensaje(respuesta);
+                    } else {
+                        MensajeNotificacionDTO respuesta = new MensajeNotificacionDTO("SERVIDOR", true, "ERROR: Nombre ocupado o sala llena");
+                        this.enviarMensaje(respuesta);
+                    }
+                }
+                else {
+                    broker.publicar(mensaje.getTipo(), mensaje);
+                    System.out.println("Mensaje recibido y publicado: " + mensaje.getTipo());
+                }
             }
-        }catch (Exception e) {
-            System.out.println("el cliente se a desconectado o hay un error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("El cliente se ha desconectado o hay un error: " + e.getMessage());
         }
     }
 
@@ -56,7 +76,7 @@ public class ServerProxy implements IProxy {
             String json =  serializador.serealizar(mensaje);
             escritor.println(json);
         }catch (Exception e){
-            System.out.println("error enviando los datos" + e.getMessage());
+            System.out.println("Error enviando los datos" + e.getMessage());
             e.printStackTrace();
         }
     }

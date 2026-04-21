@@ -10,12 +10,16 @@ import Interfaces.IVista;
  *
  * @author emiim
  */
-//cc
 public class SeleccionPartida extends javax.swing.JFrame implements IVista{
-
+    private cliente.ClienteProxy miProxy;
     /**
      * Creates new form SeleccionPartida
      */
+    public SeleccionPartida(cliente.ClienteProxy proxy) {
+        initComponents();
+        this.miProxy = proxy;
+    }
+
     public SeleccionPartida() {
         initComponents();
     }
