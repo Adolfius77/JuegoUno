@@ -2,6 +2,6 @@ package Interfacez;
 
 import dtos.MensajeDTO;
 
-public interface IServerProxy extends Runnable {
+public interface IProxy extends Runnable {
     void enviarMensaje(MensajeDTO mensaje);
 }

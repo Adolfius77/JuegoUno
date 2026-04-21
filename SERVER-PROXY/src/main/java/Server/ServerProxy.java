@@ -1,16 +1,15 @@
 package Server;
 
-import Interfacez.IServerProxy;
+import Interfacez.IProxy;
 import Interfacez.IBroker;
 import dtos.MensajeDTO;
 import interfaces.ISerializador;
-import serealizador.serializador;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class ServerProxy implements IServerProxy {
+public class ServerProxy implements IProxy {
     private Socket socket;
     private IBroker broker;
     private String nombreJugador;
