@@ -3,7 +3,7 @@ package dtos;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class MensajeDTO{
+public  class MensajeDTO{
     private String tipo;
     private String remitente;
     private Map<String,Object> datos;

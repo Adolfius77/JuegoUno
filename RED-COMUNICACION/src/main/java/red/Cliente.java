@@ -26,6 +26,7 @@ public void iniciar() throws IOException {
     if(this.in != null){
         this.hilo = ClienteHiloFactory.crearHilo(in);
         this.hilo.start();
+        System.out.println("[cliente] escuchando al servidor");
     }
 }
 //servira para enviar jugadas
