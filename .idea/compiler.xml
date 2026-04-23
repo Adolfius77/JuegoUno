@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="BROKER" />
-        <module name="red-comunicacion" />
-        <module name="DTOS" />
-        <module name="SEREALIZADOR" />
-        <module name="Cliente-proxy" />
-        <module name="DOMINIO" />
-        <module name="Server-proxy" />
-        <module name="APP-CLIENTEE" />
-      </profile>
-    </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="APP-CLIENTE" target="21" />
-      <module name="ComponenteRedBroker" target="21" />
-      <module name="Dominio" target="21" />
-      <module name="mvc" target="21" />
-      <module name="Observer" target="21" />
-      <module name="Protocolo" target="21" />
-      <module name="Serializador" target="21" />
-      <module name="serializador" target="21" />
+      <module name="APP-CLIENTEE" target="21" />
+      <module name="BROKER" target="21" />
+      <module name="Cliente-proxy" target="21" />
+      <module name="DOMINIO" target="21" />
+      <module name="DTOS" target="21" />
+      <module name="INTERFACEZ" target="21" />
+      <module name="JuegoUno" target="21" />
+      <module name="red-comunicacion" target="21" />
+      <module name="SEREALIZADOR" target="21" />
       <module name="SERVER-PROXY" target="21" />
     </bytecodeTargetLevel>
   </component>

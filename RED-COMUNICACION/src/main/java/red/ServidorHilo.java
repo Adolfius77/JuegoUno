@@ -4,8 +4,6 @@ import Entidades.Lobby;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
-import interfaces.IReceptorMensajes;
-
 import java.io.*;
 
 public class ServidorHilo extends Thread {
@@ -13,7 +11,7 @@ public class ServidorHilo extends Thread {
     private ObjectOutputStream out;
     private Lobby lobby;
 
-    public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby ) {
+    public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
         this.out = out;
         this.lobby = lobby;
