@@ -12,7 +12,7 @@ public class LobbyController {
 
     public LobbyController(IVista vista, Lobby modelo) {
         if (vista == null || modelo == null) {
-            throw new IllegalArgumentException("vista y modelo son obligatorios");
+            throw new IllegalArgumentException("Vista y modelo son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
@@ -21,7 +21,7 @@ public class LobbyController {
 
     public boolean agregarJugador(String nombreJugador) {
         if (nombreJugador == null || nombreJugador.trim().isEmpty()) {
-            vista.mostrarMensaje("el nombre del jugador es obligatorio");
+            vista.mostrarMensaje("El nombre del jugador es obligatorio");
             return false;
         }
         modelo.agregarJugador(nombreJugador.trim());
@@ -33,8 +33,17 @@ public class LobbyController {
             vista.cerrarVista();
             return true;
         }
-        vista.mostrarMensaje("se requieren al menos 2 jugadores para iniciar");
+        vista.mostrarMensaje("Se requieren al menos 2 jugadores para iniciar");
         return false;
+    }
+
+    public void actualizarListaDesdeRed(dtos.MensajeListaJugadoresDTO dto) {
+        if (dto == null) return;
+        modelo.limpiarJugadores();
+
+        for (String nombre : dto.getJugadores()) {
+            modelo.agregarJugador(nombre);
+        }
     }
 
     public List<String> obtenerJugadores() {
