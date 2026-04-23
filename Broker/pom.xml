@@ -9,26 +9,52 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Broker</artifactId>
+    <artifactId>BROKER</artifactId>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>ComponenteRed</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>DTOS</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>Serializador</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>DOMINIO</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-module-boundaries</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>org.itson:APP-CLIENTEE</exclude>
+                                        <exclude>org.itson:RED-COMUNICACION</exclude>
+                                        <exclude>org.itson:CLIENTE-PROXY</exclude>
+                                        <exclude>org.itson:SERVER-PROXY</exclude>
+                                        <exclude>org.itson:SERIALIZADOR</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
