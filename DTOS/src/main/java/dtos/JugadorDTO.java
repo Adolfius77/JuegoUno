@@ -2,7 +2,10 @@
 
 import Entidades.Mano;
 
-public class JugadorDTO {
+import java.io.Serializable;
+
+    public class JugadorDTO implements Serializable {
+    private static final long getSerialVersionUID =  1L;
     private String id;
     private String nombre;
     private byte[] avatar;
@@ -10,7 +13,8 @@ public class JugadorDTO {
     private boolean dijoUno;
     private int puntuaje;
 
-    public JugadorDTO() {
+
+        public JugadorDTO() {
     }
     public JugadorDTO(String id, String nombre, byte[] avatar, Mano mano, boolean dijoUno, int puntuaje) {
         this.id = id;

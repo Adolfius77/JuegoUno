@@ -55,16 +55,20 @@ public class Partida implements IObservable {
         return jugador;
     }
 
-    public static void crear() {
-
-    }
 
     public void verificarGanador() {
-
+        for (Jugador jugador : jugadores) {
+            if (jugador.getMano().getCartas().isEmpty()){
+                this.setEstado(EstadoFactory.crearEstadoFinalizada());
+                notificarObservador("PARTIDA_FINALIZADA" + jugador.getNombre());
+                return;
+            }
+        }
     }
 
     public void jugarCarta(Carta carta, Jugador jugador) {
        estado.jugarCarta(this, jugador, carta);
+       verificarGanador();
     }
 
     public void tomarCarta(Jugador jugador) {
@@ -81,29 +85,58 @@ public class Partida implements IObservable {
     }
 
     public void saltarTurno() {
-
+        this.saltarTurno = true;
+        pasarTurno();
     }
 
     public void cambiarSentido() {
-
+        if (this.sentido == Sentido.HORARIO) {
+            this.sentido = Sentido.ANTIHORARIO;
+        } else {
+            this.sentido = Sentido.HORARIO;
+        }
+        notificarObservador("SENTIDO_CAMBIADO");
     }
 
     public void acomularCartas(int cantidad) {
-
+        if (mazo.estaVacio()) {
+            mazo.recargar(pilaCartas);
+        }
+        Jugador actual =  getJugadorActual();
+        for (int i = 0; i < cantidad; i++) {
+            actual.recibirCarta(mazo.tomarCarta());
+        }
+        notificarObservador("CARTAS_ACUMULADAS");
     }
 
     public void pasarTurno() {
+        turnoActual = calcularSiguienteIndice();
 
+        if (this.saltarTurno) {
+            this.saltarTurno = false;
+            pasarTurno();
+        } else {
+            notificarObservador("TURNO_CAMBIADO");
+        }
     }
 
-    public void calcularSiguienteIndice() {
+    public int calcularSiguienteIndice() {
+        int numeroJugadores = jugadores.size();
+        if (numeroJugadores == 0) return 0;
 
+        int siguiente;
+        if (this.sentido == Sentido.HORARIO) {
+            siguiente = (turnoActual + 1) % numeroJugadores;
+        } else {
+            siguiente = (turnoActual - 1 + numeroJugadores) % numeroJugadores;
+        }
+        return siguiente;
     }
 
     public void avanzarSiguienteIndice() {
-
+        this.turnoActual = calcularSiguienteIndice();
     }
-    //Getters y setters
+
     public List<Jugador> getJugadores() {
         return jugadores;
     }
@@ -130,6 +163,22 @@ public class Partida implements IObservable {
 
     public void setPilaCartas(PilaCartas pilaCartas) {
         this.pilaCartas = pilaCartas;
+    }
+
+    public Sentido getSentido() {
+        return sentido;
+    }
+
+    public void setSentido(Sentido sentido) {
+        this.sentido = sentido;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

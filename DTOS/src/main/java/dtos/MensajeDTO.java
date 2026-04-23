@@ -1,9 +1,11 @@
 package dtos;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class MensajeDTO{
+public  class MensajeDTO implements Serializable {
+    private static final long getSerialVersionUID =  1L;
     private String tipo;
     private String remitente;
     private Map<String,Object> datos;

@@ -18,6 +18,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
      */
     public MenuPrincipal() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -164,7 +165,52 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonCircular1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCircular1ActionPerformed
-        // TODO add your handling code here:
+        String nombreJugador = textFieldRedondo1.getText().trim();
+
+        if (nombreJugador.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Ingresa un nombre: ", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            java.net.Socket socket = new java.net.Socket("127.0.0.1", 9090);
+
+            interfaces.ISerializador serializador = new serealizador.serializador();
+
+            cliente.ClienteProxy miProxy = new cliente.ClienteProxy(socket, serializador);
+
+            miProxy.setReceptor(mensaje -> {
+
+                if (mensaje instanceof dtos.MensajeNotificacionDTO) {
+                    dtos.MensajeNotificacionDTO notificacion = (dtos.MensajeNotificacionDTO) mensaje;
+
+                    if (!notificacion.isEsError()) {
+                        System.out.println("Registro aceptado. Cambiando pantalla...");
+
+                        java.awt.EventQueue.invokeLater(() -> {
+                            vista.SeleccionPartida seleccionVista = new vista.SeleccionPartida(miProxy);
+                            seleccionVista.setVisible(true);
+                            this.dispose();
+                        });
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(null,
+                                "Error: " + notificacion.getTextoMensaje(),
+                                "Registro Denegado",
+                                javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            Thread hiloEscucha = new Thread(miProxy);
+            hiloEscucha.setDaemon(true);
+            hiloEscucha.start();
+
+            dtos.MensajeRegistroDTO peticion = new dtos.MensajeRegistroDTO(nombreJugador, "AvatarDefault");
+            miProxy.enviarMensaje(peticion);
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_botonCircular1ActionPerformed
 
     /**

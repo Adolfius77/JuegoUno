@@ -14,12 +14,9 @@
         <module name="SEREALIZADOR" />
         <module name="DOMINIO" />
         <module name="SERVER-PROXY" />
+        <module name="Dominio" />
         <module name="APP-CLIENTEE" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Cliente-proxy" target="21" />
-      <module name="red-comunicacion" target="21" />
-    </bytecodeTargetLevel>
   </component>
 </project>

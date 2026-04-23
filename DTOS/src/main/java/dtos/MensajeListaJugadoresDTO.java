@@ -3,10 +3,11 @@ package dtos;
 import java.io.Serializable;
 import java.util.List;
 
-public class MensajeListaJugadoresDTO implements Serializable {
+public class MensajeListaJugadoresDTO extends MensajeDTO implements Serializable {
     private List<String> nombres;
 
     public MensajeListaJugadoresDTO(List<String> jugadores) {
+        super("listaJugadores");
         this.nombres = jugadores;
     }
 
