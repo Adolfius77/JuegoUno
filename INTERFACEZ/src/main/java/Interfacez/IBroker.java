@@ -8,5 +8,4 @@ public interface IBroker {
     void subscribirse(String tipoEvento, Consumer<MensajeDTO> manejador);
     void desuscribirse(String tipoEvento, Consumer<MensajeDTO> manejador);
     void publicar(String tipoEvento, MensajeDTO mensaje);
-    boolean registrarJugador(String nombreJugador, java.net.Socket socketCliente);
 }

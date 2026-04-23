@@ -12,6 +12,7 @@
         <module name="RED-COMUNICACION" />
         <module name="CLIENTE-PROXY" />
         <module name="SEREALIZADOR" />
+        <module name="DOMINIO" />
         <module name="SERVER-PROXY" />
         <module name="Dominio" />
         <module name="APP-CLIENTEE" />

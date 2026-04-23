@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PartidaDTO implements Serializable {
+    private static final long getSerialVersionUID =  1L;
     private String id;
     private List<JugadorDTO> jugadores;
     private CartaDTO cartaCentro;

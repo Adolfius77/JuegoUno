@@ -1,36 +1,34 @@
 package broker;
 
 
+import Interfacez.IBroker;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
 import interfaces.ISerializador;
+
+import java.util.function.Consumer;
 
 
 public class BrokerMain {
     private static ISerializador serializador;
     public static void main(String[] args) {
+        IBroker broker = new Broker();
+        Consumer<MensajeDTO> moduloJuego = mensaje -> {
+            System.out.println("[MÓDULO JUEGO] Recibí el evento: " + mensaje.getTipo() + mensaje.getRemitente() + mensaje.getTimestamp());
 
-        Broker broker = new Broker(8080,4,serializador);
-        broker.iniciarServidor();
+        };
+        Consumer<MensajeDTO> moduloNotificaciones = mensaje -> {
+            System.out.println("[MÓDULO NOTIFICACIONES] Alerta en pantalla: Alguien gritó UNO!");
+        };
+        System.out.println("registrando subscriptores");
+        broker.subscribirse("JUGAR_CARTA", moduloJuego);
+        broker.subscribirse("ROBAR_CARTA", moduloJuego);
+        broker.subscribirse("GRITO_UNO", moduloNotificaciones);
 
-        broker.subscribirse("INICIO_JUEGO", msg ->{
-            System.out.println("iniciar juego recibido" + msg);
-        });
-        broker.subscribirse("TURNO", msg ->{
-            System.out.println("turno recibido" + msg);
-        });
-        try{
-            Thread.sleep(2000);
-            System.out.printf("publicando eventos");
-            broker.publicar("INICIO_JUEGO", new MensajeDTO("broker","juego iniciado") {
-            });
-            broker.publicar("TURNO", new MensajeDTO("broker","juego turno") {
-
-            });
-            Thread.sleep(5000);
-            System.out.println("si llego aqui es por que si jala");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        System.out.println("publicando eventos");
+        MensajeDTO mensaje = new MensajeDTO();
+        mensaje.setTipo("JUGAR_CARTA");
+        broker.publicar("JUGAR_CARTA", mensaje);
+        
     }
 }

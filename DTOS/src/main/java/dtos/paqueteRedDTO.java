@@ -2,6 +2,7 @@ package dtos;
 import java.io.Serializable;
 
 public class paqueteRedDTO implements Serializable {
+    private static final long getSerialVersionUID =  1L;
     private String destino;
     private String remitente;
     private String accion;
