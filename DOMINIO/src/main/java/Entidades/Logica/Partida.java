@@ -4,17 +4,18 @@
  */
 package Entidades.Logica;
 
-import java.util.ArrayList;
-import java.util.List;
 import Entidades.Carta;
+import Entidades.Estados.IEstadoPartida;
 import Entidades.Jugador;
 import Entidades.Mazo;
 import Entidades.PilaCartas;
 import Entidades.enums.Sentido;
-import Entidades.Estados.IEstadoPartida;
 import Entidades.fabricas.EstadoFactory;
 import Observer.IObservable;
 import Observer.IObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

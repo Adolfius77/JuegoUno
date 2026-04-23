@@ -1,7 +1,6 @@
 package Entidades.Estados;
 
 import Entidades.Carta;
-import Entidades.Estados.IEstadoPartida;
 import Entidades.Jugador;
 import Entidades.Logica.Partida;
 

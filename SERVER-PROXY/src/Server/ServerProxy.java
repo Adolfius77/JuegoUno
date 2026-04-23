@@ -4,7 +4,6 @@ import Interfacez.IServerProxy;
 import broker.Broker;
 import dtos.MensajeDTO;
 import interfaces.ISerializador;
-import serealizador.serializador;
 
 import java.io.*;
 import java.net.Socket;

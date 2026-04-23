@@ -6,8 +6,8 @@ import Entidades.CartaNumerica;
 import Entidades.cartaComodin;
 import Entidades.enums.Color;
 import Entidades.enums.TipoAccion;
-import dtos.CartaDTO;
 import Entidades.fabricas.ICartaFactory;
+import dtos.CartaDTO;
 
 public class CartaMapper {
     public CartaDTO toDTO(Carta carta) {

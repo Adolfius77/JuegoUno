@@ -6,14 +6,46 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>Observer</module>
-        <module>Presentacion</module>
-        <module>Dominio</module>
-        <module>ComponenteRed</module>
+        <module>RED-COMUNICACION</module>
         <module>DTOS</module>
-        
+        <module>INTERFACEZ</module>
+        <module>BROKER</module>
+        <module>CLIENTE-PROXY</module>
+        <module>SERVER-PROXY</module>
+        <module>APP-CLIENTEE</module>
+        <module>DOMINIO</module>
+        <module>SEREALIZADOR</module>
     </modules>
     <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-baseline</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                </requireJavaVersion>
+                                <dependencyConvergence/>
+                                <banDuplicatePomDependencyVersions/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

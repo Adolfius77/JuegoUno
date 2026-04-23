@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="BROKER" />
+        <module name="INTERFACEZ" />
+        <module name="DTOS" />
+        <module name="RED-COMUNICACION" />
+        <module name="CLIENTE-PROXY" />
+        <module name="SEREALIZADOR" />
+        <module name="DOMINIO" />
+        <module name="SERVER-PROXY" />
+        <module name="APP-CLIENTEE" />
+      </profile>
+    </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="APP-CLIENTEE" target="21" />
-      <module name="BROKER" target="21" />
       <module name="Cliente-proxy" target="21" />
-      <module name="DOMINIO" target="21" />
-      <module name="DTOS" target="21" />
-      <module name="INTERFACEZ" target="21" />
-      <module name="JuegoUno" target="21" />
       <module name="red-comunicacion" target="21" />
-      <module name="SEREALIZADOR" target="21" />
-      <module name="SERVER-PROXY" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
