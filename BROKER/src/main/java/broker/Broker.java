@@ -91,9 +91,4 @@ public class Broker implements IBroker {
                 consumidor.accept(mensaje);
             }
     }
-    public void transmitirAtodos(MensajeDTO mensaje){
-        for(ServerProxy proxy : NodosConectados){
-            proxy.enviarMensaje(mensaje);
-        }
-    }
 }

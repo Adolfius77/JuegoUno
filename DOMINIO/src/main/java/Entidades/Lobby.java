@@ -26,6 +26,11 @@ public class Lobby implements IObservable {
         return nombreJugadores;
     }
 
+    public void limpiarJugadores() {
+        this.nombreJugadores.clear();
+        notificarObservador("LISTA_ACTUALIZADA");
+    }
+
     @Override
     public void agregarObservador(IObserver obs) {
         observadores.add(obs);

@@ -2,6 +2,7 @@ package cliente;
 
 import Interfacez.IProxy;
 import dtos.MensajeDTO;
+import dtos.MensajeResultadoDTO;
 import interfaces.ISerializador;
 
 import java.io.*;
@@ -20,6 +21,7 @@ public class ClienteProxy implements IProxy {
         this.socket = socket;
         this.serializador = serializador;
     }
+
     // la accion la recibira mediante el controlador
     public void setReceptor(Consumer<MensajeDTO> accion){
         this.accionAlRecibirMensaje = accion;
