@@ -79,12 +79,10 @@ public class Broker implements IBroker {
     }
 
     public synchronized void avisarCambioEnLobby() {
-        String todosLosJugadores = String.join(", ", socketsJugadores.keySet());
-        dtos.MensajeNotificacionDTO aviso = new dtos.MensajeNotificacionDTO(
-                "SERVIDOR",
-                false,
-                "ACTUALIZACION_LOBBY:" + todosLosJugadores
-        );
+        Entidades.Lobby lobbyEntidad = new Entidades.Lobby();
+        socketsJugadores.keySet().forEach(nombre -> lobbyEntidad.agregarJugador(nombre));
+
+        dtos.MensajeListaJugadoresDTO aviso = Mappers.LobbyMapper.toDTO(lobbyEntidad);
 
         for (IProxy p : listaProxies) {
             p.enviarMensaje(aviso);
