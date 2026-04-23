@@ -18,7 +18,7 @@ public class TurnoMapper {
                 (logicaTurno.getJugadorActual() != null
                         ? logicaTurno.getJugadorActual().getNombre()
                         : "Nadie");
-        
+
         return new MensajePasarTurnoDTO(
                 jugadorActualId,
                 sentidoActual,
