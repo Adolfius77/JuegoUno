@@ -33,19 +33,6 @@ public class GameView extends javax.swing.JFrame implements IVista {
         PanelJugadorPrincipal.removeAll();
         PanelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
         PanelJugadorPrincipal.setOpaque(false);
-
-        CartaNumerica carta1 = new CartaNumerica(1, "n1", Color.ROJO);
-
-        CartaAccion carta2 = new CartaAccion(TipoAccion.SALTAR, "n1", Color.ROJO);
-        CartaAccion carta3 = new CartaAccion(TipoAccion.MAS_2, "n1", Color.ROJO);
-        cartaComodin carta4 = new cartaComodin(true, "b1", Color.ROJO);
-
-//        agregarCarta(carta1);
-//        agregarCarta(carta2);
-//        agregarCarta(carta3);
-//        agregarCarta(carta4);
-//        agregarCarta(carta5);
-//        agregarCarta(carta6);
         DarCartas();
 
         setLocationRelativeTo(null);
@@ -61,10 +48,10 @@ public class GameView extends javax.swing.JFrame implements IVista {
         Random random = new Random();
         Color[] colores = Color.values();
 
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 7; i++) {
             Color colorRandom = colores[random.nextInt(colores.length)];
             int numeroRandom = random.nextInt(10);
-            CartaNumerica cartaRandom = new CartaNumerica(1, "n", colorRandom);
+            CartaNumerica cartaRandom = new CartaNumerica(numeroRandom, "n", colorRandom);
             agregarCarta(cartaRandom);
         }
     }
@@ -106,18 +93,18 @@ public class GameView extends javax.swing.JFrame implements IVista {
         panelFondo2 = new vista.DiseñosExtras.PanelFondo();
         PanelJugadorPrincipal = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
+        panelJugadorArriba = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
+        panelJugadorDerecho = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
+        panelJugadorIsquierdo = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
-        jPanel15 = new javax.swing.JPanel();
-        jPanel16 = new javax.swing.JPanel();
+        panelMazo = new javax.swing.JPanel();
+        panelPilaCartas = new javax.swing.JPanel();
 
         javax.swing.GroupLayout panelFondo1Layout = new javax.swing.GroupLayout(panelFondo1);
         panelFondo1.setLayout(panelFondo1Layout);
@@ -199,8 +186,8 @@ public class GameView extends javax.swing.JFrame implements IVista {
                 .addGap(90, 90, 90))
         );
 
-        jPanel6.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel6.setPreferredSize(new java.awt.Dimension(400, 120));
+        panelJugadorArriba.setBackground(new java.awt.Color(0, 0, 0));
+        panelJugadorArriba.setPreferredSize(new java.awt.Dimension(400, 120));
 
         jPanel7.setPreferredSize(new java.awt.Dimension(400, 120));
 
@@ -215,25 +202,25 @@ public class GameView extends javax.swing.JFrame implements IVista {
             .addGap(0, 120, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelJugadorArribaLayout = new javax.swing.GroupLayout(panelJugadorArriba);
+        panelJugadorArriba.setLayout(panelJugadorArribaLayout);
+        panelJugadorArribaLayout.setHorizontalGroup(
+            panelJugadorArribaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelJugadorArribaLayout.createSequentialGroup()
                 .addGap(427, 427, 427)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+        panelJugadorArribaLayout.setVerticalGroup(
+            panelJugadorArribaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJugadorArribaLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(90, 90, 90))
         );
 
-        jPanel8.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel8.setPreferredSize(new java.awt.Dimension(400, 120));
+        panelJugadorDerecho.setBackground(new java.awt.Color(0, 0, 0));
+        panelJugadorDerecho.setPreferredSize(new java.awt.Dimension(400, 120));
 
         jPanel9.setPreferredSize(new java.awt.Dimension(400, 120));
 
@@ -248,25 +235,25 @@ public class GameView extends javax.swing.JFrame implements IVista {
             .addGap(0, 120, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelJugadorDerechoLayout = new javax.swing.GroupLayout(panelJugadorDerecho);
+        panelJugadorDerecho.setLayout(panelJugadorDerechoLayout);
+        panelJugadorDerechoLayout.setHorizontalGroup(
+            panelJugadorDerechoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelJugadorDerechoLayout.createSequentialGroup()
                 .addGap(427, 427, 427)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+        panelJugadorDerechoLayout.setVerticalGroup(
+            panelJugadorDerechoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJugadorDerechoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(90, 90, 90))
         );
 
-        jPanel10.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel10.setPreferredSize(new java.awt.Dimension(400, 120));
+        panelJugadorIsquierdo.setBackground(new java.awt.Color(0, 0, 0));
+        panelJugadorIsquierdo.setPreferredSize(new java.awt.Dimension(400, 120));
 
         jPanel11.setPreferredSize(new java.awt.Dimension(400, 120));
 
@@ -281,18 +268,18 @@ public class GameView extends javax.swing.JFrame implements IVista {
             .addGap(0, 120, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelJugadorIsquierdoLayout = new javax.swing.GroupLayout(panelJugadorIsquierdo);
+        panelJugadorIsquierdo.setLayout(panelJugadorIsquierdoLayout);
+        panelJugadorIsquierdoLayout.setHorizontalGroup(
+            panelJugadorIsquierdoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelJugadorIsquierdoLayout.createSequentialGroup()
                 .addGap(427, 427, 427)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
+        panelJugadorIsquierdoLayout.setVerticalGroup(
+            panelJugadorIsquierdoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJugadorIsquierdoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(90, 90, 90))
@@ -350,29 +337,29 @@ public class GameView extends javax.swing.JFrame implements IVista {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        jPanel15.setBackground(new java.awt.Color(0, 0, 0));
+        panelMazo.setBackground(new java.awt.Color(0, 0, 0));
 
-        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
-        jPanel15.setLayout(jPanel15Layout);
-        jPanel15Layout.setHorizontalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelMazoLayout = new javax.swing.GroupLayout(panelMazo);
+        panelMazo.setLayout(panelMazoLayout);
+        panelMazoLayout.setHorizontalGroup(
+            panelMazoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 82, Short.MAX_VALUE)
         );
-        jPanel15Layout.setVerticalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelMazoLayout.setVerticalGroup(
+            panelMazoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 112, Short.MAX_VALUE)
         );
 
-        jPanel16.setBackground(new java.awt.Color(0, 0, 0));
+        panelPilaCartas.setBackground(new java.awt.Color(0, 0, 0));
 
-        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
-        jPanel16.setLayout(jPanel16Layout);
-        jPanel16Layout.setHorizontalGroup(
-            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelPilaCartasLayout = new javax.swing.GroupLayout(panelPilaCartas);
+        panelPilaCartas.setLayout(panelPilaCartasLayout);
+        panelPilaCartasLayout.setHorizontalGroup(
+            panelPilaCartasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 84, Short.MAX_VALUE)
         );
-        jPanel16Layout.setVerticalGroup(
-            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelPilaCartasLayout.setVerticalGroup(
+            panelPilaCartasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
@@ -388,13 +375,13 @@ public class GameView extends javax.swing.JFrame implements IVista {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelFondo2Layout.createSequentialGroup()
-                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelJugadorIsquierdo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelPilaCartas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelMazo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(163, 163, 163)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(panelJugadorDerecho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFondo2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -407,7 +394,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFondo2Layout.createSequentialGroup()
                         .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelJugadorArriba, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(420, 420, 420))))
         );
         panelFondo2Layout.setVerticalGroup(
@@ -415,7 +402,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFondo2Layout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelJugadorArriba, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -427,16 +414,16 @@ public class GameView extends javax.swing.JFrame implements IVista {
                                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(panelFondo2Layout.createSequentialGroup()
                                         .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(panelJugadorDerecho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(panelJugadorIsquierdo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(108, 108, 108))
                                     .addGroup(panelFondo2Layout.createSequentialGroup()
-                                        .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(panelPilaCartas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGap(116, 116, 116)))
                                 .addGroup(panelFondo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(PanelJugadorPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(panelMazo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(71, 71, 71))
         );
@@ -494,22 +481,22 @@ public class GameView extends javax.swing.JFrame implements IVista {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelJugadorPrincipal;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private vista.DiseñosExtras.PanelFondo panelFondo1;
     private vista.DiseñosExtras.PanelFondo panelFondo2;
+    private javax.swing.JPanel panelJugadorArriba;
+    private javax.swing.JPanel panelJugadorDerecho;
+    private javax.swing.JPanel panelJugadorIsquierdo;
+    private javax.swing.JPanel panelMazo;
+    private javax.swing.JPanel panelPilaCartas;
     // End of variables declaration//GEN-END:variables
 
     @Override
