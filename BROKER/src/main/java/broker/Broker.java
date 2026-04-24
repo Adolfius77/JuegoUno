@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class Broker implements IBroker {
@@ -21,17 +22,15 @@ public class Broker implements IBroker {
     private int puerto;
     private List<Socket> clientesConectados;
     private Thread hiloAceptarClientes;
-    private Map<String, List<Consumer<MensajeDTO>>> suscriptores;
+    private Map<String, List<Consumer<MensajeDTO>>> suscriptores = new ConcurrentHashMap<>();
     private Map<String , Socket> socketsJugadores = new HashMap<>();
-    private boolean partidaEnCurso;
     private ISerializador serializador;
 
     public Broker(int puerto, ISerializador serializador) {
         this.puerto = puerto;
         this.clientesConectados = new ArrayList<>();
-        this.suscriptores = new HashMap<>();
+        this.suscriptores = new ConcurrentHashMap<>();
         this.socketsJugadores = new HashMap<>();
-        this.partidaEnCurso = false;
         this.serializador = serializador;
     }
 
