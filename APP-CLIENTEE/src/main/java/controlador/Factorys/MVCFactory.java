@@ -1,17 +1,9 @@
 package controlador.Factorys;
 
-
-import Entidades.Jugador;
-import Entidades.Lobby;
-import Entidades.Logica.Partida;
-import Entidades.fabricas.IMazoFactory;
-import Entidades.fabricas.PartidaFactory;
-import Entidades.fabricas.ICartaFactory;
+import Entidades.Logica.GestorPartida;
 import controlador.GameController;
 import controlador.LobbyController;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import vista.GameView;
 import vista.LobbyView;
@@ -22,27 +14,25 @@ public final class MVCFactory {
     }
 
     public static LobbyController construirLobby() {
-        Lobby modeloLobby = new Lobby();
+        GestorPartida gestor = new GestorPartida();
 
         LobbyView vistaLobby = new LobbyView();
-        vistaLobby.setModelo(modeloLobby);
+        vistaLobby.setModelo(gestor.obtenerLobby());
 
-        LobbyController controlador = new LobbyController(vistaLobby, modeloLobby);
-        return controlador;
+        return new LobbyController(vistaLobby, gestor);
     }
 
-    public static GameController construirJuego(List<String> nombreJugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
-        List<Jugador> jugadores = new ArrayList<>();
-        for (String nombre : nombreJugadores) {
-            jugadores.add(new Jugador(UUID.randomUUID().toString(), nombre));
-
+    public static GameController construirJuego(GestorPartida gestor, List<String> nombreJugadores) {
+        if (gestor == null) {
+            throw new IllegalArgumentException("GestorPartida es obligatorio");
         }
 
-        Partida modeloJuego = PartidaFactory.crearPartida(jugadores, cartaFactory, mazoFactory);
         GameView vistaJuego = new GameView();
-        vistaJuego.setModelo(modeloJuego);
+        if (gestor.obtenerPartida() != null) {
+            vistaJuego.setModelo(gestor.obtenerPartida());
+            gestor.obtenerPartida().agregarObservador(vistaJuego);
+        }
 
-        GameController controlador = new GameController(modeloJuego, vistaJuego, nombreJugadores);
-        return controlador;
+        return new GameController(gestor, vistaJuego, nombreJugadores);
     }
 }

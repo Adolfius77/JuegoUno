@@ -14,12 +14,22 @@ public class Lobby implements IObservable {
     private List<IObserver> observadores = new ArrayList<>();
 
     public void agregarJugador(String nombre) {
-        if (nombreJugadores.size() < 4 && !nombre.trim().isEmpty()) {
-            nombreJugadores.add(nombre);
-            notificarObservador("LISTA_ACTUALIZADA");
-        } else {
-            throw new IllegalArgumentException("Sala llena o nombre invalido");
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("nombre invalido");
         }
+        if (nombreJugadores.size() >= 4) {
+            throw new IllegalArgumentException("sala llena");
+        }
+
+        String nombreNormalizado = nombre.trim();
+        boolean nombreExistente = nombreJugadores.stream()
+                .anyMatch(j -> j.equalsIgnoreCase(nombreNormalizado));
+        if (nombreExistente) {
+            throw new IllegalArgumentException("el nombre ya esta en uso");
+        }
+
+        nombreJugadores.add(nombreNormalizado);
+        notificarObservador("LISTA_ACTUALIZADA");
     }
 
     public List<String> getNombreJugadores() {

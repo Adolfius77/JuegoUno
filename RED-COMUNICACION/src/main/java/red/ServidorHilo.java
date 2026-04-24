@@ -34,13 +34,12 @@ public class ServidorHilo extends Thread {
     }
 
     private void validarNombre(MensajeRegistroDTO dto) throws IOException {
-        boolean nombreExistente = lobby.getNombreJugadores().stream().anyMatch(j -> j.equalsIgnoreCase(dto.getNombre()));
-        if (nombreExistente) {
-            out.writeObject(new MensajeNotificacionDTO("SERVIDOR",true , "error: el nombre" + dto.getNombre() + "ya esta en uso"));
-        } else {
+        try {
             lobby.agregarJugador(dto.getNombre());
-            out.writeObject(new MensajeNotificacionDTO("SERVIDOR",false , "Registro exitoso"));
+            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
             difundirLista();
+        } catch (IllegalArgumentException e) {
+            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", true, "error: " + e.getMessage()));
         }
         out.flush();
     }
