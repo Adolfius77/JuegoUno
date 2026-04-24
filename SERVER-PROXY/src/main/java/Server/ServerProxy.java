@@ -2,11 +2,9 @@ package Server;
 
 import Interfacez.IProxy;
 import Interfacez.IBroker;
+import Interfacez.ISerializador;
 import dtos.MensajeDTO;
-import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
-import interfaces.ISerializador;
-
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +34,12 @@ public class ServerProxy implements IProxy {
 
             System.out.println("Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
 
+
+            String canalDeRespuesta = "RESPUESTA_REGISTRO_" + socket.getPort();
+            broker.subscribirse(canalDeRespuesta, mensajeRespuesta -> {
+                this.enviarMensaje(mensajeRespuesta);
+            });
+
             while(true){
                 String jsonRecibido = lector.readLine();
                 if(jsonRecibido == null){
@@ -46,18 +50,12 @@ public class ServerProxy implements IProxy {
 
                 if (mensaje instanceof MensajeRegistroDTO) {
                     MensajeRegistroDTO peticionRegistro = (MensajeRegistroDTO) mensaje;
-                    String nombreSolicitado = peticionRegistro.getNombre();
+                    this.nombreJugador = peticionRegistro.getNombre();
 
-                    boolean exito = broker.registrarJugador(nombreSolicitado, this.socket);
+                    peticionRegistro.setTipo(canalDeRespuesta);
 
-                    if (exito) {
-                        this.nombreJugador = nombreSolicitado;
-                        MensajeNotificacionDTO respuesta = new MensajeNotificacionDTO("SERVIDOR", false, "EXITO: Registro completado");
-                        this.enviarMensaje(respuesta);
-                    } else {
-                        MensajeNotificacionDTO respuesta = new MensajeNotificacionDTO("SERVIDOR", true, "ERROR: Nombre ocupado o sala llena");
-                        this.enviarMensaje(respuesta);
-                    }
+                    broker.publicar("SOLICITUD_REGISTRO", peticionRegistro);
+                    System.out.println("Solicitud publicada para: " + this.nombreJugador);
                 }
                 else {
                     broker.publicar(mensaje.getTipo(), mensaje);

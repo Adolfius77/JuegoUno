@@ -2,8 +2,7 @@ package cliente;
 
 import Interfacez.IProxy;
 import dtos.MensajeDTO;
-import dtos.MensajeResultadoDTO;
-import interfaces.ISerializador;
+import Interfacez.ISerializador;
 
 import java.io.*;
 import java.net.Socket;
@@ -57,6 +56,16 @@ public class ClienteProxy implements IProxy {
 
         }catch (Exception e){
             System.out.println("error en la red" + e.getMessage());
+        }finally {
+            cerrarConexion();
+        }
+    }
+    private void cerrarConexion(){
+        try{
+            if (socket != null && !socket.isClosed()) socket.close();
+            System.out.println("Conexion cerrada");
+        } catch (IOException e) {
+            throw new RuntimeException("error cerrando conexion" + e.getMessage());
         }
     }
 }

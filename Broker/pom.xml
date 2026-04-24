@@ -11,13 +11,13 @@
 
     <artifactId>BROKER</artifactId>
 
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>INTERFACEZ</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.itson</groupId>
             <artifactId>DTOS</artifactId>
@@ -33,6 +33,12 @@
         <dependency>
             <groupId>org.itson</groupId>
             <artifactId>SERVER-PROXY</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.itson</groupId>
+            <artifactId>SEREALIZADOR</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -58,7 +64,7 @@
                                         <exclude>org.itson:RED-COMUNICACION</exclude>
                                         <exclude>org.itson:CLIENTE-PROXY</exclude>
                                         <exclude>org.itson:SERVER-PROXY</exclude>
-                                        <exclude>org.itson:SERIALIZADOR</exclude>
+                                        <exclude>org.itson:SEREALIZADOR</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>

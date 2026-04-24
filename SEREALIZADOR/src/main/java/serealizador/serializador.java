@@ -3,15 +3,7 @@ package serealizador;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dtos.MensajeDTO;
-import interfaces.ISerializador;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import Interfacez.ISerializador;
 
 public class serializador implements ISerializador {
 
