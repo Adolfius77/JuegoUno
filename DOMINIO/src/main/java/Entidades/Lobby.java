@@ -18,7 +18,7 @@ public class Lobby implements IObservable {
             nombreJugadores.add(nombre);
             notificarObservador("LISTA_ACTUALIZADA");
         } else {
-            throw new IllegalArgumentException("sala llena o nombre invalido");
+            throw new IllegalArgumentException("Sala llena o nombre invalido");
         }
     }
 
