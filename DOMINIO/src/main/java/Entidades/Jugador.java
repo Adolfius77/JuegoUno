@@ -22,6 +22,10 @@ public class Jugador {
     public Jugador() {
     }
 
+    public Jugador(String nombre){
+        this.nombre = nombre;
+    }
+
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
