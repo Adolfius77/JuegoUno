@@ -1,10 +1,11 @@
 package controlador.Factorys;
 
-import Entidades.Logica.GestorPartida;
+
 import controlador.GameController;
 import controlador.LobbyController;
 import java.util.List;
 
+import red.GestorPartida;
 import vista.GameView;
 import vista.LobbyView;
 
@@ -33,6 +34,6 @@ public final class MVCFactory {
             gestor.obtenerPartida().agregarObservador(vistaJuego);
         }
 
-        return new GameController(gestor, vistaJuego, nombreJugadores);
+        return new GameController(gestor,vistaJuego, nombreJugadores);
     }
 }

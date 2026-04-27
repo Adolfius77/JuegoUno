@@ -1,11 +1,10 @@
 package controlador;
 
 import Entidades.Jugador;
-import Entidades.Logica.GestorPartida;
+
 import Interfaces.IVista;
 import facades.GestorJuegoFacade;
 
-import java.util.Collections;
 import java.util.List;
 
 public class LobbyController {

@@ -1,7 +1,11 @@
 package Mappers;
 
 import Entidades.Jugador;
+import Entidades.Mano;
+import dtos.CartaDTO;
 import dtos.JugadorDTO;
+
+import java.util.List;
 
 public class jugadorMapper {
 public JugadorDTO toDTO(Jugador jugador){
@@ -18,7 +22,7 @@ public JugadorDTO toDTO(Jugador jugador){
         jugadorDTO.setAvatar(jugador.getAvatar());
     }
     if(jugador.getMano() !=null){
-        jugadorDTO.setMano(jugador.getMano());
+        jugadorDTO.setCartas((List<CartaDTO>) jugador.getMano());
 
     }
     return jugadorDTO;
@@ -31,7 +35,7 @@ public Jugador toEntity(JugadorDTO jugadorDTO){
     j.setId(jugadorDTO.getId());
     j.setNombre(jugadorDTO.getNombre());
     j.setAvatar(jugadorDTO.getAvatar());
-    j.setMano(jugadorDTO.getMano());
+    j.setMano((Mano) jugadorDTO.getCartas());
     j.setDijoUno(jugadorDTO.isDijoUno());
     j.setPuntaje(jugadorDTO.getPuntuaje());
 

@@ -19,9 +19,9 @@ public class GestorJuegoFacade {
         System.out.println("Fachada: iniciando los preservativos de la partida...");
 
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
-        for (String nombre : nombresJugadores) {
+        for (Jugador nombre : nombresJugadores) {
             Jugador nuevoJugador = new Jugador();
-            nuevoJugador.setNombre(nombre);
+            nuevoJugador.setNombre(String.valueOf(nombre));
             nuevoJugador.setMano(new Mano());
             listaJugadores.add(nuevoJugador);
         }

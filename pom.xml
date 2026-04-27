@@ -15,6 +15,7 @@
         <module>APP-CLIENTEE</module>
         <module>DOMINIO</module>
         <module>SEREALIZADOR</module>
+        <module>MAPPERS</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
