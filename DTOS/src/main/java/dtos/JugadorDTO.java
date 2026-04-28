@@ -1,22 +1,20 @@
     package dtos;
 
-import Entidades.Mano;
-
 import java.io.Serializable;
 
     public class JugadorDTO implements Serializable {
-    private static final long getSerialVersionUID =  1L;
+    private static final long serialVersionUID =  1L;
     private String id;
     private String nombre;
     private byte[] avatar;
-    private Mano mano;
+    private ManoDTO mano;
     private boolean dijoUno;
     private int puntuaje;
 
 
         public JugadorDTO() {
     }
-    public JugadorDTO(String id, String nombre, byte[] avatar, Mano mano, boolean dijoUno, int puntuaje) {
+    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
@@ -49,11 +47,11 @@ import java.io.Serializable;
         this.avatar = avatar;
     }
 
-    public Mano getMano() {
+    public ManoDTO getMano() {
         return mano;
     }
 
-    public void setMano(Mano mano) {
+    public void setMano(ManoDTO mano) {
         this.mano = mano;
     }
 
