@@ -31,7 +31,7 @@ public class CartaMapper {
 
     }
     public Carta toEntity(CartaDTO dto, String id, ICartaFactory factory) {
-        if(dto == null){
+        if(dto != null){
             Color color = Color.valueOf(dto.getColor());
             String valor = dto.getValor();
 
