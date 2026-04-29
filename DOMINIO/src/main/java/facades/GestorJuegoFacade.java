@@ -15,11 +15,11 @@ import java.util.List;
 public class GestorJuegoFacade {
     private Partida partidaActual;
 
-    public void prepararIniciarPartida(List<Jugador> nombresJugadores) {
+    public void prepararIniciarPartida(List<String> nombresJugadores) {
         System.out.println("Fachada: iniciando los preservativos de la partida...");
 
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
-        for (Jugador nombre : nombresJugadores) {
+        for (String nombre : nombresJugadores) {
             Jugador nuevoJugador = new Jugador();
             nuevoJugador.setNombre(String.valueOf(nombre));
             nuevoJugador.setMano(new Mano());

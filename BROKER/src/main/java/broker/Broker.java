@@ -34,12 +34,12 @@ public class Broker implements IBroker {
         while(true){
             try{
                 Socket clienteSocket = servidorSocket.accept();
-                String idTemporal = "conexion" + clienteSocket.getPort();
+                String nombreTemporal = "conexion" + clienteSocket.getPort();
                 ServerProxy proxy = ServerProxyFactory.crearManjadorCliente(this, clienteSocket,serializador);
-                NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, idTemporal);
-                NodoClientes.put(idTemporal, nuevoNodo);
+                NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, nombreTemporal);
+                NodoClientes.put(nombreTemporal, nuevoNodo);
                 new Thread(proxy).start();
-                System.out.println("nuevo nodo conectado" + idTemporal);
+                System.out.println("nuevo nodo conectado" + nombreTemporal);
             }catch (IOException e){
                 System.out.println("Error aceptando clientes: " + e.getMessage());
             }
@@ -62,7 +62,7 @@ public class Broker implements IBroker {
         NodoCliente nodo = NodoClientes.remove(idTemporal);
 
         if(nodo != null){
-            nodo.setIdJugador(nombreReal);
+            nodo.setNombre(nombreReal);
             NodoClientes.put(nombreReal, nodo);
             System.out.println("identidad confirmada" +  idTemporal + nombreReal);
         }
@@ -73,6 +73,15 @@ public class Broker implements IBroker {
             nodo.enviarMensaje(mensaje);
         }
     }
+    public List<String>obtenerNombresDeNodosConectados(){
+        List<String> nombres = new ArrayList<>();
+
+        for(NodoCliente nodo : NodoClientes.values()){
+            nombres.add(nodo.getNombre());
+        }
+        return nombres;
+    }
+
     @Override
     public void subscribirse(String tipoEvento, Consumer<MensajeDTO> manejador) {
         suscriptores.computeIfAbsent(tipoEvento, k -> new ArrayList<>()).add(manejador);

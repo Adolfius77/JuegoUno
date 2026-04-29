@@ -7,6 +7,9 @@ public class MensajeRegistroDTO extends MensajeDTO implements Serializable {
     private String nombre;
     private String nombreAvatar;
 
+    public MensajeRegistroDTO() {
+    }
+
     public MensajeRegistroDTO(String nombre, String nombreAvatar) {
         super("SERVIDOR");
         this.nombre = nombre;

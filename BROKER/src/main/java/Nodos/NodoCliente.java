@@ -6,14 +6,14 @@ import dtos.MensajeDTO;
 import java.net.Socket;
 
 public class NodoCliente {
-    private String idJugador;
+    private String nombre;
     private Socket socket;
     private IProxy proxy;
 
-    public NodoCliente(Socket socket, IProxy proxy, String idJugador) {
+    public NodoCliente(Socket socket, IProxy proxy, String nombre) {
         this.socket = socket;
         this.proxy = proxy;
-        this.idJugador = idJugador;
+        this.nombre = nombre;
     }
 
     public void enviarMensaje(MensajeDTO mensaje) {
@@ -23,12 +23,13 @@ public class NodoCliente {
     }
     //getters y setters
 
-    public String getIdJugador() {
-        return idJugador;
+
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setIdJugador(String idJugador) {
-        this.idJugador = idJugador;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public Socket getSocket() {

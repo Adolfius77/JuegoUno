@@ -3,7 +3,7 @@ package dtos;
 import java.io.Serializable;
 import java.util.List;
 
-public class PartidaDTO implements Serializable {
+public class PartidaDTO extends MensajeDTO implements Serializable {
     private static final long getSerialVersionUID =  1L;
     private String id;
     private List<JugadorDTO> jugadores;

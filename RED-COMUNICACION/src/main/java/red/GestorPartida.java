@@ -1,156 +1,87 @@
 package red;
 
-import Entidades.Carta;
-import Entidades.Jugador;
-import Entidades.Lobby;
-import Entidades.Logica.Partida;
-import Entidades.fabricas.PartidaFactory;
-import Mappers.LobbyMapper;
-import Mappers.PartidaMapper;
-import dtos.MensajeListaJugadoresDTO;
-import dtos.PartidaDTO;
-
+import dtos.*;
+import Interfacez.IProxy;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class GestorPartida {
-    private final Lobby lobby;
-    private Partida partida;
+
+    private PartidaDTO partidaActualDTO;
+    private List<String> jugadoresEnLobby;
+    private IProxy miProxyRed;
 
     public GestorPartida() {
-        this.lobby = new Lobby();
-        this.partida = null;
+        this.jugadoresEnLobby = new ArrayList<>();
+        this.partidaActualDTO = null;
+    }
+    public void setProxyRed(IProxy miProxyRed) {
+        this.miProxyRed = miProxyRed;
     }
 
-    public MensajeListaJugadoresDTO procesarRegistro(String nombre) {
+    public void procesarRegistro(String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("nombre invalido");
+            throw new IllegalArgumentException("Nombre inválido");
         }
+        MensajeRegistroDTO mensaje = new MensajeRegistroDTO();
+        mensaje.setTipo("SOLICITUD_REGISTRO");
+        mensaje.setNombre(nombre.trim());
 
-        Jugador nuevo = new Jugador(nombre.trim());
-        lobby.agregarJugador(nuevo.getNombre());
-
-        return LobbyMapper.toDTO(lobby);
+        miProxyRed.enviarMensaje(mensaje);
     }
 
-    public List<String> obtenerJugadoresRegistrados() {
-        return lobby.getNombreJugadores();
+    public void iniciarPartida() {
+        MensajeDTO mensaje = new MensajeDTO();
+        mensaje.setTipo("INTENCION_INICIAR_PARTIDA");
+        miProxyRed.enviarMensaje(mensaje);
     }
 
-    public Lobby obtenerLobby() {
-        return lobby;
+    public void jugarCarta(CartaDTO carta) {
+        MensajeJugarCartaDTO mensaje = new MensajeJugarCartaDTO();
+        mensaje.setTipo("INTENCION_JUGAR_CARTA");
+        mensaje.setCarta(carta);
+        miProxyRed.enviarMensaje(mensaje);
     }
 
-    public Partida obtenerPartida() {
-        return partida;
+    public void tomarCarta() {
+        MensajeRobarCartaDTO mensaje = new MensajeRobarCartaDTO();
+        mensaje.setTipo("INTENCION_ROBAR_CARTA");
+        miProxyRed.enviarMensaje(mensaje);
     }
 
-    public void limpiarLobby() {
-        lobby.limpiarJugadores();
+    public void pasarTurno() {
+        MensajePasarTurnoDTO mensaje = new MensajePasarTurnoDTO();
+        mensaje.setTipo("INTENCION_PASAR_TURNO");
+        miProxyRed.enviarMensaje(mensaje);
     }
 
-    public PartidaDTO iniciarPartida() {
-        if (partida != null && esPartidaActiva()) {
-            throw new IllegalStateException("Ya hay una partida en curso");
-        }
-
-        List<String> nombresJugadores = lobby.getNombreJugadores();
-        if (nombresJugadores.size() < 2) {
-            throw new IllegalStateException("Se requieren al menos 2 jugadores");
-        }
-
-        List<Jugador> jugadores = new ArrayList<>();
-        for (String nombreJugador : nombresJugadores) {
-            jugadores.add(new Jugador(nombreJugador));
-        }
-
-        this.partida = PartidaFactory.crearPartida(jugadores, null, null);
-        this.partida.iniciar();
-        return PartidaMapper.toDTO(this.partida);
+    public void decirUno() {
+        MensajeGritarUnoDTO mensaje = new MensajeGritarUnoDTO();
+        mensaje.setTipo("INTENCION_GRITAR_UNO");
+        miProxyRed.enviarMensaje(mensaje);
+    }
+    public void actualizarEstadoPartida(PartidaDTO nuevoEstado) {
+        this.partidaActualDTO = nuevoEstado;
     }
 
-    public PartidaDTO jugarCarta(Jugador jugador, Carta carta) {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.jugarCarta(carta, jugador);
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO tomarCarta(Jugador jugador) {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.tomarCarta(jugador);
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO pasarTurno() {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.pasarTurno();
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO saltarTurno() {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.saltarTurno();
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO cambiarSentido() {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.cambiarSentido();
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO acumularCartas(int cantidad) {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        partida.acomularCartas(cantidad);
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public PartidaDTO decirUno(Jugador jugador) {
-        if (partida == null || !esPartidaActiva()) {
-            throw new IllegalStateException("No hay partida activa");
-        }
-        jugador.setDijoUno(true);
-        return PartidaMapper.toDTO(partida);
+    public void actualizarLobby(List<String> nuevaLista) {
+        this.jugadoresEnLobby = nuevaLista;
     }
 
     public PartidaDTO obtenerEstadoPartida() {
-        if (partida == null) {
-            return null;
-        }
-        return PartidaMapper.toDTO(partida);
+        return partidaActualDTO;
     }
 
-    public Jugador obtenerJugadorActual() {
-        if (partida == null) {
-            return null;
-        }
-        return partida.getJugadorActual();
+    public List<String> obtenerJugadoresRegistrados() {
+        return jugadoresEnLobby;
     }
 
     public boolean esPartidaActiva() {
-        if (partida == null) {
-            return false;
-        }
-        return partida.getEstado() != null &&
-               partida.getEstado().toString().contains("Jugando");
+        return partidaActualDTO != null && partidaActualDTO.isEnCurso();
     }
 
-    public void finalizarPartida() {
-        if (partida != null) {
-            this.partida = null;
-        }
+    public void limpiarLobby() {
+        jugadoresEnLobby.clear();
     }
 }
-
