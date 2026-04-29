@@ -5,7 +5,6 @@
 package vista;
 
 
-import Entidades.Lobby;
 import Interfaces.IVista;
 import red.GestorPartida;
 

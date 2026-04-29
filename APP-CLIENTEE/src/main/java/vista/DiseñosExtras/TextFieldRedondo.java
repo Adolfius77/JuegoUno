@@ -4,12 +4,8 @@
  */
 package vista.DiseñosExtras;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import javax.swing.BorderFactory;
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Un JTextField personalizado con esquinas redondeadas y un borde.

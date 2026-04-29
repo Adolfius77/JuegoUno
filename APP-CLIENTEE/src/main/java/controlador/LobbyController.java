@@ -1,11 +1,6 @@
 package controlador;
 
-import Entidades.Jugador;
-
 import Interfaces.IVista;
-import facades.GestorJuegoFacade;
-
-import java.util.List;
 import red.GestorPartida;
 
 public class LobbyController {

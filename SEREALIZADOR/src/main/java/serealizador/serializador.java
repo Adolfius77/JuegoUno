@@ -1,9 +1,9 @@
 package serealizador;
 
+import Interfacez.ISerializador;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dtos.MensajeDTO;
-import Interfacez.ISerializador;
 
 public class serializador implements ISerializador {
 

@@ -1,11 +1,12 @@
 package broker;
 
 import Interfacez.IBroker;
+import Interfacez.IProxy;
+import Interfacez.IProxyFactory;
 import Interfacez.ISerializador;
 import Nodos.NodoCliente;
-import Server.ServerProxy;
 import dtos.MensajeDTO;
-import fabricas.ServerProxyFactory;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,11 +24,13 @@ public class Broker implements IBroker {
     private Map<String, List<Consumer<MensajeDTO>>> suscriptores = new ConcurrentHashMap<>();
     private Map<String , NodoCliente> NodoClientes = new ConcurrentHashMap<>();
     private ISerializador serializador;
+    private IProxyFactory proxyFactory;
 
-    public Broker(int puerto, ISerializador serializador) {
+    public Broker(int puerto, ISerializador serializador, IProxyFactory proxyFactory) {
         this.puerto = puerto;
         this.suscriptores = new ConcurrentHashMap<>();
         this.serializador = serializador;
+        this.proxyFactory = proxyFactory;
     }
 
     private void aceptarClientes(){
@@ -35,7 +38,7 @@ public class Broker implements IBroker {
             try{
                 Socket clienteSocket = servidorSocket.accept();
                 String nombreTemporal = "conexion" + clienteSocket.getPort();
-                ServerProxy proxy = ServerProxyFactory.crearManejadorCliente(this, clienteSocket,serializador);
+                IProxy proxy = proxyFactory.createProxy(this, clienteSocket, serializador);
                 NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, nombreTemporal);
                 NodoClientes.put(nombreTemporal, nuevoNodo);
                 new Thread(proxy).start();

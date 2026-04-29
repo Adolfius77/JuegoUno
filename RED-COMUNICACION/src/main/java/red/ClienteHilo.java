@@ -1,6 +1,9 @@
 package red;
 
-import dtos.*;
+import dtos.MensajeEstadoPartidaDTO;
+import dtos.MensajeListaJugadoresDTO;
+import dtos.MensajeNotificacionDTO;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 

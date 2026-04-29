@@ -9,11 +9,8 @@ import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -42,7 +39,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
-    
+
     private void reproducirMusica(){
         
     }

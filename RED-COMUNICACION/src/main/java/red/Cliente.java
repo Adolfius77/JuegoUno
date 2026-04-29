@@ -1,13 +1,13 @@
 package red;
 
-import dtos.MensajeRegistroDTO;
 import factorys.ClienteHiloFactory;
 import factorys.SocketFactory;
 import factorys.StreamFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Cliente {
 

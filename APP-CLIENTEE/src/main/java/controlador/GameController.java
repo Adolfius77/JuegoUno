@@ -1,6 +1,5 @@
 package controlador;
 
-import Entidades.Carta;
 import Entidades.Jugador;
 import Interfaces.IVista;
 import dtos.CartaDTO;
