@@ -1,4 +1,3 @@
-Mappers\jugadorMapper.class
 dtos\CartaDTO.class
 dtos\MensajeEstadoPartidaDTO.class
 dtos\MensajeGritarUnoDTO.class
@@ -10,5 +9,6 @@ dtos\MensajeRegistroDTO.class
 dtos\MensajeListaJugadoresDTO.class
 dtos\JugadorDTO.class
 dtos\MensajePasarTurnoDTO.class
-Mappers\CartaMapper.class
+dtos\MensajeResultadoDTO.class
+dtos\PartidaDTO.class
 dtos\MensajeNotificacionDTO.class
