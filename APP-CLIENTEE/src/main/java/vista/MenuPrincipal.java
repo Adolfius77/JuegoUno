@@ -23,7 +23,6 @@ import java.net.URL;
  *
  * @author emiim
  */
-//cc
 public class MenuPrincipal extends javax.swing.JFrame implements IVista{
 
     private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");

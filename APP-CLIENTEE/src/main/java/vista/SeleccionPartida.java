@@ -16,7 +16,6 @@ import java.awt.BorderLayout;
  * @author emiim
  */
 public class SeleccionPartida extends javax.swing.JFrame implements IVista{
-
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();
@@ -84,8 +83,6 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         ventana.setVisible(true);
         dispose();
     }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -273,7 +270,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        abrirVentana(new CrearPartida());
+        abrirVentana(new CrearPartida(this.nombreUsuario));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
