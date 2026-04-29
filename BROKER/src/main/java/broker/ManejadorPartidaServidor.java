@@ -1,5 +1,7 @@
 package broker;
 
+import Entidades.fabricas.ICartaFactory;
+import Entidades.fabricas.IMazoFactory;
 import Mappers.PartidaMapper;
 import dtos.MensajeDTO;
 import dtos.PartidaDTO;
@@ -9,10 +11,14 @@ import java.util.List;
 
 public class ManejadorPartidaServidor {
     private Broker broker;
+    private ICartaFactory cartaFactory;
+    private IMazoFactory mazoFactory;
 
-    public ManejadorPartidaServidor(Broker broker) {
+    public ManejadorPartidaServidor(Broker broker,  ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
         this.broker = broker;
         this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", this::procesarInicioPartida);
+        this.cartaFactory = cartaFactory;
+        this.mazoFactory = mazoFactory;
     }
     private void procesarInicioPartida(MensajeDTO mensaje) {
         System.out.println("Servidor: Peticion de inicio partida recibida");
@@ -23,7 +29,7 @@ public class ManejadorPartidaServidor {
             System.out.println("no hay suficentes jugadores deben ser almenos mas de 2 o 2");
             return;
         }
-        GestorJuegoFacade fachadaJuego = new GestorJuegoFacade();
+        GestorJuegoFacade fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory);
         fachadaJuego.prepararIniciarPartida(nombreJugadores);
 
         PartidaDTO estadoInicialDTO = PartidaMapper.toDTO(fachadaJuego.getPartidaActual());

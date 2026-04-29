@@ -5,15 +5,20 @@ import Comandos.IComando;
 import Entidades.Jugador;
 import Entidades.Logica.Partida;
 import Entidades.Mano;
-import Entidades.fabricas.CartaFactory;
-import Entidades.fabricas.MazoClasicoFactory;
-import Entidades.fabricas.PartidaFactory;
+import Entidades.fabricas.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GestorJuegoFacade {
     private Partida partidaActual;
+    private final ICartaFactory  cartaFactory;
+    private final IMazoFactory mazoFactory;
+
+    public GestorJuegoFacade(ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
+        this.cartaFactory = cartaFactory;
+        this.mazoFactory = mazoFactory;
+    }
 
     public void prepararIniciarPartida(List<String> nombresJugadores) {
         System.out.println("Fachada: iniciando los preservativos de la partida...");
@@ -25,11 +30,8 @@ public class GestorJuegoFacade {
             nuevoJugador.setMano(new Mano());
             listaJugadores.add(nuevoJugador);
         }
-        CartaFactory cartaFactory = new CartaFactory();
-        MazoClasicoFactory mazoFactory = new MazoClasicoFactory();
-
+        this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory);
         System.out.println("fachada: construyendo mazo y partida....");
-        this.partidaActual = PartidaFactory.crearPartida(listaJugadores, cartaFactory, mazoFactory);
         IComando comandoIniciar = new ComandoIniciarPartida(this.partidaActual);
         comandoIniciar.ejecutar();
     }

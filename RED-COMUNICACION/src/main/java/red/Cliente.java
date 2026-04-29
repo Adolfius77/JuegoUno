@@ -3,6 +3,8 @@ package red;
 import factorys.ClienteHiloFactory;
 import factorys.SocketFactory;
 import factorys.StreamFactory;
+import interfaces.IConexionFactory;
+import interfaces.IGestorPartida;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,20 +17,30 @@ public class Cliente {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ClienteHilo hilo;
-    private GestorPartida gestor;
+    private IGestorPartida gestor;
+    private IConexionFactory conexion;
+
+
+
 //metodo para estableces la conexion :p
 
+
+    public Cliente(IGestorPartida gestor, IConexionFactory conexion) {
+        this.gestor = gestor;
+        this.conexion = conexion;
+    }
+
     public void conectar(String ip, int puerto) throws IOException {
-        this.socket = SocketFactory.crearSocket(ip, puerto);
-        this.out = StreamFactory.crearOutputStream(socket);
+        this.socket = conexion.crearSocket(ip, puerto);
+        this.out = conexion.crearOutputStream(socket);
         this.out.flush();
-        this.in = StreamFactory.crearInputStream(socket);
+        this.in = conexion.crearInputStream(socket);
     }
 //con este metodo se inicia el hilo que escucha al servidor
 
     public void iniciar() throws IOException {
         if (this.in != null) {
-            this.hilo = ClienteHiloFactory.crearHilo(in, gestor);
+            this.hilo = (ClienteHilo) conexion.crearHiloCliente(in,gestor);
             this.hilo.start();
             System.out.println("[cliente] escuchando al servidor");
         }

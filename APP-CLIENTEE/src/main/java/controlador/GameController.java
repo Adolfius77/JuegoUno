@@ -3,7 +3,7 @@ package controlador;
 import Entidades.Jugador;
 import Interfaces.IVista;
 import dtos.CartaDTO;
-import red.GestorPartida;
+import interfaces.IGestorPartida;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,11 +11,11 @@ import java.util.List;
 
 public class GameController {
 
-    private final GestorPartida gestor;
+    private final IGestorPartida gestor;
     private final IVista vista;
     private final List<String> nombreJugadores;
 
-    public GameController(GestorPartida gestor, IVista vista, List<String> nombreJugadores) {
+    public GameController(IGestorPartida gestor, IVista vista, List<String> nombreJugadores) {
         if (gestor == null || vista == null) {
             throw new IllegalArgumentException("Gestor y vista son obligatorios");
         }
@@ -86,7 +86,7 @@ public class GameController {
         return Collections.unmodifiableList(nombreJugadores);
     }
 
-    public GestorPartida obtenerGestor() {
+    public IGestorPartida obtenerGestor() {
         return gestor;
     }
 
