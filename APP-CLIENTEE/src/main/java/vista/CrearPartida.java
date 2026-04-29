@@ -5,6 +5,11 @@
 package vista;
 
 import Interfaces.IVista;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import vista.LobbyView;
+import vista.SeleccionPartida;
 
 /**
  *
@@ -25,9 +30,56 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
      */
     public CrearPartida(String nombreHost) {
         this();
-        if (nombreHost != null && !nombreHost.isBlank()) {
-            jLabel3.setText("Host: " + nombreHost);
+        this.nombreHost = nombreHost;
+        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
+            jLabel3.setText("Host: " + this.nombreHost);
         }
+        configurarEventos();
+    }
+
+    // nombre del jugador que crea la sala
+    private String nombreHost;
+    // limite de jugadores seleccionado (2,3,4)
+    private int limiteJugadores = 4;
+
+    private void configurarEventos() {
+        // botones para seleccionar limite
+        btn2jugadores.addActionListener(e -> seleccionarLimite(2));
+        btn3jugadore.addActionListener(e -> seleccionarLimite(3));
+        btn4jugadores.addActionListener(e -> seleccionarLimite(4));
+
+        // crear partida: abrir vista de lobby y marcar host
+        btnCrearPartida.addActionListener(e -> crearPartida());
+
+        // volver a la pantalla anterior
+        btnVolver.addActionListener(e -> {
+            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, null);
+            sel.setVisible(true);
+            dispose();
+        });
+    }
+
+    private void seleccionarLimite(int limite) {
+        this.limiteJugadores = limite;
+        btn2jugadores.setColor(limite == 2 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
+        btn3jugadore.setColor(limite == 3 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
+        btn4jugadores.setColor(limite == 4 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
+    }
+
+    private void crearPartida() {
+        // crear la vista del lobby y pasarle el host
+        LobbyView lobby = new LobbyView();
+        // Intentar pasar el host a la vista del lobby mediante reflection (evita dependencia de método exacto)
+        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
+            try {
+                java.lang.reflect.Method m = lobby.getClass().getMethod("setHost", String.class);
+                m.invoke(lobby, this.nombreHost);
+            } catch (Exception ex) {
+                // si no existe el método no hacemos nada
+            }
+        }
+        lobby.setVisible(true);
+        dispose();
     }
 
     /**
