@@ -1,0 +1,7 @@
+Mappers\CartaMapper.class
+Mappers\jugadorMapper.class
+Mappers\TurnoMapper.class
+Mappers\LobbyMapper.class
+Mappers\PartidaMapper.class
+Mappers\JugarCartaMapper.class
+Mappers\ResultadoMapper.class
