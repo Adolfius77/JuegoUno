@@ -1,20 +1,24 @@
 package red;
 
 import Entidades.Lobby;
-import dtos.MensajeListaJugadoresDTO;
-import dtos.MensajeNotificacionDTO;
-import dtos.MensajeRegistroDTO;
+import Entidades.Logica.Partida;
+import Mappers.PartidaMapper;
+import dtos.*;
+import facades.GestorJuegoFacade;
+
 import java.io.*;
 
 public class ServidorHilo extends Thread {
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Lobby lobby;
+    private GestorJuegoFacade fachadaJuego;
 
     public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
         this.out = out;
         this.lobby = lobby;
+        this.fachadaJuego = new GestorJuegoFacade();
     }
 
     @Override
@@ -26,12 +30,45 @@ public class ServidorHilo extends Thread {
                 if (objeto instanceof MensajeRegistroDTO) {
                     MensajeRegistroDTO dto = (MensajeRegistroDTO) objeto;
                     validarNombre(dto);
+                }else if(objeto instanceof MensajeDTO){
+                    MensajeDTO mensaje = (MensajeDTO) objeto;
+                    if("INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())){
+                            procesarInicioPartida();
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Cliente desconectado.");
+            Servidor.hilosConectados.remove(this);
         }
     }
+    private void procesarInicioPartida() {
+        try {
+            fachadaJuego.prepararIniciarPartida(lobby.getNombreJugadores());
+            Partida partida = fachadaJuego.getPartidaActual();
+            PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
+
+            MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
+            respuesta.setTipo("ACTUALIZACION_PARTIDA");
+            respuesta.setPartida(partidaDTO);
+
+            for (ServidorHilo cliente: Servidor.hilosConectados){
+                cliente.out.writeObject(respuesta);
+                cliente.out.flush();
+            }
+            System.out.println("[servidor] Partida iniciada");
+        }catch (Exception e){
+            enviarError(e.getMessage());
+        }
+    }
+    private void enviarError(String msj) {
+        try {
+            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", true, msj));
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace(); }
+    }
+
 
     private void validarNombre(MensajeRegistroDTO dto) throws IOException {
         try {
