@@ -500,7 +500,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actualizar() {
+    public void actualizar(String evento) {
         
     }
 

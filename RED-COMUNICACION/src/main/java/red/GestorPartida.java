@@ -133,7 +133,7 @@ public class GestorPartida implements IObservable{
     @Override
     public void notificarObservador(String evento) {
         for (IObserver obs : observadores) {
-            obs.actualizar();
+            obs.actualizar(evento);
         }
     }
 }
