@@ -1,4 +1,5 @@
 dtos\CartaDTO.class
+dtos\ManoDTO.class
 dtos\MensajeEstadoPartidaDTO.class
 dtos\MensajeGritarUnoDTO.class
 dtos\paqueteRedDTO.class

@@ -5,13 +5,32 @@
 package vista;
 
 import Interfaces.IVista;
-import java.applet.AudioClip;
+import dtos.MensajeListaJugadoresDTO;
+import dtos.MensajeNotificacionDTO;
+import dtos.MensajeRegistroDTO;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.URL;
+
 /**
  *
  * @author emiim
  */
-//cc
 public class MenuPrincipal extends javax.swing.JFrame implements IVista{
+
+    private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
+    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "9090"));
+    private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
+
+    private int avatarSeleccionado = 0;
+    private final javax.swing.JLabel etiquetaAvatar = new javax.swing.JLabel();
 
     /**
      * Creates new form NewJFrame
@@ -19,10 +38,15 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     public MenuPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
+        configurarVistaAvatar();
+        btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
+        txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
+    
     private void reproducirMusica(){
         
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -204,66 +228,113 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonCircular1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCircular1ActionPerformed
-//        String nombreJugador = textFieldRedondo1.getText().trim();
-//
-//        if (nombreJugador.isEmpty()) {
-//            javax.swing.JOptionPane.showMessageDialog(this, "Ingresa un nombre: ", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-//            return;
-//        }
-//
-//        try {
-//            java.net.Socket socket = new java.net.Socket("127.0.0.1", 9090);
-//
-//            interfaces.ISerializador serializador = new serealizador.serializador();
-//
-//            cliente.ClienteProxy miProxy = new cliente.ClienteProxy(socket, serializador);
-//
-//            miProxy.setReceptor(mensaje -> {
-//
-//                if (mensaje instanceof dtos.MensajeNotificacionDTO) {
-//                    dtos.MensajeNotificacionDTO notificacion = (dtos.MensajeNotificacionDTO) mensaje;
-//
-//                    if (!notificacion.isEsError()) {
-//                        System.out.println("Registro aceptado. Cambiando pantalla...");
-//
-//                        java.awt.EventQueue.invokeLater(() -> {
-//                            vista.SeleccionPartida seleccionVista = new vista.SeleccionPartida(miProxy);
-//                            seleccionVista.setVisible(true);
-//                            this.dispose();
-//                        });
-//                    } else {
-//                        javax.swing.JOptionPane.showMessageDialog(null,
-//                                "Error: " + notificacion.getTextoMensaje(),
-//                                "Registro Denegado",
-//                                javax.swing.JOptionPane.ERROR_MESSAGE);
-//                    }
-//                }
-//            });
-//
-//            Thread hiloEscucha = new Thread(miProxy);
-//            hiloEscucha.setDaemon(true);
-//            hiloEscucha.start();
-//
-//            dtos.MensajeRegistroDTO peticion = new dtos.MensajeRegistroDTO(nombreJugador, "AvatarDefault");
-//            miProxy.enviarMensaje(peticion);
-//
-//        } catch (Exception e) {
-//            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-//        }
-    }//GEN-LAST:event_botonCircular1ActionPerformed
+    private void configurarVistaAvatar() {
+        panelDinamicoAvatars.removeAll();
+        panelDinamicoAvatars.setLayout(new BorderLayout());
+        etiquetaAvatar.setHorizontalAlignment(SwingConstants.CENTER);
+        etiquetaAvatar.setVerticalAlignment(SwingConstants.CENTER);
+        etiquetaAvatar.setHorizontalTextPosition(SwingConstants.CENTER);
+        etiquetaAvatar.setVerticalTextPosition(SwingConstants.BOTTOM);
+        etiquetaAvatar.setIcon(cargarAvatar(avatarSeleccionado));
+        actualizarAvatarPreview();
+        panelDinamicoAvatars.add(etiquetaAvatar, BorderLayout.CENTER);
+        panelDinamicoAvatars.revalidate();
+        panelDinamicoAvatars.repaint();
+    }
+
+    private ImageIcon cargarAvatar(int indice) {
+        String ruta = "/img/" + AVATARES[indice] + ".png";
+        URL recurso = getClass().getResource(ruta);
+        return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+    }
+
+    private void actualizarAvatarPreview() {
+        etiquetaAvatar.setIcon(cargarAvatar(avatarSeleccionado));
+        etiquetaAvatar.setText("Avatar " + (avatarSeleccionado + 1));
+    }
+
+    private String obtenerAvatarSeleccionado() {
+        return AVATARES[avatarSeleccionado];
+    }
+
+    private void setFormularioHabilitado(boolean habilitado) {
+        txtNombreUsuario.setEnabled(habilitado);
+        btnEntrar.setEnabled(habilitado);
+        btnAvanzar.setEnabled(habilitado);
+        btnRetroseder.setEnabled(habilitado);
+    }
+
+    private void registrarUsuario() {
+        final String nombreJugador = txtNombreUsuario.getText().trim();
+        if (nombreJugador.isEmpty()) {
+            mostrarMensaje("Ingresa un nombre de usuario.");
+            return;
+        }
+
+        final String avatar = obtenerAvatarSeleccionado();
+        setFormularioHabilitado(false);
+
+        new Thread(() -> {
+            try (Socket socket = new Socket(HOST_SERVIDOR, PUERTO_SERVIDOR);
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+                out.flush();
+                out.writeObject(new MensajeRegistroDTO(nombreJugador, avatar));
+                out.flush();
+
+                final boolean[] registroExitoso = {false};
+                final String[] mensajeRespuesta = {""};
+
+                Object respuesta = in.readObject();
+                if (respuesta instanceof MensajeNotificacionDTO) {
+                    MensajeNotificacionDTO notificacion = (MensajeNotificacionDTO) respuesta;
+                    registroExitoso[0] = !notificacion.isEsError();
+                    mensajeRespuesta[0] = notificacion.getTextoMensaje();
+                }
+
+                if (registroExitoso[0]) {
+                    Object posibleLista = in.readObject();
+                    if (posibleLista instanceof MensajeListaJugadoresDTO) {
+                        MensajeListaJugadoresDTO lista = (MensajeListaJugadoresDTO) posibleLista;
+                        System.out.println("[MenuPrincipal] Jugadores registrados: " + lista.getJugadores());
+                    }
+
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(this, mensajeRespuesta[0], "Registro", JOptionPane.INFORMATION_MESSAGE);
+                        SeleccionPartida seleccionPartida = new SeleccionPartida();
+                        seleccionPartida.setJugadorInfo(nombreJugador, avatar);
+                        seleccionPartida.mostrarVista();
+                        cerrarVista();
+                    });
+                } else {
+                    SwingUtilities.invokeLater(() -> mostrarMensaje(mensajeRespuesta[0].isBlank() ? "No se pudo registrar al usuario." : mensajeRespuesta[0]));
+                }
+            } catch (Exception ex) {
+                SwingUtilities.invokeLater(() -> mostrarMensaje("No se pudo conectar al servidor: " + ex.getMessage()));
+            } finally {
+                SwingUtilities.invokeLater(() -> setFormularioHabilitado(true));
+            }
+        }).start();
+    }
 
     private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed
-        // TODO add your handling code here:
+        btnEntrarActionPerformed(evt);
     }//GEN-LAST:event_txtNombreUsuarioActionPerformed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
-        // TODO add your handling code here:
+        registrarUsuario();
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void btnAvanzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvanzarActionPerformed
-        // TODO add your handling code here:
+        avatarSeleccionado = (avatarSeleccionado + 1) % AVATARES.length;
+        actualizarAvatarPreview();
     }//GEN-LAST:event_btnAvanzarActionPerformed
+
+    private void btnRetrosederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetrosederActionPerformed
+        avatarSeleccionado = (avatarSeleccionado - 1 + AVATARES.length) % AVATARES.length;
+        actualizarAvatarPreview();
+    }//GEN-LAST:event_btnRetrosederActionPerformed
 
     /**
      * @param args the command line arguments
@@ -322,21 +393,22 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
 
     @Override
     public void actualizar() {
-    
+        revalidate();
+        repaint();
     }
 
     @Override
     public void mostrarVista() {
-        
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        
+        JOptionPane.showMessageDialog(this, mensaje, "UNO", JOptionPane.INFORMATION_MESSAGE);
     }
 }

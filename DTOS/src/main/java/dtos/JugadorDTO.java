@@ -1,26 +1,24 @@
-package dtos;
-
+    package dtos;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class JugadorDTO implements Serializable {
-    private static final long getSerialVersionUID =  1L;
+    public class JugadorDTO implements Serializable {
+    private static final long serialVersionUID =  1L;
     private String id;
     private String nombre;
     private byte[] avatar;
-    private List<CartaDTO> cartas;
+    private ManoDTO mano;
     private boolean dijoUno;
     private int puntuaje;
 
 
     public JugadorDTO() {
     }
-    public JugadorDTO(String id, String nombre, byte[] avatar, List<CartaDTO> cartas, boolean dijoUno, int puntuaje) {
+    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
-        this.cartas = cartas;
+        this.mano = mano;
         this.dijoUno = dijoUno;
         this.puntuaje = puntuaje;
     }
@@ -49,12 +47,12 @@ public class JugadorDTO implements Serializable {
         this.avatar = avatar;
     }
 
-    public List<CartaDTO> getCartas() {
-        return cartas;
+    public ManoDTO getMano() {
+        return mano;
     }
 
-    public void setCartas(List<CartaDTO> cartas) {
-        this.cartas = cartas;
+    public void setMano(ManoDTO mano) {
+        this.mano = mano;
     }
 
     public boolean isDijoUno() {
