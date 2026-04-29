@@ -7,6 +7,7 @@ package vista;
 
 import Entidades.Lobby;
 import Interfaces.IVista;
+import red.GestorPartida;
 
 /**
  *
@@ -15,13 +16,18 @@ import Interfaces.IVista;
 //cc
 public class LobbyView extends javax.swing.JFrame implements IVista{
 
-    private Lobby modeloLobby;
+    private GestorPartida gestor;
+    
     public LobbyView() {
         initComponents();
     }
-    public void setModelo(Lobby modelo){
-        this.modeloLobby = modelo;
+   
+    public void setModeloGestor(GestorPartida gestor){
+        this.gestor = gestor;
+        this.gestor.agregarObservador(this);
+        
     }
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -63,7 +63,7 @@ public class GameController {
         }
     }
 
-    public void decirUno(Jugador jugador) {
+    public void decirUno() {
         try {
             gestor.decirUno();
         } catch (Exception e) {
