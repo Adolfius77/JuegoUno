@@ -194,7 +194,7 @@ public class Partida implements IObservable {
     @Override
     public void notificarObservador(String evento) {
         for (IObserver obs : observadores) {
-            obs.actualizar(evento);
+            obs.actualizar();
         }
     }
 

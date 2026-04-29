@@ -54,7 +54,7 @@ public class Lobby implements IObservable {
     @Override
     public void notificarObservador(String evento) {
         for (IObserver obs : observadores) {
-            obs.actualizar(evento);
+            obs.actualizar();
         }
     }
 }
