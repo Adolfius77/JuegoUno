@@ -1,8 +1,9 @@
-package Entidades.Logica;
+package red;
 
 import Entidades.Carta;
 import Entidades.Jugador;
 import Entidades.Lobby;
+import Entidades.Logica.Partida;
 import Entidades.fabricas.PartidaFactory;
 import Mappers.LobbyMapper;
 import Mappers.PartidaMapper;

@@ -1,5 +1,7 @@
 package Interfaces;
 
+
+
 import dtos.MensajeDTO;
 
 import java.util.function.Consumer;

@@ -5,7 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
-
+import java.applet.AudioClip;
 /**
  *
  * @author emiim
@@ -20,7 +20,9 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
     }
-
+    private void reproducirMusica(){
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,35 +33,39 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private void initComponents() {
 
         jTextField1 = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        botonCircular1 = new vista.DiseñosExtras.botonCircular();
-        textFieldRedondo1 = new vista.DiseñosExtras.TextFieldRedondo();
+        txtNombreUsuario = new vista.DiseñosExtras.TextFieldRedondo();
+        btnEntrar = new vista.DiseñosExtras.botonCircular();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        panelDinamicoAvatars = new javax.swing.JPanel();
+        btnRetroseder = new javax.swing.JButton();
+        btnAvanzar = new javax.swing.JButton();
 
         jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha1.png"))); // NOI18N
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha2.png"))); // NOI18N
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 109, 109));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/unoLogo.png"))); // NOI18N
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
-
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
-
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
-
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha2.png"))); // NOI18N
-
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha1.png"))); // NOI18N
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
@@ -69,54 +75,82 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Nombre de Usuario");
 
-        botonCircular1.setForeground(new java.awt.Color(0, 0, 0));
-        botonCircular1.setText("Entrar");
-        botonCircular1.setBorderColor(new java.awt.Color(255, 255, 0));
-        botonCircular1.setColor(new java.awt.Color(255, 255, 0));
-        botonCircular1.setColorClick(new java.awt.Color(255, 255, 0));
-        botonCircular1.setColorOver(new java.awt.Color(255, 255, 0));
-        botonCircular1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        botonCircular1.setRadius(50);
-        botonCircular1.addActionListener(new java.awt.event.ActionListener() {
+        txtNombreUsuario.setRadius(50);
+        txtNombreUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonCircular1ActionPerformed(evt);
+                txtNombreUsuarioActionPerformed(evt);
             }
         });
 
-        textFieldRedondo1.setRadius(30);
+        btnEntrar.setForeground(new java.awt.Color(0, 0, 0));
+        btnEntrar.setText("Entrar");
+        btnEntrar.setBorderColor(new java.awt.Color(255, 255, 255));
+        btnEntrar.setColor(new java.awt.Color(255, 255, 51));
+        btnEntrar.setColorClick(new java.awt.Color(255, 255, 0));
+        btnEntrar.setColorOver(new java.awt.Color(255, 255, 51));
+        btnEntrar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        btnEntrar.setRadius(50);
+        btnEntrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEntrarActionPerformed(evt);
+            }
+        });
+
+        panelDinamicoAvatars.setBackground(new java.awt.Color(255, 255, 255));
+        panelDinamicoAvatars.setForeground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout panelDinamicoAvatarsLayout = new javax.swing.GroupLayout(panelDinamicoAvatars);
+        panelDinamicoAvatars.setLayout(panelDinamicoAvatarsLayout);
+        panelDinamicoAvatarsLayout.setHorizontalGroup(
+            panelDinamicoAvatarsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 385, Short.MAX_VALUE)
+        );
+        panelDinamicoAvatarsLayout.setVerticalGroup(
+            panelDinamicoAvatarsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 111, Short.MAX_VALUE)
+        );
+
+        jScrollPane1.setViewportView(panelDinamicoAvatars);
+
+        btnRetroseder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha2.png"))); // NOI18N
+
+        btnAvanzar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/flecha1.png"))); // NOI18N
+        btnAvanzar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAvanzarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(416, Short.MAX_VALUE)
+                .addContainerGap(418, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(textFieldRedondo1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(43, 43, 43))
+                                .addComponent(btnRetroseder, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel7)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel3)
-                                        .addGap(56, 56, 56)
-                                        .addComponent(jLabel4)))
-                                .addGap(59, 59, 59)
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)))
-                        .addComponent(jLabel6)
-                        .addGap(390, 390, 390))
+                                .addComponent(jLabel7)
+                                .addGap(158, 158, 158)))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAvanzar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(401, 401, 401))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(464, 464, 464))))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(549, 549, 549)
-                .addComponent(botonCircular1, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(548, 548, 548)
+                        .addComponent(txtNombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(618, 618, 618)
+                        .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -130,19 +164,25 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
                 .addGap(74, 74, 74)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                .addComponent(textFieldRedondo1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
+                .addComponent(txtNombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel7)
-                .addGap(14, 14, 14)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(36, 36, 36)
-                .addComponent(botonCircular1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(108, 108, 108))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(btnAvanzar, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(btnRetroseder, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(33, 33, 33)))
+                .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(101, 101, 101))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(318, 318, 318)
@@ -165,53 +205,65 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonCircular1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCircular1ActionPerformed
-        String nombreJugador = textFieldRedondo1.getText().trim();
-
-        if (nombreJugador.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Ingresa un nombre: ", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            java.net.Socket socket = new java.net.Socket("127.0.0.1", 9090);
-
-            interfaces.ISerializador serializador = new serealizador.serializador();
-
-            cliente.ClienteProxy miProxy = new cliente.ClienteProxy(socket, serializador);
-
-            miProxy.setReceptor(mensaje -> {
-
-                if (mensaje instanceof dtos.MensajeNotificacionDTO) {
-                    dtos.MensajeNotificacionDTO notificacion = (dtos.MensajeNotificacionDTO) mensaje;
-
-                    if (!notificacion.isEsError()) {
-                        System.out.println("Registro aceptado. Cambiando pantalla...");
-
-                        java.awt.EventQueue.invokeLater(() -> {
-                            vista.SeleccionPartida seleccionVista = new vista.SeleccionPartida(miProxy);
-                            seleccionVista.setVisible(true);
-                            this.dispose();
-                        });
-                    } else {
-                        javax.swing.JOptionPane.showMessageDialog(null,
-                                "Error: " + notificacion.getTextoMensaje(),
-                                "Registro Denegado",
-                                javax.swing.JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            });
-
-            Thread hiloEscucha = new Thread(miProxy);
-            hiloEscucha.setDaemon(true);
-            hiloEscucha.start();
-
-            dtos.MensajeRegistroDTO peticion = new dtos.MensajeRegistroDTO(nombreJugador, "AvatarDefault");
-            miProxy.enviarMensaje(peticion);
-
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
+//        String nombreJugador = textFieldRedondo1.getText().trim();
+//
+//        if (nombreJugador.isEmpty()) {
+//            javax.swing.JOptionPane.showMessageDialog(this, "Ingresa un nombre: ", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//
+//        try {
+//            java.net.Socket socket = new java.net.Socket("127.0.0.1", 9090);
+//
+//            interfaces.ISerializador serializador = new serealizador.serializador();
+//
+//            cliente.ClienteProxy miProxy = new cliente.ClienteProxy(socket, serializador);
+//
+//            miProxy.setReceptor(mensaje -> {
+//
+//                if (mensaje instanceof dtos.MensajeNotificacionDTO) {
+//                    dtos.MensajeNotificacionDTO notificacion = (dtos.MensajeNotificacionDTO) mensaje;
+//
+//                    if (!notificacion.isEsError()) {
+//                        System.out.println("Registro aceptado. Cambiando pantalla...");
+//
+//                        java.awt.EventQueue.invokeLater(() -> {
+//                            vista.SeleccionPartida seleccionVista = new vista.SeleccionPartida(miProxy);
+//                            seleccionVista.setVisible(true);
+//                            this.dispose();
+//                        });
+//                    } else {
+//                        javax.swing.JOptionPane.showMessageDialog(null,
+//                                "Error: " + notificacion.getTextoMensaje(),
+//                                "Registro Denegado",
+//                                javax.swing.JOptionPane.ERROR_MESSAGE);
+//                    }
+//                }
+//            });
+//
+//            Thread hiloEscucha = new Thread(miProxy);
+//            hiloEscucha.setDaemon(true);
+//            hiloEscucha.start();
+//
+//            dtos.MensajeRegistroDTO peticion = new dtos.MensajeRegistroDTO(nombreJugador, "AvatarDefault");
+//            miProxy.enviarMensaje(peticion);
+//
+//        } catch (Exception e) {
+//            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+//        }
     }//GEN-LAST:event_botonCircular1ActionPerformed
+
+    private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreUsuarioActionPerformed
+
+    private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEntrarActionPerformed
+
+    private void btnAvanzarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvanzarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAvanzarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -250,7 +302,9 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular botonCircular1;
+    private javax.swing.JButton btnAvanzar;
+    private vista.DiseñosExtras.botonCircular btnEntrar;
+    private javax.swing.JButton btnRetroseder;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -260,8 +314,10 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private vista.DiseñosExtras.TextFieldRedondo textFieldRedondo1;
+    private javax.swing.JPanel panelDinamicoAvatars;
+    private vista.DiseñosExtras.TextFieldRedondo txtNombreUsuario;
     // End of variables declaration//GEN-END:variables
 
     @Override

@@ -2,8 +2,9 @@ package controlador;
 
 import Entidades.Carta;
 import Entidades.Jugador;
-import Entidades.Logica.GestorPartida;
 import Interfaces.IVista;
+import red.GestorPartida;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

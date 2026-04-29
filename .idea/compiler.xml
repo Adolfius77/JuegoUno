@@ -10,6 +10,7 @@
         <module name="INTERFACEZ" />
         <module name="DTOS" />
         <module name="RED-COMUNICACION" />
+        <module name="MAPPERS" />
         <module name="CLIENTE-PROXY" />
         <module name="SEREALIZADOR" />
         <module name="DOMINIO" />
