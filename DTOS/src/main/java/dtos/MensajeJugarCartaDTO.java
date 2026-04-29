@@ -6,6 +6,9 @@ public class MensajeJugarCartaDTO extends MensajeDTO{
     private CartaDTO cartaJugada;
     private String colorElegido;
 
+    public MensajeJugarCartaDTO() {
+    }
+
     public MensajeJugarCartaDTO(String idRemitente, CartaDTO cartaJugada, String colorElegido) {
         super("JUGAR_CARTA");
         this.idRemitente = idRemitente;

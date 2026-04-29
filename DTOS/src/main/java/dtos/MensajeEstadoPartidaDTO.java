@@ -13,6 +13,8 @@ public class MensajeEstadoPartidaDTO extends MensajeDTO{
     private Map<String, Integer> cantidadCartasPorJugador;
     private List<CartaDTO>miMano;
 
+    public MensajeEstadoPartidaDTO() {
+    }
 
     public MensajeEstadoPartidaDTO(CartaDTO cartaEnTope, String idJugadorTurnoActual, String sentidoJuego, boolean alguienGritoUno, Map<String, Integer> cantidadCartasPorJugador, List<CartaDTO> miMano) {
         super("SERVIDOR");

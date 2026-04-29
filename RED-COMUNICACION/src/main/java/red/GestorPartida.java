@@ -5,7 +5,6 @@ import Interfacez.IProxy;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class GestorPartida {
 
     private PartidaDTO partidaActualDTO;
@@ -16,14 +15,27 @@ public class GestorPartida {
         this.jugadoresEnLobby = new ArrayList<>();
         this.partidaActualDTO = null;
     }
+
     public void setProxyRed(IProxy miProxyRed) {
+        if (miProxyRed == null) {
+            throw new IllegalArgumentException("El proxy de red no puede ser nulo.");
+        }
         this.miProxyRed = miProxyRed;
     }
 
-    public void procesarRegistro(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nombre inválido");
+    private void verificarProxy() {
+        if (this.miProxyRed == null) {
+            throw new IllegalStateException("Error: No se ha asignado un Proxy de Red. Llama a setProxyRed() antes de enviar mensajes.");
         }
+    }
+
+    public void procesarRegistro(String nombre) {
+        verificarProxy();
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del jugador es inválido o está vacío.");
+        }
+
         MensajeRegistroDTO mensaje = new MensajeRegistroDTO();
         mensaje.setTipo("SOLICITUD_REGISTRO");
         mensaje.setNombre(nombre.trim());
@@ -32,41 +44,56 @@ public class GestorPartida {
     }
 
     public void iniciarPartida() {
+        verificarProxy();
         MensajeDTO mensaje = new MensajeDTO();
         mensaje.setTipo("INTENCION_INICIAR_PARTIDA");
         miProxyRed.enviarMensaje(mensaje);
     }
 
     public void jugarCarta(CartaDTO carta) {
+        verificarProxy();
+
+        if (carta == null) {
+            throw new IllegalArgumentException("La carta a jugar no puede ser nula.");
+        }
+
         MensajeJugarCartaDTO mensaje = new MensajeJugarCartaDTO();
         mensaje.setTipo("INTENCION_JUGAR_CARTA");
-        mensaje.setCarta(carta);
+        mensaje.setCartaJugada(carta);
         miProxyRed.enviarMensaje(mensaje);
     }
 
     public void tomarCarta() {
+        verificarProxy();
         MensajeRobarCartaDTO mensaje = new MensajeRobarCartaDTO();
         mensaje.setTipo("INTENCION_ROBAR_CARTA");
         miProxyRed.enviarMensaje(mensaje);
     }
 
     public void pasarTurno() {
+        verificarProxy();
         MensajePasarTurnoDTO mensaje = new MensajePasarTurnoDTO();
         mensaje.setTipo("INTENCION_PASAR_TURNO");
         miProxyRed.enviarMensaje(mensaje);
     }
 
     public void decirUno() {
+        verificarProxy();
         MensajeGritarUnoDTO mensaje = new MensajeGritarUnoDTO();
         mensaje.setTipo("INTENCION_GRITAR_UNO");
         miProxyRed.enviarMensaje(mensaje);
     }
+
     public void actualizarEstadoPartida(PartidaDTO nuevoEstado) {
-        this.partidaActualDTO = nuevoEstado;
+        if (nuevoEstado != null) {
+            this.partidaActualDTO = nuevoEstado;
+        }
     }
 
     public void actualizarLobby(List<String> nuevaLista) {
-        this.jugadoresEnLobby = nuevaLista;
+        if (nuevaLista != null) {
+            this.jugadoresEnLobby = new ArrayList<>(nuevaLista);
+        }
     }
 
     public PartidaDTO obtenerEstadoPartida() {
@@ -82,6 +109,8 @@ public class GestorPartida {
     }
 
     public void limpiarLobby() {
-        jugadoresEnLobby.clear();
+        if (jugadoresEnLobby != null) {
+            jugadoresEnLobby.clear();
+        }
     }
 }

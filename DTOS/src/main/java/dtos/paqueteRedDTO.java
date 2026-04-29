@@ -8,6 +8,9 @@ public class paqueteRedDTO implements Serializable {
     private String accion;
     private Object payload;
 
+    public paqueteRedDTO() {
+    }
+
     public paqueteRedDTO(String destino, String remitente, String accion, Object payload) {
         this.destino = destino;
         this.remitente = remitente;

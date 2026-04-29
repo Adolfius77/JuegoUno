@@ -5,6 +5,9 @@ public class MensajeNotificacionDTO extends MensajeDTO {
     private String textoMensaje;
     private boolean esError;//para movimientos invalidos
 
+    public MensajeNotificacionDTO() {
+    }
+
     public MensajeNotificacionDTO(String idRemitente, boolean esError, String textoMensaje) {
         super("SERVIDOR");
         this.esError = esError;

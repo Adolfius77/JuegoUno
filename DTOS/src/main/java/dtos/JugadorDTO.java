@@ -14,7 +14,7 @@ public class JugadorDTO implements Serializable {
     private int puntuaje;
 
 
-        public JugadorDTO() {
+    public JugadorDTO() {
     }
     public JugadorDTO(String id, String nombre, byte[] avatar, List<CartaDTO> cartas, boolean dijoUno, int puntuaje) {
         this.id = id;

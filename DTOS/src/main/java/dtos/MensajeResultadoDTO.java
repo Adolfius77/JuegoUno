@@ -9,6 +9,9 @@ public class MensajeResultadoDTO extends MensajeDTO implements Serializable {
     private String nombreGanador;
     private List<JugadorDTO> podio;
 
+    public MensajeResultadoDTO() {
+    }
+
     public MensajeResultadoDTO(String nombreGanador, List<JugadorDTO> podio) {
         super("RESULTADO_PARTIDA");
         this.nombreGanador = nombreGanador;
