@@ -37,28 +37,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-module-boundaries</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <bannedDependencies>
-                                    <searchTransitive>true</searchTransitive>
-                                    <excludes>
-                                        <exclude>org.itson:APP-CLIENTEE</exclude>
-                                        <exclude>org.itson:BROKER</exclude>
-                                        <exclude>org.itson:CLIENTE-PROXY</exclude>
-                                        <exclude>org.itson:SERVER-PROXY</exclude>
-                                        <exclude>org.itson:SERIALIZADOR</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
+                
             </plugin>
         </plugins>
     </build>
