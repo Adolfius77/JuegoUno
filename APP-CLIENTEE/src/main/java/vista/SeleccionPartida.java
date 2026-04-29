@@ -6,18 +6,86 @@ package vista;
 
 import Interfaces.IVista;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+
 /**
  *
  * @author emiim
  */
 public class SeleccionPartida extends javax.swing.JFrame implements IVista{
-    
+
+    private String nombreUsuario;
+    private String avatarUsuario;
+    private final JLabel etiquetaAvatar = new JLabel();
+
     public SeleccionPartida() {
-        initComponents();
-        
+        this(null, null);
     }
 
-    
+    public SeleccionPartida(String nombreUsuario, String avatarUsuario) {
+        this.nombreUsuario = nombreUsuario;
+        this.avatarUsuario = avatarUsuario;
+        initComponents();
+        this.setLocationRelativeTo(null);
+        btnSalir.addActionListener(this::btnSalirActionPerformed);
+        mostrarDatosJugador();
+    }
+
+    public void setJugadorInfo(String nombreUsuario, String avatarUsuario) {
+        this.nombreUsuario = nombreUsuario;
+        this.avatarUsuario = avatarUsuario;
+        mostrarDatosJugador();
+    }
+
+    private void mostrarDatosJugador() {
+        if (nombreUsuario != null && !nombreUsuario.isBlank()) {
+            jLabel3.setText(nombreUsuario);
+        }
+
+        if (avatarUsuario != null && !avatarUsuario.isBlank()) {
+            panelAvatar.removeAll();
+            panelAvatar.setLayout(new BorderLayout());
+            etiquetaAvatar.setHorizontalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setHorizontalTextPosition(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalTextPosition(SwingConstants.BOTTOM);
+            etiquetaAvatar.setIcon(cargarAvatar(avatarUsuario));
+            etiquetaAvatar.setText(formatearNombreAvatar(avatarUsuario));
+            panelAvatar.add(etiquetaAvatar, BorderLayout.CENTER);
+            panelAvatar.revalidate();
+            panelAvatar.repaint();
+        }
+    }
+
+    private String formatearNombreAvatar(String avatarId) {
+        if (avatarId == null || avatarId.isBlank()) {
+            return "";
+        }
+
+        if (avatarId.startsWith("avatar")) {
+            String numero = avatarId.substring("avatar".length());
+            return numero.isBlank() ? avatarId : "Avatar " + numero;
+        }
+
+        return avatarId;
+    }
+
+    private ImageIcon cargarAvatar(String avatarId) {
+        String ruta = "/img/" + avatarId + ".png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+    }
+
+    private void abrirVentana(javax.swing.JFrame ventana) {
+        ventana.setLocationRelativeTo(this);
+        ventana.setVisible(true);
+        dispose();
+    }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -205,12 +273,16 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        // TODO add your handling code here:
+        abrirVentana(new CrearPartida());
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
-        // TODO add your handling code here:
+        abrirVentana(new unirsePartidaView());
     }//GEN-LAST:event_btnUnirsePartidaActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        abrirVentana(new MenuPrincipal());
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,21 +338,22 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
 
     @Override
     public void actualizar() {
-        //aqui iran los metodos de pintar o mostrar cosas
+        revalidate();
+        repaint();
     }
 
     @Override
     public void mostrarVista() {
-        
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        
+        javax.swing.JOptionPane.showMessageDialog(this, mensaje, "UNO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
 }
