@@ -14,7 +14,7 @@ public final class MVCFactory {
     private MVCFactory() {}
 
     public static LobbyController construirLobby() {
-        GestorJuegoFacade gestor = new GestorJuegoFacade();
+        GestorPartida gestor = new GestorPartida();
         LobbyView vistaLobby = new LobbyView();
         return new LobbyController(vistaLobby, gestor);
     }

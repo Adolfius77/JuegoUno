@@ -35,7 +35,7 @@ public class Broker implements IBroker {
             try{
                 Socket clienteSocket = servidorSocket.accept();
                 String nombreTemporal = "conexion" + clienteSocket.getPort();
-                ServerProxy proxy = ServerProxyFactory.crearManjadorCliente(this, clienteSocket,serializador);
+                ServerProxy proxy = ServerProxyFactory.crearManejadorCliente(this, clienteSocket,serializador);
                 NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, nombreTemporal);
                 NodoClientes.put(nombreTemporal, nuevoNodo);
                 new Thread(proxy).start();

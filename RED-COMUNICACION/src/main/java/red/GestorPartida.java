@@ -2,18 +2,22 @@ package red;
 
 import dtos.*;
 import Interfacez.IProxy;
+import Observer.IObservable;
+import Observer.IObserver;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestorPartida {
+public class GestorPartida implements IObservable{
 
     private PartidaDTO partidaActualDTO;
     private List<String> jugadoresEnLobby;
     private IProxy miProxyRed;
+    private List<IObserver> observadores;
 
     public GestorPartida() {
         this.jugadoresEnLobby = new ArrayList<>();
         this.partidaActualDTO = null;
+        this.observadores = new ArrayList<>();
     }
 
     public void setProxyRed(IProxy miProxyRed) {
@@ -87,12 +91,14 @@ public class GestorPartida {
     public void actualizarEstadoPartida(PartidaDTO nuevoEstado) {
         if (nuevoEstado != null) {
             this.partidaActualDTO = nuevoEstado;
+            notificarObservador("PARTIDA_INICIADA");
         }
     }
 
     public void actualizarLobby(List<String> nuevaLista) {
         if (nuevaLista != null) {
             this.jugadoresEnLobby = new ArrayList<>(nuevaLista);
+            notificarObservador("LOBBY_ACTUALIZADO");
         }
     }
 
@@ -111,6 +117,23 @@ public class GestorPartida {
     public void limpiarLobby() {
         if (jugadoresEnLobby != null) {
             jugadoresEnLobby.clear();
+        }
+    }
+
+    @Override
+    public void agregarObservador(IObserver obs) {
+        this.observadores.add(obs);
+    }
+
+    @Override
+    public void eliminarObservador(IObserver obs) {
+        this.observadores.remove(obs);
+    }
+
+    @Override
+    public void notificarObservador(String evento) {
+        for (IObserver obs : observadores) {
+            obs.actualizar(evento);
         }
     }
 }
