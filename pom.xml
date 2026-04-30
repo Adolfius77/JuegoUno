@@ -16,6 +16,7 @@
         <module>DOMINIO</module>
         <module>SEREALIZADOR</module>
         <module>MAPPERS</module>
+        <module>Launcher</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
