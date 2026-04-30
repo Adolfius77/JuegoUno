@@ -19,6 +19,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
     
     public LobbyView() {
         initComponents();
+        setLocationRelativeTo(null);
     }
    
     public void setModeloGestor(GestorPartida gestor){

@@ -9,9 +9,11 @@ controlador\LobbyController.class
 vista\LobbyView$1.class
 vista\NumeroDeCartasForm.class
 vista\CrearPartida.class
+vista\MenuPrincipal$5.class
 vista\CrearPartida$4.class
 vista\SeleccionPartida$2.class
 controlador\TableroController.class
+utileria\GestorAudio.class
 vista\GameView.class
 vista\unirsePartidaView.class
 vista\MenuPrincipal.class
@@ -29,6 +31,7 @@ vista\SeleccionPartida$1.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
 controlador\ConfiguracionController.class
+vista\SeleccionPartida$4.class
 Interfaces\IVista.class
 vista\DiseñosExtras\GameView.class
 controlador\PodioController.class
