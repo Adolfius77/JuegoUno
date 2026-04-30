@@ -39,10 +39,20 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                ventanaActual();
+            }
+        });
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
-    
+
+    private void ventanaActual() {
+        System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
+    }
+
     private void reproducirMusica(){
         
     }

@@ -67,6 +67,22 @@ public class Broker implements IBroker {
             System.out.println("identidad confirmada" +  idTemporal + nombreReal);
         }
     }
+
+    public void eliminarNodo(String idNodo) {
+        if (idNodo == null) return;
+        NodoCliente nodo = NodoClientes.remove(idNodo);
+        if (nodo != null) {
+            try {
+                if (nodo.getSocket() != null && !nodo.getSocket().isClosed()) {
+                    nodo.getSocket().close();
+                }
+            } catch (Exception e) {
+                System.out.println("Error cerrando socket del nodo " + idNodo + ": " + e.getMessage());
+            }
+            System.out.println("Nodo eliminado: " + idNodo);
+        }
+    }
+
     public void enviarNodo(String idTemporal, MensajeDTO mensaje){
         NodoCliente nodo = NodoClientes.get(idTemporal);
         if(nodo != null){

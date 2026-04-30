@@ -29,8 +29,18 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         this.avatarUsuario = avatarUsuario;
         initComponents();
         this.setLocationRelativeTo(null);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                ventanaActual();
+            }
+        });
         btnSalir.addActionListener(this::btnSalirActionPerformed);
         mostrarDatosJugador();
+    }
+
+    private void ventanaActual(){
+        System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
 
     public void setJugadorInfo(String nombreUsuario, String avatarUsuario) {
