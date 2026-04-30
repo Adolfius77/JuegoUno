@@ -22,7 +22,7 @@ import java.net.URL;
  */
 public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
-    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "9090"));
+    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "8080"));
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
 
     private int avatarSeleccionado = 0;
