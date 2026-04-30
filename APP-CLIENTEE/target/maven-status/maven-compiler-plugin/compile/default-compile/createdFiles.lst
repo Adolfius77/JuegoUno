@@ -14,6 +14,7 @@ vista\MenuPrincipal$5.class
 vista\CrearPartida$4.class
 vista\SeleccionPartida$2.class
 controlador\TableroController.class
+utileria\GestorAudio.class
 vista\GameView.class
 vista\unirsePartidaView.class
 vista\MenuPrincipal.class

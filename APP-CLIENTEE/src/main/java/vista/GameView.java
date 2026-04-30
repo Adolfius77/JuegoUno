@@ -9,6 +9,7 @@ import Entidades.CartaNumerica;
 import Entidades.Logica.Partida;
 import Entidades.enums.Color;
 import Interfaces.IVista;
+import utileria.GestorAudio;
 import vista.DiseñosExtras.PanelCarta;
 
 import java.awt.*;
@@ -32,7 +33,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
         DarCartas();
 
         setLocationRelativeTo(null);
-
+        GestorAudio.getInstancia().reproducirMusica("/img/musicaJuego.wav");
     }
     public void setModelo(Partida modelo){
         this.modeloPartida = modelo;
