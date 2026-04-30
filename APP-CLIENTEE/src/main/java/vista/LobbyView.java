@@ -108,13 +108,9 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
         jLabel18.setForeground(new java.awt.Color(255, 255, 255));
         jLabel18.setText("asfdsg");
 
-        jButton5.setBackground(new java.awt.Color(255, 255, 255));
-        jButton5.setForeground(new java.awt.Color(0, 0, 0));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/equis.png"))); // NOI18N
         jButton5.setText("Cancelar");
 
-        jButton7.setBackground(new java.awt.Color(255, 255, 255));
-        jButton7.setForeground(new java.awt.Color(0, 0, 0));
         jButton7.setText("Salir del Lobby");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -200,6 +196,11 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
         btnEstoyListo.setColorClick(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setColorOver(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        btnEstoyListo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEstoyListoActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setText("Cancelar");
@@ -363,6 +364,10 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnEstoyListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstoyListoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEstoyListoActionPerformed
 
     /**
      * @param args the command line arguments

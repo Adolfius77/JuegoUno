@@ -14,7 +14,7 @@ public class Jugador {
 
     private String Id;
     private String nombre;
-    private byte[] avatar;
+    private String avatar;
     private Mano mano;
     private Boolean dijoUno;
     private int puntaje;
@@ -74,11 +74,11 @@ public class Jugador {
         this.mano = mano;
     }
 
-    public byte[] getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 

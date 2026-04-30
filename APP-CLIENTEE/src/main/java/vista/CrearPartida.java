@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import dtos.JugadorDTO;
 
 /**
  *
@@ -13,6 +14,10 @@ import Interfaces.IVista;
 //cc
 public class CrearPartida extends javax.swing.JFrame implements IVista{
 
+     private JugadorDTO jugadorHost;
+     private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
+    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "8080"));
+    
     /**
      * Creates new form CrearPartida
      */
@@ -23,17 +28,11 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
     /**
      * Constructor que recibe el nombre del host (el jugador que crea la sala)
      */
-    public CrearPartida(String nombreHost) {
-        this();
-        this.nombreHost = nombreHost;
-        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
-            jLabel3.setText("Host: " + this.nombreHost);
-        }
+    public CrearPartida(JugadorDTO jugadorHost) {
+        this.jugadorHost = jugadorHost;
+        
         configurarEventos();
     }
-
-    // nombre del jugador que crea la sala
-    private String nombreHost;
     // limite de jugadores seleccionado (2,3,4)
     private int limiteJugadores = 4;
 
@@ -48,7 +47,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
 
         // volver a la pantalla anterior
         btnVolver.addActionListener(e -> {
-            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, null);
+            SeleccionPartida sel = new SeleccionPartida(jugadorHost.getNombre(), jugadorHost.getAvatar());
             sel.setVisible(true);
             dispose();
         });
@@ -65,14 +64,14 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
         // crear la vista del lobby y pasarle el host
         LobbyView lobby = new LobbyView();
         // Intentar pasar el host a la vista del lobby mediante reflection (evita dependencia de método exacto)
-        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
-            try {
-                java.lang.reflect.Method m = lobby.getClass().getMethod("setHost", String.class);
-                m.invoke(lobby, this.nombreHost);
-            } catch (Exception ex) {
-                // si no existe el método no hacemos nada
-            }
-        }
+//        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
+//            try {
+//                java.lang.reflect.Method m = lobby.getClass().getMethod("setHost", String.class);
+//                m.invoke(lobby, this.nombreHost);
+//            } catch (Exception ex) {
+//                // si no existe el método no hacemos nada
+//            }
+//        }
         lobby.setVisible(true);
         dispose();
     }

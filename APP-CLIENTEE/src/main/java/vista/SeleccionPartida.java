@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import dtos.JugadorDTO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -278,7 +279,10 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        abrirVentana(new CrearPartida(this.nombreUsuario));
+        JugadorDTO jugadorHost = new JugadorDTO();
+        jugadorHost.setAvatar(avatarUsuario);
+        jugadorHost.setNombre(nombreUsuario);
+        abrirVentana(new CrearPartida(jugadorHost));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
@@ -289,6 +293,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 
+    
     /**
      * @param args the command line arguments
      */

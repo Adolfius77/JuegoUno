@@ -6,7 +6,7 @@ import java.io.Serializable;
     private static final long serialVersionUID =  1L;
     private String id;
     private String nombre;
-    private byte[] avatar;
+    private String avatar;
     private ManoDTO mano;
     private boolean dijoUno;
     private int puntuaje;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 
     public JugadorDTO() {
     }
-    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
+    public JugadorDTO(String id, String nombre, String avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
@@ -39,11 +39,11 @@ import java.io.Serializable;
         this.nombre = nombre;
     }
 
-    public byte[] getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 
