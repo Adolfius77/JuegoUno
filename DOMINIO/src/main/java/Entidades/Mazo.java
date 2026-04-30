@@ -50,4 +50,10 @@ public class Mazo {
     public boolean estaVacio() {
         return listaCartas.isEmpty();
     }
+    public void agregarCarta(Carta carta){
+        if(carta != null){
+            listaCartas.add(carta);
+            barajear();
+        }
+    }
 }

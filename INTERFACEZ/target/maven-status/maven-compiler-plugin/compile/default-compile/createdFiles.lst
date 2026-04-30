@@ -1,3 +1,4 @@
 Interfacez\ISerializador.class
 Interfacez\IBroker.class
 Interfacez\IProxy.class
+Interfacez\IProxyFactory.class

@@ -1,5 +1,6 @@
 package controlador.Factorys;
 
+import Interfaces.IVista;
 import controlador.GameController;
 import controlador.LobbyController;
 import red.GestorPartida;
@@ -23,6 +24,6 @@ public final class MVCFactory {
             throw new IllegalArgumentException("GestorPartida es obligatorio");
         }
         GameView vistaJuego = new GameView();
-        return new GameController(gestor, vistaJuego, nombreJugadores);
+        return new GameController(gestor, (IVista) vistaJuego, nombreJugadores);
     }
 }
