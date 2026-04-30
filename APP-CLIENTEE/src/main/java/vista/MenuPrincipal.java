@@ -36,6 +36,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                ventanaActual();
+            }
+        });
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
@@ -43,7 +49,11 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private void reproducirMusica(){
         
     }
-    
+
+    private void ventanaActual() {
+        System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
