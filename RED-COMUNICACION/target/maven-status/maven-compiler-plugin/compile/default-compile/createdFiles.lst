@@ -1,12 +1,15 @@
 interfaces\IReceptorMensajes.class
+factorys\StreamFactory.class
+factorys\ConexionFactoryImpl.class
+factorys\SocketFactory.class
+interfaces\IGestorPartida.class
 red\Cliente.class
 red\Servidor.class
+interfaces\IConexionFactory.class
 red\clienteMain.class
 red\servidorMain.class
-factorys\StreamFactory.class
 red\GestorPartida.class
 red\ClienteHilo.class
 red\ServidorHilo.class
-factorys\SocketFactory.class
 factorys\ClienteHiloFactory.class
 red\servidorMain$1.class

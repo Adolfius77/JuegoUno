@@ -1,7 +1,10 @@
 package red;
 
+import Entidades.Estados.IEstadoPartida;
 import Entidades.Lobby;
 import Entidades.Logica.Partida;
+import Entidades.fabricas.ICartaFactory;
+import Entidades.fabricas.IMazoFactory;
 import Mappers.PartidaMapper;
 import dtos.*;
 import facades.GestorJuegoFacade;
@@ -15,12 +18,15 @@ public class ServidorHilo extends Thread {
     private ObjectOutputStream out;
     private Lobby lobby;
     private GestorJuegoFacade fachadaJuego;
+    private ICartaFactory carta;
+    private IMazoFactory mazo;
+    private IEstadoPartida estado;
 
     public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
         this.out = out;
         this.lobby = lobby;
-        this.fachadaJuego = new GestorJuegoFacade();
+        this.fachadaJuego = new GestorJuegoFacade(carta,mazo,estado);
     }
 
     @Override
