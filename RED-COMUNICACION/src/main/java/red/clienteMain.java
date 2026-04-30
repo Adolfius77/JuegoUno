@@ -1,11 +1,20 @@
 package red;
 
+import factorys.ConexionFactoryImpl;
+import interfaces.IConexionFactory;
+import interfaces.IGestorPartida;
 import java.io.IOException;
 
 public class clienteMain {
+   
     public static void main(String[] args) throws IOException {
-        Cliente cliente = new Cliente();
+        
+      
         try {
+            IGestorPartida gestor = new GestorPartida();
+            IConexionFactory conexion = new ConexionFactoryImpl();
+            Cliente cliente = new Cliente(gestor, conexion);
+            
             System.out.println("conectando...");
             cliente.conectar("127.0.0.1", 8080);
             cliente.iniciar();

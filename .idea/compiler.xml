@@ -13,6 +13,7 @@
         <module name="MAPPERS" />
         <module name="CLIENTE-PROXY" />
         <module name="SEREALIZADOR" />
+        <module name="Launcher" />
         <module name="DOMINIO" />
         <module name="SERVER-PROXY" />
         <module name="Dominio" />

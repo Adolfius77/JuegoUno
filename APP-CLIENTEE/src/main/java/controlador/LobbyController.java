@@ -1,7 +1,9 @@
 package controlador;
 
 import Interfaces.IVista;
+import java.util.ArrayList;
 import red.GestorPartida;
+import vista.GameView;
 
 public class LobbyController {
 
@@ -29,7 +31,7 @@ public class LobbyController {
             return false;
         }
     }
-
+   
     public void iniciarPartida() {
         try {
             gestor.iniciarPartida();
@@ -40,5 +42,14 @@ public class LobbyController {
 
     public GestorPartida obtenerGestor() {
         return gestor;
+    }
+    public void procesarEventoRed(String evento){
+        if("PARTIDA_INICIADA".equals(evento)){
+            System.out.println("la partida va a comenzar cambiando de pantalla..");
+            vista.cerrarVista();
+            GameView vistaJuego = new GameView();
+            GameController controladorJuego = new GameController(gestor, vista, new ArrayList<>());
+            controladorJuego.procesarEventoRed(evento);
+        }
     }
 }

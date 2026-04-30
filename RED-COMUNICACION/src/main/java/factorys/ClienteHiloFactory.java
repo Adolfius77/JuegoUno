@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class ClienteHiloFactory {
-    public static ClienteHilo crearHilo(ObjectInputStream in, GestorPartida gestor) throws IOException {
+    public static ClienteHilo crearHilo(ObjectInputStream in, GestorPartida gestor) {
         return new ClienteHilo(in,gestor);
     }
 }

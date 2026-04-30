@@ -4,6 +4,7 @@ import Interfacez.IBroker;
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
 import dtos.MensajeDTO;
+import dtos.MensajeDesconexionDTO;
 import dtos.MensajeRegistroDTO;
 
 import java.io.*;
@@ -58,6 +59,12 @@ public class ServerProxy implements IProxy {
                     broker.publicar("SOLICITUD_REGISTRO", peticionRegistro);
                     System.out.println("Solicitud publicada para: " + this.nombreJugador);
                 }
+                else if (mensaje instanceof MensajeDesconexionDTO) {
+                    MensajeDesconexionDTO desconexion = (MensajeDesconexionDTO) mensaje;
+                    broker.eliminarNodo(desconexion.getNombreUsuario());
+                    System.out.println("Jugador desconectado: " + desconexion.getNombreUsuario());
+                    break;
+                }
                 else {
                     broker.publicar(mensaje.getTipo(), mensaje);
                     System.out.println("Mensaje recibido y publicado: " + mensaje.getTipo());
@@ -65,6 +72,13 @@ public class ServerProxy implements IProxy {
             }
         } catch (Exception e) {
             System.out.println("El cliente se ha desconectado o hay un error: " + e.getMessage());
+            if (nombreJugador != null && !nombreJugador.isEmpty()) {
+                broker.eliminarNodo(nombreJugador);
+            }
+        } finally {
+            if (nombreJugador != null && !nombreJugador.isEmpty()) {
+                broker.eliminarNodo(nombreJugador);
+            }
         }
     }
 
