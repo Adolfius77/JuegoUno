@@ -1,5 +1,4 @@
 vista\unirsePartidaView$1.class
-vista\GameView$2.class
 vista\CrearPartida$5.class
 vista\SeleccionPartida$3.class
 vista\DiseñosExtras\botonCircular$1.class
@@ -10,11 +9,9 @@ controlador\LobbyController.class
 vista\LobbyView$1.class
 vista\NumeroDeCartasForm.class
 vista\CrearPartida.class
-vista\MenuPrincipal$5.class
 vista\CrearPartida$4.class
 vista\SeleccionPartida$2.class
 controlador\TableroController.class
-utileria\GestorAudio.class
 vista\GameView.class
 vista\unirsePartidaView.class
 vista\MenuPrincipal.class
@@ -22,7 +19,6 @@ vista\avatarForm.class
 vista\DiseñosExtras\botonCircular.class
 vista\DiseñosExtras\PanelCarta.class
 vista\podioView.class
-vista\DiseñosExtras\PanelCarta$1.class
 vista\CrearPartida$3.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
@@ -33,7 +29,6 @@ vista\SeleccionPartida$1.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
 controlador\ConfiguracionController.class
-vista\SeleccionPartida$4.class
 Interfaces\IVista.class
 vista\DiseñosExtras\GameView.class
 controlador\PodioController.class

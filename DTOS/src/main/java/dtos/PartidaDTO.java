@@ -14,13 +14,13 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
     private boolean sentidoHorario;
     private int mazoTamano;
     private String mensajeEstado;
-
+    private int cartasRestantesMazo;
     public PartidaDTO() {
     }
 
     public PartidaDTO(String id, List<JugadorDTO> jugadores, CartaDTO cartaCentro,
                       String turnoJugadorId, boolean enCurso, String colorActual,
-                      boolean sentidoHorario, int mazoTamano, String mensajeEstado) {
+                      boolean sentidoHorario, int mazoTamano, String mensajeEstadom , int cartasRestantesMazo) {
         this.id = id;
         this.jugadores = jugadores;
         this.cartaCentro = cartaCentro;
@@ -30,6 +30,7 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
         this.sentidoHorario = sentidoHorario;
         this.mazoTamano = mazoTamano;
         this.mensajeEstado = mensajeEstado;
+        this.cartasRestantesMazo = cartasRestantesMazo;
     }
 
     public String getId() {
@@ -103,4 +104,13 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
     public void setMensajeEstado(String mensajeEstado) {
         this.mensajeEstado = mensajeEstado;
     }
+
+    public int getCartasRestantesMazo() {
+        return cartasRestantesMazo;
+    }
+
+    public void setCartasRestantesMazo(int cartasRestantesMazo) {
+        this.cartasRestantesMazo = cartasRestantesMazo;
+    }
+    
 }

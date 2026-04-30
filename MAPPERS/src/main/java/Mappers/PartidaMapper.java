@@ -55,7 +55,8 @@ public class PartidaMapper {
                 colorActual,
                 partida.getSentido() == Entidades.enums.Sentido.HORARIO,
                 mazoTamano,
-                mensajeTurno
+                mensajeTurno,
+                0
         );
     }
 

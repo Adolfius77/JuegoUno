@@ -14,7 +14,7 @@ public class CartaMapper {
         if(carta == null) {
             return null;
         }
-        String colorStr = carta.getColor().name();
+        String colorStr = (carta.getColor() != null) ? carta.getColor().name() : "SIN_COLOR";
         String valorStr = "";
 
         if(carta instanceof CartaNumerica) {
