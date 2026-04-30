@@ -4,6 +4,7 @@
  */
 package Entidades.fabricas;
 
+import Entidades.Estados.IEstadoPartida;
 import Entidades.Jugador;
 import Entidades.Logica.Partida;
 import Entidades.Mazo;
@@ -20,21 +21,20 @@ import java.util.Objects;
  * @author emiim
  */
 public final class PartidaFactory {
-
     private PartidaFactory() {
     }
 
-    public static Partida crearPartida(List<Jugador> jugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
+    public static Partida crearPartida(List<Jugador> jugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory, IEstadoPartida estado) {
         Objects.requireNonNull(cartaFactory, "cartaFactory es obligatorio");
         Objects.requireNonNull(mazoFactory, "mazoFactory es obligatorio");
         Mazo mazoNuevo = mazoFactory.crearMazo(cartaFactory);
         PilaCartas pilaNueva = new PilaCartas();
         List<Jugador> listaJugadores = jugadores == null ? new ArrayList<>() : jugadores;
-        return new Partida(listaJugadores, mazoNuevo, pilaNueva);
+        return new Partida(listaJugadores, mazoNuevo, pilaNueva,estado);
     }
 
     //metodo viejo
-    public static Partida fabricadorPartida(List<Jugador> jugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory) {
-        return crearPartida(jugadores, cartaFactory, mazoFactory);
+    public static Partida fabricadorPartida(List<Jugador> jugadores, ICartaFactory cartaFactory, IMazoFactory mazoFactory, IEstadoPartida estado) {
+        return crearPartida(jugadores, cartaFactory, mazoFactory, estado);
     }
 }
