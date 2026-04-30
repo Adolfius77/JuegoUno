@@ -3,11 +3,14 @@ package controlador;
 import Entidades.Jugador;
 import Interfaces.IVista;
 import dtos.CartaDTO;
+import dtos.JugadorDTO;
+import dtos.PartidaDTO;
 import interfaces.IGestorPartida;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import vista.GameView;
 
 public class GameController {
 
@@ -24,22 +27,39 @@ public class GameController {
         this.nombreJugadores = nombreJugadores == null
                 ? new ArrayList<>()
                 : new ArrayList<>(nombreJugadores);
-        if (gestor.obtenerEstadoPartida() != null) {
-            this.gestor.obtenerEstadoPartida();
+        
+    }
+    public void procesarEventoRed(String evento){
+        if("PARTIDA_INICIADA".equals(evento)){
+            PartidaDTO estadoPartida = gestor.obtenerEstadoPartida();
+            
+            if(estadoPartida != null && vista instanceof GameView){
+                GameView gameView = (GameView) vista;
+                
+                String miNombre = nombreJugadores.isEmpty() ? "" : nombreJugadores.get(0);
+                List<CartaDTO> miMano = null;
+                
+                for (JugadorDTO j : estadoPartida.getJugadores()) {
+                    if(j.getNombre().equals(miNombre)){
+                        miMano = j.getMano().getCartas();
+                        break;
+                    }
+                }
+                if(miMano != null){
+                    gameView.mostrarCartas(miMano);
+                    gameView.actualizar(estadoPartida.getColorActual());
+                    gameView.actualizarMazo(estadoPartida.getCartasRestantesMazo());
+                    gameView.mostrarVista();
+                }
+            }
         }
     }
-
     public void iniciarJuego() {
         try {
             gestor.iniciarPartida();
-            vista.mostrarVista();
         } catch (Exception e) {
             vista.mostrarMensaje("Error al iniciar juego: " + e.getMessage());
         }
-    }
-
-    public void inicarJuego() {
-        iniciarJuego();
     }
 
     public void jugarCarta(CartaDTO carta) {
