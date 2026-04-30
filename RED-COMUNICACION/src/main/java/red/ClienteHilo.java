@@ -1,43 +1,46 @@
 package red;
 
-
+import dtos.MensajeEstadoPartidaDTO;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
-import java.io.*;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 public class ClienteHilo extends Thread {
-    private final ObjectInputStream in;
+    private ObjectInputStream in;
+    private GestorPartida gestor;
+    private boolean escuchando = true;
 
-    public ClienteHilo(ObjectInputStream in) {
+    public ClienteHilo(ObjectInputStream in, GestorPartida gestor) {
         this.in = in;
+        this.gestor = gestor;
     }
 
     @Override
     public void run() {
         try {
-            while (true) {
-                Object object = in.readObject();
-                if (object instanceof MensajeNotificacionDTO) {
-                    MensajeNotificacionDTO msg = (MensajeNotificacionDTO) object;
-                    procesarNotificacion(msg);
+            while (escuchando) {
+                Object objeto = in.readObject();
+
+                if (objeto instanceof MensajeListaJugadoresDTO) {
+
+                    gestor.actualizarLobby(((MensajeListaJugadoresDTO) objeto).getJugadores());
                 }
-                else if(object instanceof MensajeListaJugadoresDTO){
-                    MensajeListaJugadoresDTO msgLista = (MensajeListaJugadoresDTO) object;
-                    System.out.println("lista actualizada de los jugadores: " + msgLista.getJugadores());
+                else if (objeto instanceof MensajeEstadoPartidaDTO) {
+                    MensajeEstadoPartidaDTO msg = (MensajeEstadoPartidaDTO) objeto;
+                    gestor.actualizarEstadoPartida(msg.getPartida());
+                    System.out.println("[Cliente] Partida recibida. ¡A jugar!");
+
+                }
+                else if (objeto instanceof MensajeNotificacionDTO) {
+                    MensajeNotificacionDTO notif = (MensajeNotificacionDTO) objeto;
+                    System.out.println("Notificación: " + notif.getTextoMensaje());
                 }
             }
-        } catch (Exception e) {
-            System.out.println("Conexión perdida con el servidor.");
-            e.printStackTrace();
-        }
-    }
-
-    public void procesarNotificacion(MensajeNotificacionDTO msg) {
-        if (msg.getTextoMensaje().equals("Registro exitoso")) {
-            System.out.println("[Cliente] Registro exitoso");
-        } else {
-            System.err.println("[Cliente] Error de registro: " + msg.getTextoMensaje());
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Conexión con el servidor perdida.");
+            escuchando = false;
         }
     }
 }

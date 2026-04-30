@@ -1,11 +1,12 @@
 package broker;
 
 import Interfacez.IBroker;
+import Interfacez.IProxy;
+import Interfacez.IProxyFactory;
 import Interfacez.ISerializador;
 import Nodos.NodoCliente;
-import Server.ServerProxy;
 import dtos.MensajeDTO;
-import fabricas.ServerProxyFactory;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,23 +24,25 @@ public class Broker implements IBroker {
     private Map<String, List<Consumer<MensajeDTO>>> suscriptores = new ConcurrentHashMap<>();
     private Map<String , NodoCliente> NodoClientes = new ConcurrentHashMap<>();
     private ISerializador serializador;
+    private IProxyFactory proxyFactory;
 
-    public Broker(int puerto, ISerializador serializador) {
+    public Broker(int puerto, ISerializador serializador, IProxyFactory proxyFactory) {
         this.puerto = puerto;
         this.suscriptores = new ConcurrentHashMap<>();
         this.serializador = serializador;
+        this.proxyFactory = proxyFactory;
     }
 
     private void aceptarClientes(){
         while(true){
             try{
                 Socket clienteSocket = servidorSocket.accept();
-                String idTemporal = "conexion" + clienteSocket.getPort();
-                ServerProxy proxy = ServerProxyFactory.crearManjadorCliente(this, clienteSocket,serializador);
-                NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, idTemporal);
-                NodoClientes.put(idTemporal, nuevoNodo);
+                String nombreTemporal = "conexion" + clienteSocket.getPort();
+                IProxy proxy = proxyFactory.createProxy(this, clienteSocket, serializador);
+                NodoCliente nuevoNodo = new NodoCliente(clienteSocket, proxy, nombreTemporal);
+                NodoClientes.put(nombreTemporal, nuevoNodo);
                 new Thread(proxy).start();
-                System.out.println("nuevo nodo conectado" + idTemporal);
+                System.out.println("nuevo nodo conectado" + nombreTemporal);
             }catch (IOException e){
                 System.out.println("Error aceptando clientes: " + e.getMessage());
             }
@@ -62,7 +65,7 @@ public class Broker implements IBroker {
         NodoCliente nodo = NodoClientes.remove(idTemporal);
 
         if(nodo != null){
-            nodo.setIdJugador(nombreReal);
+            nodo.setNombre(nombreReal);
             NodoClientes.put(nombreReal, nodo);
             System.out.println("identidad confirmada" +  idTemporal + nombreReal);
         }
@@ -89,6 +92,15 @@ public class Broker implements IBroker {
             nodo.enviarMensaje(mensaje);
         }
     }
+    public List<String>obtenerNombresDeNodosConectados(){
+        List<String> nombres = new ArrayList<>();
+
+        for(NodoCliente nodo : NodoClientes.values()){
+            nombres.add(nodo.getNombre());
+        }
+        return nombres;
+    }
+
     @Override
     public void subscribirse(String tipoEvento, Consumer<MensajeDTO> manejador) {
         suscriptores.computeIfAbsent(tipoEvento, k -> new ArrayList<>()).add(manejador);

@@ -12,7 +12,7 @@ import java.io.Serializable;
     private int puntuaje;
 
 
-        public JugadorDTO() {
+    public JugadorDTO() {
     }
     public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
         this.id = id;

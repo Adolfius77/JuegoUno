@@ -9,11 +9,8 @@ import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -39,18 +36,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
-        this.addWindowListener(new java.awt.event.WindowAdapter() {;
-            @Override
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                ventanaActual();
-            }
-        });
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
-    }
-
-    private void ventanaActual() {
-        System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
 
     private void reproducirMusica(){
@@ -402,7 +389,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actualizar() {
+    public void actualizar(String evento) {
         revalidate();
         repaint();
     }

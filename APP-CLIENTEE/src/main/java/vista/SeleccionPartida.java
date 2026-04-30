@@ -6,10 +6,8 @@ package vista;
 
 import Interfaces.IVista;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -344,7 +342,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actualizar() {
+    public void actualizar(String evento) {
         revalidate();
         repaint();
     }

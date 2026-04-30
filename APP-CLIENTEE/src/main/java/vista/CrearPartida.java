@@ -5,11 +5,6 @@
 package vista;
 
 import Interfaces.IVista;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import vista.LobbyView;
-import vista.SeleccionPartida;
 
 /**
  *
@@ -460,7 +455,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actualizar() {
+    public void actualizar(String evento) {
         
     }
 

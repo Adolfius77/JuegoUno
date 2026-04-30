@@ -4,19 +4,15 @@
  */
 package vista;
 
-import Entidades.CartaAccion;
 import Entidades.Carta;
 import Entidades.CartaNumerica;
 import Entidades.Logica.Partida;
-import Entidades.cartaComodin;
 import Entidades.enums.Color;
-import Entidades.enums.TipoAccion;
 import Interfaces.IVista;
-import java.awt.FlowLayout;
-import java.util.Random;
-
-
 import vista.DiseñosExtras.PanelCarta;
+
+import java.awt.*;
+import java.util.Random;
 
 /**
  *
@@ -500,7 +496,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actualizar() {
+    public void actualizar(String evento) {
         
     }
 

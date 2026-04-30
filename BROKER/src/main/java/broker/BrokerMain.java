@@ -1,10 +1,11 @@
 package broker;
 
 import Interfacez.IBroker;
+import Interfacez.IProxyFactory;
 import Interfacez.ISerializador;
 import dtos.MensajeDTO;
+import fabricas.ServerProxyFactory;
 import serealizador.serializador;
-
 
 import java.util.function.Consumer;
 
@@ -14,8 +15,8 @@ public class BrokerMain {
 
 
         ISerializador miSerializador = new serializador();
-
-        IBroker broker = new Broker(9000, miSerializador);
+        IProxyFactory proxyFactory = new ServerProxyFactory();
+        IBroker broker = new Broker(9000, miSerializador,proxyFactory);
 
         Consumer<MensajeDTO> moduloJuego = mensaje -> {
             System.out.println("[MÓDULO JUEGO] Recibí el evento: " + mensaje.getTipo() + mensaje.getRemitente() + mensaje.getTimestamp());

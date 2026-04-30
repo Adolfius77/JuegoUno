@@ -4,8 +4,7 @@
  */
 package vista.DiseñosExtras;
 
-import javax.swing.JFrame;
-import vista.DiseñosExtras.PanelFondo;
+import javax.swing.*;
 
 /**
  *

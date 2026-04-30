@@ -33,12 +33,11 @@ public class Partida implements IObservable {
     private int turnoActual = 0;
     private List<IObserver> observadores;
 
-    public Partida(List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas) {
+    public Partida(List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas, IEstadoPartida estado) {
         this.jugadores = jugadores != null ? jugadores : new ArrayList<>();
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
-        
-        this.estado = EstadoFactory.crearEstadoEsperando();
+        this.estado = estado;
         this.id = java.util.UUID.randomUUID().toString(); 
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
@@ -194,7 +193,7 @@ public class Partida implements IObservable {
     @Override
     public void notificarObservador(String evento) {
         for (IObserver obs : observadores) {
-            obs.actualizar();
+            obs.actualizar(evento);
         }
     }
 

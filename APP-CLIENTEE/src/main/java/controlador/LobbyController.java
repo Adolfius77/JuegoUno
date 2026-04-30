@@ -1,33 +1,28 @@
 package controlador;
 
-import Entidades.Jugador;
-
 import Interfaces.IVista;
-import facades.GestorJuegoFacade;
-
-import java.util.List;
+import red.GestorPartida;
 
 public class LobbyController {
 
     private final IVista vista;
-    private final GestorJuegoFacade facade;
+    private final GestorPartida gestor;
 
-    public LobbyController(IVista vista, GestorJuegoFacade facade) {
-        if (vista == null || facade == null) {
+    public LobbyController(IVista vista, GestorPartida gestor) {
+        if (vista == null || gestor == null) {
             throw new IllegalArgumentException("vista y gestor son obligatorios");
         }
         this.vista = vista;
-        this.facade = facade;
-        this.facade.getPartidaActual().agregarObservador(this.vista);
+        this.gestor = gestor;
     }
 
-    public boolean agregarJugador(Jugador nombreJugador) {
+    public boolean agregarJugador(String nombreJugador) {
         try {
             if (nombreJugador == null) {
                 vista.mostrarMensaje("el nombre del jugador es obligatorio");
                 return false;
             }
-            facade.getPartidaActual().agregarJugador(nombreJugador);
+            gestor.procesarRegistro(nombreJugador);
             return true;
         } catch (IllegalArgumentException e) {
             vista.mostrarMensaje(e.getMessage());
@@ -35,23 +30,15 @@ public class LobbyController {
         }
     }
 
-    public boolean iniciarPartida() {
+    public void iniciarPartida() {
         try {
-            List<Jugador> jugadores = facade.getPartidaActual().getJugadores();
-            if(jugadores.size() < 2){
-                vista.mostrarMensaje("se requieren almenos 2 jugadores para iniciar la partida.");
-                return false;
-            }
-            facade.prepararIniciarPartida(jugadores);
-            vista.cerrarVista();
-            return true;
+            gestor.iniciarPartida();
         } catch (Exception e) {
             vista.mostrarMensaje("error al iniciar partida: " + e.getMessage());
-            return false;
         }
     }
 
-    public GestorJuegoFacade obtenerGestor() {
-        return facade;
+    public GestorPartida obtenerGestor() {
+        return gestor;
     }
 }

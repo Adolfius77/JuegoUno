@@ -9,6 +9,9 @@ public class MensajePasarTurnoDTO extends MensajeDTO implements Serializable {
     private String sentido;
     private String mensaje;
 
+    public MensajePasarTurnoDTO() {
+    }
+
     public MensajePasarTurnoDTO(String idJugadorActual, String sentido, String mensaje) {
         super("PASAR_TURNO");
         this.idJugadorActual = idJugadorActual;

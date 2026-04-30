@@ -1,9 +1,9 @@
 package controlador;
 
-import Entidades.Carta;
 import Entidades.Jugador;
 import Interfaces.IVista;
-import red.GestorPartida;
+import dtos.CartaDTO;
+import interfaces.IGestorPartida;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,11 +11,11 @@ import java.util.List;
 
 public class GameController {
 
-    private final GestorPartida gestor;
+    private final IGestorPartida gestor;
     private final IVista vista;
     private final List<String> nombreJugadores;
 
-    public GameController(GestorPartida gestor, IVista vista, List<String> nombreJugadores) {
+    public GameController(IGestorPartida gestor, IVista vista, List<String> nombreJugadores) {
         if (gestor == null || vista == null) {
             throw new IllegalArgumentException("Gestor y vista son obligatorios");
         }
@@ -42,20 +42,13 @@ public class GameController {
         iniciarJuego();
     }
 
-    public void jugarCarta(Jugador jugador, Carta carta) {
+    public void jugarCarta(CartaDTO carta) {
         try {
-            if (jugador == null || carta == null) {
-                vista.mostrarMensaje("Jugador y carta son obligatorios");
+            if(carta == null){
+                vista.mostrarMensaje("debes seleccionar una carta para jugar");
                 return;
             }
-
-            Jugador jugadorActual = gestor.obtenerJugadorActual();
-            if (!esMismoJugador(jugador, jugadorActual)) {
-                vista.mostrarMensaje("No es turno de este jugador");
-                return;
-            }
-
-            gestor.jugarCarta(jugadorActual, carta);
+            gestor.jugarCarta(carta);
         } catch (Exception e) {
             vista.mostrarMensaje("Error al jugar carta: " + e.getMessage());
         }
@@ -63,33 +56,15 @@ public class GameController {
 
     public void tomarCarta() {
         try {
-            Jugador jugadorActual = gestor.obtenerJugadorActual();
-            if (jugadorActual == null) {
-                vista.mostrarMensaje("No hay jugador activo");
-                return;
-            }
-            gestor.tomarCarta(jugadorActual);
+            gestor.tomarCarta();
         } catch (Exception e) {
             vista.mostrarMensaje("Error al tomar carta: " + e.getMessage());
         }
     }
 
-    public void decirUno(Jugador jugador) {
+    public void decirUno() {
         try {
-            if (jugador == null || jugador.getMano() == null) {
-                vista.mostrarMensaje("Jugador invalido");
-                return;
-            }
-
-            if (jugador.getMano().getCartas().size() == 1) {
-                gestor.decirUno(jugador);
-                vista.mostrarMensaje("El jugador " + jugador.getNombre() + " dijo UNO");
-                return;
-            }
-
-            vista.mostrarMensaje("No grito UNO, se le dan 2 cartas");
-            gestor.tomarCarta(jugador);
-            gestor.tomarCarta(jugador);
+            gestor.decirUno();
         } catch (Exception e) {
             vista.mostrarMensaje("Error al decir UNO: " + e.getMessage());
         }
@@ -111,7 +86,7 @@ public class GameController {
         return Collections.unmodifiableList(nombreJugadores);
     }
 
-    public GestorPartida obtenerGestor() {
+    public IGestorPartida obtenerGestor() {
         return gestor;
     }
 
@@ -126,4 +101,5 @@ public class GameController {
         String idB = jugadorB.getId();
         return idA != null && idA.equals(idB);
     }
+    
 }

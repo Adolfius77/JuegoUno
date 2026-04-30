@@ -2,19 +2,18 @@ package controlador.Factorys;
 
 import controlador.GameController;
 import controlador.LobbyController;
-import java.util.List;
-
-import facades.GestorJuegoFacade;
 import red.GestorPartida;
 import vista.GameView;
 import vista.LobbyView;
+
+import java.util.List;
 
 public final class MVCFactory {
 
     private MVCFactory() {}
 
     public static LobbyController construirLobby() {
-        GestorJuegoFacade gestor = new GestorJuegoFacade();
+        GestorPartida gestor = new GestorPartida();
         LobbyView vistaLobby = new LobbyView();
         return new LobbyController(vistaLobby, gestor);
     }

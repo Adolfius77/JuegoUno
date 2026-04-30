@@ -1,8 +1,8 @@
 package cliente;
 
 import Interfacez.IProxy;
-import dtos.MensajeDTO;
 import Interfacez.ISerializador;
+import dtos.MensajeDTO;
 
 import java.io.*;
 import java.net.Socket;
