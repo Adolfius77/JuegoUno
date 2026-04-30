@@ -21,6 +21,7 @@ public class ServidorHilo extends Thread {
     private ICartaFactory carta;
     private IMazoFactory mazo;
     private IEstadoPartida estado;
+    private String nombreJugador;
 
     public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
@@ -47,6 +48,11 @@ public class ServidorHilo extends Thread {
             }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Cliente desconectado.");
+            if (this.nombreJugador != null && !this.nombreJugador.isBlank()) {
+                lobby.getNombreJugadores().removeIf(j -> j.equalsIgnoreCase(this.nombreJugador));
+                lobby.notificarObservador("LISTA_ACTUALIZADA");
+                System.out.println("Jugador removido del lobby: " + this.nombreJugador);
+            }
             Servidor.hilosConectados.remove(this);
         }
     }
@@ -81,6 +87,7 @@ public class ServidorHilo extends Thread {
     private void validarNombre(MensajeRegistroDTO dto) throws IOException {
         try {
             lobby.agregarJugador(dto.getNombre());
+            this.nombreJugador = dto.getNombre();
             out.writeObject(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
             difundirLista();
         } catch (IllegalArgumentException e) {

@@ -8,7 +8,7 @@ import Interfaces.IVista;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
 import dtos.MensajeRegistroDTO;
-
+import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;
 import java.io.ObjectInputStream;
@@ -21,7 +21,6 @@ import java.net.URL;
  * @author emiim
  */
 public class MenuPrincipal extends javax.swing.JFrame implements IVista{
-
     private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
     private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "9090"));
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
@@ -36,14 +35,21 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                ventanaActual();
+            }
+        });
+        GestorAudio.getInstancia().reproducirMusica("/img/lobby.wav");
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
 
-    private void reproducirMusica(){
-        
+    private void ventanaActual() {
+        System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

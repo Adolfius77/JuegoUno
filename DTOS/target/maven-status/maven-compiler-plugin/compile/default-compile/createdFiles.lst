@@ -13,3 +13,4 @@ dtos\MensajePasarTurnoDTO.class
 dtos\MensajeResultadoDTO.class
 dtos\PartidaDTO.class
 dtos\MensajeNotificacionDTO.class
+dtos\MensajeDesconexionDTO.class
