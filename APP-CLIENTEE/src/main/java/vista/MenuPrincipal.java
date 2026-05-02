@@ -5,7 +5,9 @@
 package vista;
 
 import Interfaces.IVista;
-import red.ClienteRed;
+import dtos.MensajeListaJugadoresDTO;
+import dtos.MensajeNotificacionDTO;
+import dtos.MensajeRegistroDTO;
 import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +21,8 @@ import java.net.URL;
  * @author emiim
  */
 public class MenuPrincipal extends javax.swing.JFrame implements IVista{
+    private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
+    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "8080"));
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
 
     private int avatarSeleccionado = 0;
@@ -266,22 +270,53 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private void registrarUsuario() {
         final String nombreJugador = txtNombreUsuario.getText().trim();
         if (nombreJugador.isEmpty()) {
-            mostrarMensaje("Ingresa un nombre.");
+            mostrarMensaje("Ingresa un nombre de usuario.");
             return;
         }
+
         final String avatar = obtenerAvatarSeleccionado();
+        setFormularioHabilitado(false);
 
         new Thread(() -> {
-            try {
-                ClienteRed red = ClienteRed.getInstance();
-                red.setVistaMenu(this, nombreJugador, avatar);
+            try (Socket socket = new Socket(HOST_SERVIDOR, PUERTO_SERVIDOR);
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-                red.conectar();
+                out.flush();
+                out.writeObject(new MensajeRegistroDTO(nombreJugador, avatar));
+                out.flush();
 
-                red.enviarMensaje(new dtos.MensajeRegistroDTO(nombreJugador, avatar));
+                final boolean[] registroExitoso = {false};
+                final String[] mensajeRespuesta = {""};
 
+                Object respuesta = in.readObject();
+                if (respuesta instanceof MensajeNotificacionDTO) {
+                    MensajeNotificacionDTO notificacion = (MensajeNotificacionDTO) respuesta;
+                    registroExitoso[0] = !notificacion.isEsError();
+                    mensajeRespuesta[0] = notificacion.getTextoMensaje();
+                }
+
+                if (registroExitoso[0]) {
+                    Object posibleLista = in.readObject();
+                    if (posibleLista instanceof MensajeListaJugadoresDTO) {
+                        MensajeListaJugadoresDTO lista = (MensajeListaJugadoresDTO) posibleLista;
+                        System.out.println("[MenuPrincipal] Jugadores registrados: " + lista.getJugadores());
+                    }
+
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(this, mensajeRespuesta[0], "Registro", JOptionPane.INFORMATION_MESSAGE);
+                        SeleccionPartida seleccionPartida = new SeleccionPartida();
+                        seleccionPartida.setJugadorInfo(nombreJugador, avatar);
+                        seleccionPartida.mostrarVista();
+                        cerrarVista();
+                    });
+                } else {
+                    SwingUtilities.invokeLater(() -> mostrarMensaje(mensajeRespuesta[0].isBlank() ? "No se pudo registrar al usuario." : mensajeRespuesta[0]));
+                }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                SwingUtilities.invokeLater(() -> mostrarMensaje("No se pudo conectar al servidor: " + ex.getMessage()));
+            } finally {
+                SwingUtilities.invokeLater(() -> setFormularioHabilitado(true));
             }
         }).start();
     }
