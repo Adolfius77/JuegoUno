@@ -59,7 +59,6 @@ public class ServidorHilo extends Thread {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Cliente desconectado.");
             if (this.nombreJugador != null && !this.nombreJugador.isBlank()) {
                 lobby.getNombreJugadores().removeIf(j -> j.equalsIgnoreCase(this.nombreJugador));
                 lobby.notificarObservador("LISTA_ACTUALIZADA");
@@ -106,7 +105,7 @@ public class ServidorHilo extends Thread {
             enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
             difundirLista();
         } else {
-            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya está en uso."));
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya esta en uso."));
         }
     }
 

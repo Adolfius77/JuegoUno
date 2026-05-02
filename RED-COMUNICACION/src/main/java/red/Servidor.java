@@ -32,7 +32,7 @@ public class Servidor {
             while(escuchando) {
                 Socket socketCliente = serverSocket.accept();
                 try{
-                    System.out.println("[Servidor Red] Nueva conexión aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
+                    System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
 
                     ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
                     out.flush();
@@ -42,10 +42,10 @@ public class Servidor {
                     hilosConectados.add(nuevoHilo);
                     nuevoHilo.start();
                     
-                    System.out.println("[Socket] Flujos inicializados para nueva conexión. Esperando registro...");
+                    System.out.println("[Socket] Flujos inicializados para nueva conexion. Esperando registro...");
                 }
                 catch (IOException e){
-                    System.err.println("Error al manejar la conexión del cliente: " + e.getMessage());
+                    System.err.println("Error al manejar la conexion del cliente: " + e.getMessage());
                     socketCliente.close();
                 }
             }
