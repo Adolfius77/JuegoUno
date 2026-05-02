@@ -37,7 +37,6 @@ vista\DiseñosExtras\GameView.class
 controlador\PodioController.class
 vista\GameView$1.class
 vista\LobbyView.class
-red\ClienteRed.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class
 controlador\GameController.class

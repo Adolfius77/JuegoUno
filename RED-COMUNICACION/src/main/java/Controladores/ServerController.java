@@ -39,7 +39,7 @@ public class ServerController implements IObservable , IGestorPartida {
         verificarProxy();
 
         if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del jugador es invalido o esta vacio.");
+            throw new IllegalArgumentException("El nombre del jugador es inválido o está vacío.");
         }
 
         MensajeRegistroDTO mensaje = new MensajeRegistroDTO();

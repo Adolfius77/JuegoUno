@@ -7,20 +7,29 @@ import Observer.IObserver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Lobby implements IObservable {
 
-    private final List<String> nombreJugadores = new CopyOnWriteArrayList<>();
+    private final List<String> nombreJugadores = new ArrayList<>();
     private List<IObserver> observadores = new ArrayList<>();
 
-    public synchronized boolean agregarJugador(String nombre) {
-        for (String n : nombreJugadores) {
-            if (n.equalsIgnoreCase(nombre)) {
-                return false;
-            }
+    public void agregarJugador(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("nombre invalido");
         }
-        return nombreJugadores.add(nombre);
+        if (nombreJugadores.size() >= 4) {
+            throw new IllegalArgumentException("sala llena");
+        }
+
+        String nombreNormalizado = nombre.trim();
+        boolean nombreExistente = nombreJugadores.stream()
+                .anyMatch(j -> j.equalsIgnoreCase(nombreNormalizado));
+        if (nombreExistente) {
+            throw new IllegalArgumentException("el nombre ya esta en uso");
+        }
+
+        nombreJugadores.add(nombreNormalizado);
+        notificarObservador("LISTA_ACTUALIZADA");
     }
 
     public List<String> getNombreJugadores() {

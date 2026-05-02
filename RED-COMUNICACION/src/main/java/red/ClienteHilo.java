@@ -36,11 +36,11 @@ public class ClienteHilo extends Thread {
                 }
                 else if (objeto instanceof MensajeNotificacionDTO) {
                     MensajeNotificacionDTO notif = (MensajeNotificacionDTO) objeto;
-                    System.out.println("Notificacion: " + notif.getTextoMensaje());
+                    System.out.println("Notificación: " + notif.getTextoMensaje());
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Conexion con el servidor perdida.");
+            System.err.println("Conexión con el servidor perdida.");
             escuchando = false;
         }
     }
