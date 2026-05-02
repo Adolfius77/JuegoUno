@@ -30,6 +30,18 @@ public class ServidorHilo extends Thread {
         this.fachadaJuego = new GestorJuegoFacade(carta,mazo,estado);
     }
 
+    public synchronized void enviarDatos(Object mensaje){
+        try {
+            if (out != null) {
+            out.writeObject(mensaje);
+            out.reset();
+            out.flush();
+            }
+        } catch (IOException e) {
+            System.out.println("Error enviando datos a " + (nombreJugador != null ? nombreJugador : "cliente") + ": " + e.getMessage());
+        }
+    }
+
     @Override
     public void run() {
         try {
@@ -47,7 +59,6 @@ public class ServidorHilo extends Thread {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Cliente desconectado.");
             if (this.nombreJugador != null && !this.nombreJugador.isBlank()) {
                 lobby.getNombreJugadores().removeIf(j -> j.equalsIgnoreCase(this.nombreJugador));
                 lobby.notificarObservador("LISTA_ACTUALIZADA");
@@ -67,8 +78,7 @@ public class ServidorHilo extends Thread {
             respuesta.setPartida(partidaDTO);
 
             for (ServidorHilo cliente: Servidor.hilosConectados){
-                cliente.out.writeObject(respuesta);
-                cliente.out.flush();
+                cliente.enviarDatos(respuesta);
             }
             System.out.println("[servidor] Partida iniciada");
         }catch (Exception e){
@@ -84,16 +94,19 @@ public class ServidorHilo extends Thread {
     }
 
 
-    private void validarNombre(MensajeRegistroDTO dto) throws IOException {
-        try {
-            lobby.agregarJugador(dto.getNombre());
+    private void validarNombre(MensajeRegistroDTO dto) {
+        boolean exito = lobby.agregarJugador(dto.getNombre());
+
+        if (exito) {
             this.nombreJugador = dto.getNombre();
-            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
+            
+            System.out.println("[REGISTRO] El usuario '" + this.nombreJugador + "' se ha unido al lobby.");
+            System.out.println("Jugadores actuales en el lobby: " + lobby.getNombreJugadores());
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
             difundirLista();
-        } catch (IllegalArgumentException e) {
-            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", true, "error: " + e.getMessage()));
+        } else {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya esta en uso."));
         }
-        out.flush();
     }
 
     private void difundirLista() {
