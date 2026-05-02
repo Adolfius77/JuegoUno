@@ -31,13 +31,21 @@ public class Servidor {
 
             while(escuchando) {
                 Socket socketCliente = serverSocket.accept();
-                System.out.println("[Servidor Red] Nueva conexión aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
-                ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
-                out.flush();
-                ObjectInputStream in = new ObjectInputStream(socketCliente.getInputStream());
-                ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
-                hilosConectados.add(nuevoHilo);
-                nuevoHilo.start();
+                try{
+                    System.out.println("[Servidor Red] Nueva conexión aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
+
+                    ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
+                    out.flush();
+                    ObjectInputStream in = new ObjectInputStream(socketCliente.getInputStream());
+
+                    ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
+                    hilosConectados.add(nuevoHilo);
+                    nuevoHilo.start();
+                }
+                catch (IOException e){
+                    System.err.println("Error al manejar la conexión del cliente: " + e.getMessage());
+                    socketCliente.close();
+                }
             }
         }catch (IOException e){
             System.err.println("error en el servidor en el puerto: " + puerto);
