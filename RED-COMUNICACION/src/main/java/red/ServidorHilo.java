@@ -100,6 +100,9 @@ public class ServidorHilo extends Thread {
 
         if (exito) {
             this.nombreJugador = dto.getNombre();
+            
+            System.out.println("[REGISTRO] El usuario '" + this.nombreJugador + "' se ha unido al lobby.");
+            System.out.println("Jugadores actuales en el lobby: " + lobby.getNombreJugadores());
             enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
             difundirLista();
         } else {

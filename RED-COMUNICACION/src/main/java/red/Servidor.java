@@ -41,6 +41,8 @@ public class Servidor {
                     ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
                     hilosConectados.add(nuevoHilo);
                     nuevoHilo.start();
+                    
+                    System.out.println("[Socket] Flujos inicializados para nueva conexión. Esperando registro...");
                 }
                 catch (IOException e){
                     System.err.println("Error al manejar la conexión del cliente: " + e.getMessage());
