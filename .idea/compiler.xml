@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="" />
         <module name="BROKER" />
-        <module name="INTERFACEZ" />
         <module name="DTOS" />
         <module name="RED-COMUNICACION" />
         <module name="MAPPERS" />
@@ -20,5 +20,8 @@
         <module name="APP-CLIENTEE" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

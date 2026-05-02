@@ -1,5 +1,6 @@
 package red;
 
+import Controladores.ServerController;
 import factorys.ConexionFactoryImpl;
 import interfaces.IConexionFactory;
 import interfaces.IGestorPartida;
@@ -11,7 +12,7 @@ public class clienteMain {
         
       
         try {
-            IGestorPartida gestor = new GestorPartida();
+            IGestorPartida gestor = new ServerController();
             IConexionFactory conexion = new ConexionFactoryImpl();
             Cliente cliente = new Cliente(gestor, conexion);
             

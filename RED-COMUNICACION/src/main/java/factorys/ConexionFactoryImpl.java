@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import red.GestorPartida;
+import Controladores.ServerController;
 
 /**
  *
@@ -35,7 +35,7 @@ public class ConexionFactoryImpl implements IConexionFactory{
 
     @Override
     public Thread crearHiloCliente(ObjectInputStream in, IGestorPartida gestor){
-            return ClienteHiloFactory.crearHilo(in, (GestorPartida) gestor);
+            return ClienteHiloFactory.crearHilo(in, (ServerController) gestor);
     }
     
 }

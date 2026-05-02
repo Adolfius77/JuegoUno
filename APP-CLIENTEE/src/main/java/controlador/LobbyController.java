@@ -2,15 +2,15 @@ package controlador;
 
 import Interfaces.IVista;
 import java.util.ArrayList;
-import red.GestorPartida;
+import Controladores.ServerController;
 import vista.GameView;
 
 public class LobbyController {
 
     private final IVista vista;
-    private final GestorPartida gestor;
+    private final ServerController gestor;
 
-    public LobbyController(IVista vista, GestorPartida gestor) {
+    public LobbyController(IVista vista, ServerController gestor) {
         if (vista == null || gestor == null) {
             throw new IllegalArgumentException("vista y gestor son obligatorios");
         }
@@ -40,7 +40,7 @@ public class LobbyController {
         }
     }
 
-    public GestorPartida obtenerGestor() {
+    public ServerController obtenerGestor() {
         return gestor;
     }
     public void procesarEventoRed(String evento){

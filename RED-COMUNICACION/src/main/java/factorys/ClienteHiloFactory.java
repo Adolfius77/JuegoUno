@@ -1,13 +1,12 @@
 package factorys;
 
 import red.ClienteHilo;
-import red.GestorPartida;
+import Controladores.ServerController;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class ClienteHiloFactory {
-    public static ClienteHilo crearHilo(ObjectInputStream in, GestorPartida gestor) {
+    public static ClienteHilo crearHilo(ObjectInputStream in, ServerController gestor) {
         return new ClienteHilo(in,gestor);
     }
 }

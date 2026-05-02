@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>INTERFACEZ</artifactId>
+            <artifactId></artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

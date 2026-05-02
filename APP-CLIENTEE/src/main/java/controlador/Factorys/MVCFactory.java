@@ -3,7 +3,7 @@ package controlador.Factorys;
 import Interfaces.IVista;
 import controlador.GameController;
 import controlador.LobbyController;
-import red.GestorPartida;
+import Controladores.ServerController;
 import vista.GameView;
 import vista.LobbyView;
 
@@ -14,12 +14,12 @@ public final class MVCFactory {
     private MVCFactory() {}
 
     public static LobbyController construirLobby() {
-        GestorPartida gestor = new GestorPartida();
+        ServerController gestor = new ServerController();
         LobbyView vistaLobby = new LobbyView();
         return new LobbyController(vistaLobby, gestor);
     }
 
-    public static GameController construirJuego(GestorPartida gestor, List<String> nombreJugadores) {
+    public static GameController construirJuego(ServerController gestor, List<String> nombreJugadores) {
         if (gestor == null) {
             throw new IllegalArgumentException("GestorPartida es obligatorio");
         }

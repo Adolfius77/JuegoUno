@@ -1,5 +1,6 @@
 package red;
 
+import Controladores.ServerController;
 import dtos.MensajeEstadoPartidaDTO;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
@@ -9,10 +10,10 @@ import java.io.ObjectInputStream;
 
 public class ClienteHilo extends Thread {
     private ObjectInputStream in;
-    private GestorPartida gestor;
+    private ServerController gestor;
     private boolean escuchando = true;
 
-    public ClienteHilo(ObjectInputStream in, GestorPartida gestor) {
+    public ClienteHilo(ObjectInputStream in, ServerController gestor) {
         this.in = in;
         this.gestor = gestor;
     }

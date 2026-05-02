@@ -6,7 +6,7 @@ package vista;
 
 
 import Interfaces.IVista;
-import red.GestorPartida;
+import Controladores.ServerController;
 
 /**
  *
@@ -15,14 +15,14 @@ import red.GestorPartida;
 //cc
 public class LobbyView extends javax.swing.JFrame implements IVista{
 
-    private GestorPartida gestor;
+    private ServerController gestor;
     
     public LobbyView() {
         initComponents();
         setLocationRelativeTo(null);
     }
    
-    public void setModeloGestor(GestorPartida gestor){
+    public void setModeloGestor(ServerController gestor){
         this.gestor = gestor;
         this.gestor.agregarObservador(this);
         

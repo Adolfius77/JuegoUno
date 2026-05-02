@@ -1,4 +1,4 @@
-package red;
+package Controladores;
 
 import Interfacez.IProxy;
 import Observer.IObservable;
@@ -9,14 +9,14 @@ import interfaces.IGestorPartida;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestorPartida implements IObservable , IGestorPartida {
+public class ServerController implements IObservable , IGestorPartida {
 
     private PartidaDTO partidaActualDTO;
     private List<String> jugadoresEnLobby;
     private IProxy miProxyRed;
     private List<IObserver> observadores;
 
-    public GestorPartida() {
+    public ServerController() {
         this.jugadoresEnLobby = new ArrayList<>();
         this.partidaActualDTO = null;
         this.observadores = new ArrayList<>();
