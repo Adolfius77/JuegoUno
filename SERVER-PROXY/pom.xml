@@ -17,12 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId></artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.itson</groupId>
             <artifactId>DTOS</artifactId>
