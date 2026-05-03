@@ -8,7 +8,6 @@
     <modules>
         <module>RED-COMUNICACION</module>
         <module>DTOS</module>
-        <module>INTERFACES</module>
         <module>BROKER</module>
         <module>CLIENTE-PROXY</module>
         <module>SERVER-PROXY</module>
@@ -17,6 +16,7 @@
         <module>SEREALIZADOR</module>
         <module>MAPPERS</module>
         <module>Launcher</module>
+        <module>INTERFACES</module>
     </modules>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

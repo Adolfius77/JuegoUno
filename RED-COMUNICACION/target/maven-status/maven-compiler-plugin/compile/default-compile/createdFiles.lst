@@ -1,6 +1,7 @@
 interfaces\IReceptorMensajes.class
 factorys\StreamFactory.class
 factorys\ConexionFactoryImpl.class
+Controladores\ServerController.class
 factorys\SocketFactory.class
 interfaces\IGestorPartida.class
 red\Cliente.class
@@ -8,7 +9,6 @@ red\Servidor.class
 interfaces\IConexionFactory.class
 red\clienteMain.class
 red\servidorMain.class
-red\GestorPartida.class
 red\ClienteHilo.class
 red\ServidorHilo.class
 factorys\ClienteHiloFactory.class
