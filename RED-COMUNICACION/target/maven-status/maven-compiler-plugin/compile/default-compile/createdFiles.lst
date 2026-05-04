@@ -1,6 +1,7 @@
 interfaces\IReceptorMensajes.class
 factorys\StreamFactory.class
 factorys\ConexionFactoryImpl.class
+red\LectorConfiguracion.class
 Controladores\ServerController.class
 factorys\SocketFactory.class
 interfaces\IGestorPartida.class

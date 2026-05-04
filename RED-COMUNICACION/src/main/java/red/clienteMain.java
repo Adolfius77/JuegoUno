@@ -12,12 +12,16 @@ public class clienteMain {
         
       
         try {
+            LectorConfiguracion config = new LectorConfiguracion();
             IGestorPartida gestor = new ServerController();
             IConexionFactory conexion = new ConexionFactoryImpl();
             Cliente cliente = new Cliente(gestor, conexion);
             
+            String ip = config.getIpServidor();
+            int puerto = config.getPuertoServidor();
+            
             System.out.println("conectando...");
-            cliente.conectar("127.0.0.1", 8080);
+            cliente.conectar(ip, puerto);
             cliente.iniciar();
             System.out.println("conectado");
         }catch (IOException e){

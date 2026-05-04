@@ -19,7 +19,7 @@ public class BrokerMain {
         IBroker broker = new Broker(9090, miSerializador,proxyFactory);
 
         Consumer<MensajeDTO> moduloJuego = mensaje -> {
-            System.out.println("[MÓDULO JUEGO] Recibi el evento: " + mensaje.getTipo() + mensaje.getRemitente() + mensaje.getTimestamp());
+            System.out.println("[MODULO JUEGO] Recibi el evento: " + mensaje.getTipo() + mensaje.getRemitente() + mensaje.getTimestamp());
         };
 
         Consumer<MensajeDTO> moduloNotificaciones = mensaje -> {

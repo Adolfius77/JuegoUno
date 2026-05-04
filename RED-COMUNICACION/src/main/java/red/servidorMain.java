@@ -13,7 +13,13 @@ public class servidorMain {
                 System.out.println("el servidor responde: " + paquete.getClass().getSimpleName());
             }
         };
-        Servidor servidor = new Servidor(9090, receptor);
+        LectorConfiguracion config = new LectorConfiguracion();
+        String ip = config.getIpServidor();
+        int puerto = config.getPuertoServidor();
+        
+        Servidor servidor = new Servidor(puerto, receptor);
         servidor.iniciar();
+        
+        
     }
 }

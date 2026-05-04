@@ -20,11 +20,16 @@ public class ClienteRed extends Thread {
     private String nombreAvatar;
     private MenuPrincipal vista;
 
-    private ClienteRed() {}
-
+    private ClienteRed() {
+    }
+    
+    LectorConfiguracion config = new LectorConfiguracion();
+    String ip = config.getIpServidor();
+    int puerto = config.getPuertoServidor();
+    
     public void conectar() throws Exception {
         if (socket == null || socket.isClosed()) {
-            socket = new Socket("127.0.0.1", 9090);
+            socket = new Socket(ip, puerto);
             out = new ObjectOutputStream(socket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(socket.getInputStream());

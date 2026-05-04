@@ -33,7 +33,7 @@ public class GameView extends javax.swing.JFrame implements IVista{
     public void mostrarCartas(List<CartaDTO> manoDelServidor) {
         panelJugadorPrincipal.removeAll();
         int cantidadCartas = manoDelServidor.size();
-        if(cantidadCartas ==0)return;
+        if(cantidadCartas == 0)return;
         
         int anchoCarta = 75;
         int separacion = 40;
