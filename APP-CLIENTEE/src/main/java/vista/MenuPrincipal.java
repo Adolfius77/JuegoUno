@@ -18,7 +18,8 @@ import java.net.URL;
  *
  * @author emiim
  */
-public class MenuPrincipal extends javax.swing.JFrame implements IVista{
+public class MenuPrincipal extends javax.swing.JFrame implements IVista {
+
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
 
     private int avatarSeleccionado = 0;
@@ -31,7 +32,10 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
-        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+        ClienteRed.getInstance().setVistaActual(this);
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            ;
             @Override
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 ventanaActual();
@@ -256,7 +260,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         return AVATARES[avatarSeleccionado];
     }
 
-    private void setFormularioHabilitado(boolean habilitado) {
+    public void setFormularioHabilitado(boolean habilitado) {
         txtNombreUsuario.setEnabled(habilitado);
         btnEntrar.setEnabled(habilitado);
         btnAvanzar.setEnabled(habilitado);
@@ -269,18 +273,22 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
             mostrarMensaje("Ingresa un nombre.");
             return;
         }
+
+        setFormularioHabilitado(false);
+
         final String avatar = obtenerAvatarSeleccionado();
 
         new Thread(() -> {
             try {
                 ClienteRed red = ClienteRed.getInstance();
                 red.setVistaMenu(this, nombreJugador, avatar);
-
                 red.conectar();
-
                 red.enviarMensaje(new dtos.MensajeRegistroDTO(nombreJugador, avatar));
-
             } catch (Exception ex) {
+                java.awt.EventQueue.invokeLater(() -> {
+                    setFormularioHabilitado(true);
+                    mostrarMensaje("No se pudo conectar con el servidor.");
+                });
                 ex.printStackTrace();
             }
         }).start();
@@ -361,8 +369,21 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
 
     @Override
     public void actualizar(String evento) {
-        revalidate();
-        repaint();
+        System.out.println("[MenuPrincipal] Evento recibido: '" + evento + "'");
+
+        switch (evento.trim().toUpperCase()) {
+            case "REGISTRO_EXITOSO":
+                SeleccionPartida pantallaSeleccion = new SeleccionPartida();
+                ClienteRed.getInstance().setVistaActual(pantallaSeleccion);
+                pantallaSeleccion.setVisible(true);
+                this.dispose();
+                break;
+
+            default:
+                setFormularioHabilitado(true);
+                System.out.println("[MenuPrincipal] Evento no manejado: " + evento);
+                break;
+        }
     }
 
     @Override

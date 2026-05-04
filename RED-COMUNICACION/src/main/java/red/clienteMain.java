@@ -16,7 +16,7 @@ public class clienteMain {
             Cliente cliente = new Cliente(gestor, conexion);
             
             System.out.println("conectando...");
-            cliente.conectar("127.0.0.1", 8080);
+            cliente.conectar("127.0.0.1", 9090);
             cliente.iniciar();
             System.out.println("conectado");
         }catch (IOException e){

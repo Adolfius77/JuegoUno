@@ -22,7 +22,7 @@ public class Broker implements IBroker {
     private int puerto;
     private Thread hiloAceptarClientes;
     private Map<String, List<Consumer<MensajeDTO>>> suscriptores = new ConcurrentHashMap<>();
-    private Map<String , NodoCliente> NodoClientes = new ConcurrentHashMap<>();
+    private Map<String, NodoCliente> NodoClientes = new ConcurrentHashMap<>();
     private ISerializador serializador;
     private IProxyFactory proxyFactory;
 
@@ -33,9 +33,9 @@ public class Broker implements IBroker {
         this.proxyFactory = proxyFactory;
     }
 
-    private void aceptarClientes(){
-        while(true){
-            try{
+    private void aceptarClientes() {
+        while (true) {
+            try {
                 Socket clienteSocket = servidorSocket.accept();
                 String nombreTemporal = "conexion" + clienteSocket.getPort();
                 IProxy proxy = proxyFactory.createProxy(this, clienteSocket, serializador);
@@ -43,36 +43,38 @@ public class Broker implements IBroker {
                 NodoClientes.put(nombreTemporal, nuevoNodo);
                 new Thread(proxy).start();
                 System.out.println("nuevo nodo conectado" + nombreTemporal);
-            }catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("Error aceptando clientes: " + e.getMessage());
             }
         }
     }
 
-    public void iniciarServidor(){
-        try{
+    public void iniciarServidor() {
+        try {
             servidorSocket = new ServerSocket(puerto);
             hiloAceptarClientes = new Thread(this::aceptarClientes);
             hiloAceptarClientes.setName("aceptarClientes");
-            hiloAceptarClientes.setDaemon(true);
             hiloAceptarClientes.start();
             System.out.println("Servidor iniciado en puerto " + puerto);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println("Error al iniciar el servidor: " + e.getMessage());
         }
     }
-    public void actualizarIdentidadNodo(String idTemporal, String nombreReal){
+
+    public void actualizarIdentidadNodo(String idTemporal, String nombreReal) {
         NodoCliente nodo = NodoClientes.remove(idTemporal);
 
-        if(nodo != null){
+        if (nodo != null) {
             nodo.setNombre(nombreReal);
             NodoClientes.put(nombreReal, nodo);
-            System.out.println("identidad confirmada" +  idTemporal + nombreReal);
+            System.out.println("identidad confirmada" + idTemporal + nombreReal);
         }
     }
 
     public void eliminarNodo(String idNodo) {
-        if (idNodo == null) return;
+        if (idNodo == null) {
+            return;
+        }
         NodoCliente nodo = NodoClientes.remove(idNodo);
         if (nodo != null) {
             try {
@@ -86,16 +88,17 @@ public class Broker implements IBroker {
         }
     }
 
-    public void enviarNodo(String idTemporal, MensajeDTO mensaje){
+    public void enviarNodo(String idTemporal, MensajeDTO mensaje) {
         NodoCliente nodo = NodoClientes.get(idTemporal);
-        if(nodo != null){
+        if (nodo != null) {
             nodo.enviarMensaje(mensaje);
         }
     }
-    public List<String>obtenerNombresDeNodosConectados(){
+
+    public List<String> obtenerNombresDeNodosConectados() {
         List<String> nombres = new ArrayList<>();
 
-        for(NodoCliente nodo : NodoClientes.values()){
+        for (NodoCliente nodo : NodoClientes.values()) {
             nombres.add(nodo.getNombre());
         }
         return nombres;

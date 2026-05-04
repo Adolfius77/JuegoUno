@@ -29,6 +29,7 @@ controlador\Factorys\MVCFactory.class
 vista\SeleccionPartida.class
 controlador\ManoController.class
 vista\SeleccionPartida$1.class
+vista\unirsePartidaView$3.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
 controlador\ConfiguracionController.class

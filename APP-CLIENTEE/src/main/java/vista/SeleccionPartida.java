@@ -14,7 +14,8 @@ import java.awt.*;
  *
  * @author emiim
  */
-public class SeleccionPartida extends javax.swing.JFrame implements IVista{
+public class SeleccionPartida extends javax.swing.JFrame implements IVista {
+
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();
@@ -28,7 +29,8 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         this.avatarUsuario = avatarUsuario;
         initComponents();
         this.setLocationRelativeTo(null);
-        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            ;
             @Override
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 ventanaActual();
@@ -38,7 +40,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         mostrarDatosJugador();
     }
 
-    private void ventanaActual(){
+    private void ventanaActual() {
         System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
 
@@ -282,18 +284,21 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista{
         JugadorDTO jugadorHost = new JugadorDTO();
         jugadorHost.setAvatar(avatarUsuario);
         jugadorHost.setNombre(nombreUsuario);
-        abrirVentana(new CrearPartida(jugadorHost));
+
+        CrearPartida proximaVista = new CrearPartida(jugadorHost);
+        red.ClienteRed.getInstance().setVistaActual(proximaVista);
+        abrirVentana(proximaVista);
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
-        abrirVentana(new unirsePartidaView());
-    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
+        unirsePartidaView proximaVista = new unirsePartidaView();
+        red.ClienteRed.getInstance().setVistaActual(proximaVista);
+        abrirVentana(proximaVista);    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 
-    
     /**
      * @param args the command line arguments
      */

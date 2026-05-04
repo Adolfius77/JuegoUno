@@ -4,11 +4,13 @@
  */
 package vista;
 
+import Interfaces.IVista;
+
 /**
  *
  * @author USER
  */
-public class unirsePartidaView extends javax.swing.JFrame {
+public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     /**
      * Creates new form unirsePartidaView
@@ -155,6 +157,11 @@ public class unirsePartidaView extends javax.swing.JFrame {
         btnCancelar.setColorClick(new java.awt.Color(204, 0, 0));
         btnCancelar.setColorOver(new java.awt.Color(204, 0, 0));
         btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnUnirse.setForeground(new java.awt.Color(255, 255, 255));
         btnUnirse.setText("Unirse");
@@ -256,8 +263,23 @@ public class unirsePartidaView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
-        // TODO add your handling code here:
+        String codigo = txtCodigoSala.getText().trim();
+        if (!codigo.isEmpty()) {
+            try {
+                red.ClienteRed.getInstance().enviarMensaje("UNIRSE_PARTIDA:" + codigo);
+            } catch (Exception ex) {
+                mostrarMensaje("Error al intentar conectar con la sala.");
+            }
+        } else {
+            mostrarMensaje("Por favor, selecciona una partida o ingresa un código.");
+        }
     }//GEN-LAST:event_btnUnirseActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+
+        SeleccionPartida menu = new SeleccionPartida();
+        menu.mostrarVista();
+        this.cerrarVista();    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -316,4 +338,62 @@ public class unirsePartidaView extends javax.swing.JFrame {
     private javax.swing.JPanel panelDianamicoPartidas;
     private vista.DiseñosExtras.TextFieldRedondo txtCodigoSala;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mostrarVista() {
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
+
+        try {
+            red.ClienteRed.getInstance().enviarMensaje("SOLICITAR_LISTA_PARTIDAS");
+        } catch (Exception ex) {
+            System.getLogger(unirsePartidaView.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }
+
+    @Override
+    public void cerrarVista() {
+        this.dispose();
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje) {
+        javax.swing.JOptionPane.showMessageDialog(this, mensaje);
+    }
+
+    @Override
+    public void actualizar(String evento) {
+        if (evento.equals("PARTIDA_UNIDA")) {
+            
+            
+        }
+        if (evento.startsWith("LISTA_PARTIDAS:")) {
+            actualizarListaVisual(evento.replace("LISTA_PARTIDAS:", ""));
+        }
+
+        this.revalidate();
+        this.repaint();
+    }
+
+    private void actualizarListaVisual(String datos) {
+        panelDianamicoPartidas.removeAll();
+        panelDianamicoPartidas.setLayout(new javax.swing.BoxLayout(panelDianamicoPartidas, javax.swing.BoxLayout.Y_AXIS));
+
+        String[] partidas = datos.split(",");
+
+        for (String idPartida : partidas) {
+            javax.swing.JButton btnPartida = new javax.swing.JButton("Unirse a: " + idPartida);
+            btnPartida.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+
+            btnPartida.addActionListener(e -> {
+                txtCodigoSala.setText(idPartida);
+            });
+
+            panelDianamicoPartidas.add(btnPartida);
+            panelDianamicoPartidas.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
+        }
+
+        panelDianamicoPartidas.revalidate();
+        panelDianamicoPartidas.repaint();
+    }
 }

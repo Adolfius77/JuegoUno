@@ -1,51 +1,39 @@
 package Launcher;
 
-import dtos.paqueteRedDTO;
-import interfaces.IReceptorMensajes;
-import red.Servidor;
-import red.ServidorHilo;
 import vista.MenuPrincipal;
+import java.awt.EventQueue;
 
-import java.awt.*;
-
+/**
+ * Clase principal encargada de iniciar la interfaz del cliente.
+ * Se ha removido la inicialización del servidor para evitar conflictos 
+ * de puertos (BindException) con el ServidorMain y el Broker.
+ * 
+ * @author emiim
+ */
 public class launcher {
+
     public static void main(String[] args) {
-        IReceptorMensajes receptor = new IReceptorMensajes() {
+        // Registro de actividad en consola para depuración
+        System.out.println("[Cliente] Iniciando cargador de interfaces...");
+        System.out.println("[Cliente] Construyendo interfaces y controladores...");
 
-
-            @Override
-            public void procesarMensaje(paqueteRedDTO paquete, ServidorHilo hiloRemintente) {
-                System.out.println("el servidor responde: " + paquete.getClass().getSimpleName());
-            }
-        };
-        Thread hiloServidor = new Thread(() -> {
-            try {
-                Servidor servidor = new Servidor(8080, receptor);
-                servidor.iniciar();
-            } catch (Exception e) {
-                System.out.println("error al iniciar el servidor: " + e.getMessage());
-            }
-        });
-        hiloServidor.start();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("[cliente] construyendo interfaces y controladores");
+        // Iniciamos la GUI en el Event Dispatch Thread (EDT) de Swing
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
+                    // Instanciamos el menú principal
                     MenuPrincipal menu = new MenuPrincipal();
+                    
+                    // Centramos y mostramos la ventana
                     menu.setVisible(true);
-
+                    
+                    System.out.println("[Cliente] MenuPrincipal desplegado con éxito.");
                 } catch (Exception e) {
-                    System.out.println("error al iniciar la interfaz grafica: " + e.getMessage());
+                    System.err.println("Error crítico al iniciar la interfaz gráfica: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });
     }
 }
-
-

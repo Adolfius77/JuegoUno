@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ServidorHilo extends Thread {
+
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private Lobby lobby;
@@ -27,15 +28,15 @@ public class ServidorHilo extends Thread {
         this.in = in;
         this.out = out;
         this.lobby = lobby;
-        this.fachadaJuego = new GestorJuegoFacade(carta,mazo,estado);
+        this.fachadaJuego = new GestorJuegoFacade(carta, mazo, estado);
     }
 
-    public synchronized void enviarDatos(Object mensaje){
+    public synchronized void enviarDatos(Object mensaje) {
         try {
             if (out != null) {
-            out.writeObject(mensaje);
-            out.reset();
-            out.flush();
+                out.writeObject(mensaje);
+                out.reset();
+                out.flush();
             }
         } catch (IOException e) {
             System.out.println("Error enviando datos a " + (nombreJugador != null ? nombreJugador : "cliente") + ": " + e.getMessage());
@@ -51,10 +52,13 @@ public class ServidorHilo extends Thread {
                 if (objeto instanceof MensajeRegistroDTO) {
                     MensajeRegistroDTO dto = (MensajeRegistroDTO) objeto;
                     validarNombre(dto);
-                }else if(objeto instanceof MensajeDTO){
+                } else if (objeto instanceof MensajeDTO) {
                     MensajeDTO mensaje = (MensajeDTO) objeto;
-                    if("INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())){
-                            procesarInicioPartida();
+
+                    if ("SOLICITUD_UNIRSE_LOBBY".equals(mensaje.getTipo())) {
+                        unirJugadorAlLobby();
+                    } else if ("INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())) {
+                        procesarInicioPartida();
                     }
                 }
             }
@@ -67,6 +71,17 @@ public class ServidorHilo extends Thread {
             Servidor.hilosConectados.remove(this);
         }
     }
+
+    private void unirJugadorAlLobby() {
+        if (this.nombreJugador != null) {
+            boolean exito = lobby.agregarJugador(this.nombreJugador);
+            if (exito) {
+                System.out.println("[LOBBY] " + this.nombreJugador + " ha entrado a la sala de espera.");
+                difundirLista();
+            }
+        }
+    }
+
     private void procesarInicioPartida() {
         try {
             fachadaJuego.prepararIniciarPartida(lobby.getNombreJugadores());
@@ -77,48 +92,40 @@ public class ServidorHilo extends Thread {
             respuesta.setTipo("ACTUALIZACION_PARTIDA");
             respuesta.setPartida(partidaDTO);
 
-            for (ServidorHilo cliente: Servidor.hilosConectados){
+            for (ServidorHilo cliente : Servidor.hilosConectados) {
                 cliente.enviarDatos(respuesta);
             }
             System.out.println("[servidor] Partida iniciada");
-        }catch (Exception e){
+        } catch (Exception e) {
             enviarError(e.getMessage());
         }
     }
+
     private void enviarError(String msj) {
         try {
             out.writeObject(new MensajeNotificacionDTO("SERVIDOR", true, msj));
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace(); }
+            e.printStackTrace();
+        }
     }
 
-
     private void validarNombre(MensajeRegistroDTO dto) {
-        boolean exito = lobby.agregarJugador(dto.getNombre());
+        boolean yaExiste = Servidor.hilosConectados.stream()
+                .anyMatch(h -> dto.getNombre().equalsIgnoreCase(h.nombreJugador));
 
-        if (exito) {
+        if (!yaExiste) {
             this.nombreJugador = dto.getNombre();
-            
-            System.out.println("[REGISTRO] El usuario '" + this.nombreJugador + "' se ha unido al lobby.");
-            System.out.println("Jugadores actuales en el lobby: " + lobby.getNombreJugadores());
-            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
-            difundirLista();
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "REGISTRO_EXITOSO"));
         } else {
-            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya esta en uso."));
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya está en uso."));
         }
     }
 
     private void difundirLista() {
         MensajeListaJugadoresDTO msgLista = new MensajeListaJugadoresDTO(lobby.getNombreJugadores());
-
-        for (ServidorHilo cliente : Servidor.hilosConectados){
-            try{
-                cliente.out.writeObject(msgLista);
-                cliente.out.flush();
-            } catch (IOException e) {
-                System.out.println("Error al escribir lista de jugadores.");
-            }
+        for (ServidorHilo cliente : Servidor.hilosConectados) {
+            cliente.enviarDatos(msgLista);
         }
     }
 }
