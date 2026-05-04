@@ -1,6 +1,7 @@
 package red;
 
 import Controladores.ServerController;
+import Lector.LectorConfiguracion;
 import factorys.ConexionFactoryImpl;
 import interfaces.IConexionFactory;
 import interfaces.IGestorPartida;

@@ -1,11 +1,11 @@
 package red;
 
+import Lector.LectorConfiguracion;
 import dtos.MensajeNotificacionDTO;
 import vista.MenuPrincipal;
 import vista.SeleccionPartida;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;

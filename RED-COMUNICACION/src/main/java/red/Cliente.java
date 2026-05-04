@@ -22,7 +22,7 @@ public class Cliente {
 
 
 
-//metodo para estableces la conexion :p
+   //metodo para estableces la conexion :p
 
 
     public Cliente(IGestorPartida gestor, IConexionFactory conexion) {

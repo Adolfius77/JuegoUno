@@ -1,6 +1,7 @@
 package red;
 
 
+import Lector.LectorConfiguracion;
 import dtos.paqueteRedDTO;
 import interfaces.IReceptorMensajes;
 
