@@ -20,14 +20,16 @@ public class Broker implements IBroker {
 
     private ServerSocket servidorSocket;
     private int puerto;
+    private String ip;
     private Thread hiloAceptarClientes;
     private Map<String, List<Consumer<MensajeDTO>>> suscriptores = new ConcurrentHashMap<>();
     private Map<String , NodoCliente> NodoClientes = new ConcurrentHashMap<>();
     private ISerializador serializador;
     private IProxyFactory proxyFactory;
 
-    public Broker(int puerto, ISerializador serializador, IProxyFactory proxyFactory) {
+    public Broker(int puerto,String ip, ISerializador serializador, IProxyFactory proxyFactory) {
         this.puerto = puerto;
+        this.ip = ip;
         this.suscriptores = new ConcurrentHashMap<>();
         this.serializador = serializador;
         this.proxyFactory = proxyFactory;

@@ -25,10 +25,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>RED-COMUNICACION</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SEREALIZADOR</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
