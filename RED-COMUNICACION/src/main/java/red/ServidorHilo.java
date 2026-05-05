@@ -1,124 +1,95 @@
 package red;
 
-import Entidades.Estados.IEstadoPartida;
-import Entidades.Lobby;
-import Entidades.Logica.Partida;
-import Entidades.fabricas.ICartaFactory;
-import Entidades.fabricas.IMazoFactory;
-import Mappers.PartidaMapper;
-import dtos.*;
-import facades.GestorJuegoFacade;
+import Interfacez.IProxy;
+import broker.Broker;
+import dtos.MensajeDTO;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ServidorHilo extends Thread {
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
-    private Lobby lobby;
-    private GestorJuegoFacade fachadaJuego;
-    private ICartaFactory carta;
-    private IMazoFactory mazo;
-    private IEstadoPartida estado;
-    private String nombreJugador;
+public class ServidorHilo implements Runnable, IProxy {
 
-    public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
-        this.in = in;
-        this.out = out;
-        this.lobby = lobby;
-        this.fachadaJuego = new GestorJuegoFacade(carta,mazo,estado);
-    }
+    private final Socket socketCliente;
+    private final Broker broker;
+    private final ObjectInputStream in;
+    private final ObjectOutputStream out;
+    private volatile boolean escuchando;
 
-    public synchronized void enviarDatos(Object mensaje){
-        try {
-            if (out != null) {
-            out.writeObject(mensaje);
-            out.reset();
-            out.flush();
-            }
-        } catch (IOException e) {
-            System.out.println("Error enviando datos a " + (nombreJugador != null ? nombreJugador : "cliente") + ": " + e.getMessage());
+    public ServidorHilo(Socket socketCliente, Broker broker) throws IOException {
+        if (socketCliente == null) {
+            throw new IllegalArgumentException("El socket del cliente no puede ser nulo.");
         }
+        if (broker == null) {
+            throw new IllegalArgumentException("El broker no puede ser nulo.");
+        }
+        this.socketCliente = socketCliente;
+        this.broker = broker;
+        this.out = new ObjectOutputStream(socketCliente.getOutputStream());
+        this.out.flush();
+        this.in = new ObjectInputStream(socketCliente.getInputStream());
+        this.escuchando = true;
     }
 
     @Override
     public void run() {
         try {
-            while (true) {
+            while (escuchando) {
                 Object objeto = in.readObject();
-
-                if (objeto instanceof MensajeRegistroDTO) {
-                    MensajeRegistroDTO dto = (MensajeRegistroDTO) objeto;
-                    validarNombre(dto);
-                }else if(objeto instanceof MensajeDTO){
-                    MensajeDTO mensaje = (MensajeDTO) objeto;
-                    if("INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())){
-                            procesarInicioPartida();
-                    }
+                if (!(objeto instanceof MensajeDTO mensaje)) {
+                    continue;
                 }
+                if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
+                    continue;
+                }
+                broker.publicar(mensaje.getTipo(), mensaje);
             }
         } catch (IOException | ClassNotFoundException e) {
-            if (this.nombreJugador != null && !this.nombreJugador.isBlank()) {
-                lobby.getNombreJugadores().removeIf(j -> j.equalsIgnoreCase(this.nombreJugador));
-                lobby.notificarObservador("LISTA_ACTUALIZADA");
-                System.out.println("Jugador removido del lobby: " + this.nombreJugador);
-            }
-            Servidor.hilosConectados.remove(this);
+            System.out.println("[ServidorHilo] Conexion finalizada: " + e.getMessage());
+        } finally {
+            cerrarConexion();
         }
     }
-    private void procesarInicioPartida() {
-        try {
-            fachadaJuego.prepararIniciarPartida(lobby.getNombreJugadores());
-            Partida partida = fachadaJuego.getPartidaActual();
-            PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
 
-            MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
-            respuesta.setTipo("ACTUALIZACION_PARTIDA");
-            respuesta.setPartida(partidaDTO);
-
-            for (ServidorHilo cliente: Servidor.hilosConectados){
-                cliente.enviarDatos(respuesta);
-            }
-            System.out.println("[servidor] Partida iniciada");
-        }catch (Exception e){
-            enviarError(e.getMessage());
+    @Override
+    public synchronized void enviarMensaje(MensajeDTO mensaje) {
+        if (mensaje == null) {
+            return;
         }
-    }
-    private void enviarError(String msj) {
         try {
-            out.writeObject(new MensajeNotificacionDTO("SERVIDOR", true, msj));
+            out.writeObject(mensaje);
+            out.reset();
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace(); }
-    }
-
-
-    private void validarNombre(MensajeRegistroDTO dto) {
-        boolean exito = lobby.agregarJugador(dto.getNombre());
-
-        if (exito) {
-            this.nombreJugador = dto.getNombre();
-            
-            System.out.println("[REGISTRO] El usuario '" + this.nombreJugador + "' se ha unido al lobby.");
-            System.out.println("Jugadores actuales en el lobby: " + lobby.getNombreJugadores());
-            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso"));
-            difundirLista();
-        } else {
-            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "El nombre ya esta en uso."));
+            System.out.println("[ServidorHilo] Error enviando mensaje: " + e.getMessage());
         }
     }
 
-    private void difundirLista() {
-        MensajeListaJugadoresDTO msgLista = new MensajeListaJugadoresDTO(lobby.getNombreJugadores());
+    private void cerrarConexion() {
+        escuchando = false;
 
-        for (ServidorHilo cliente : Servidor.hilosConectados){
-            try{
-                cliente.out.writeObject(msgLista);
-                cliente.out.flush();
-            } catch (IOException e) {
-                System.out.println("Error al escribir lista de jugadores.");
-            }
+        MensajeDTO eventoDesconexion = new MensajeDTO();
+        eventoDesconexion.setTipo("CONEXION_CERRADA");
+        eventoDesconexion.setRemitente("SERVIDOR");
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("proxy", this);
+        eventoDesconexion.setDatos(datos);
+        broker.publicar("CONEXION_CERRADA", eventoDesconexion);
+
+        try {
+            in.close();
+        } catch (IOException ignored) {
+        }
+        try {
+            out.close();
+        } catch (IOException ignored) {
+        }
+        try {
+            socketCliente.close();
+        } catch (IOException ignored) {
         }
     }
 }

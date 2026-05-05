@@ -34,7 +34,7 @@ public class ServerProxy implements IProxy {
             this.salida = socket.getOutputStream();
             BufferedReader lector = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8));
 
-            System.out.println("Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
+            System.out.println("Escuchando a jugador desde: " + " " + socket.getInetAddress() + ":" + socket.getPort());
 
 
             String canalDeRespuesta = "RESPUESTA_REGISTRO_" + socket.getPort();

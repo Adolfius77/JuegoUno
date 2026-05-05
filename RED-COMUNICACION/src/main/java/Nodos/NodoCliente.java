@@ -10,6 +10,10 @@ public class NodoCliente {
     private Socket socket;
     private IProxy proxy;
 
+    public NodoCliente(String nombre, IProxy proxy) {
+        this(null, proxy, nombre);
+    }
+
     public NodoCliente(Socket socket, IProxy proxy, String nombre) {
         this.socket = socket;
         this.proxy = proxy;

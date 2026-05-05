@@ -1,26 +1,15 @@
 package Launcher;
 
-import dtos.paqueteRedDTO;
-import interfaces.IReceptorMensajes;
 import red.Servidor;
-import red.ServidorHilo;
 import vista.MenuPrincipal;
 
 import java.awt.*;
 
 public class launcher {
     public static void main(String[] args) {
-        IReceptorMensajes receptor = new IReceptorMensajes() {
-
-
-            @Override
-            public void procesarMensaje(paqueteRedDTO paquete, ServidorHilo hiloRemintente) {
-                System.out.println("el servidor responde: " + paquete.getClass().getSimpleName());
-            }
-        };
         Thread hiloServidor = new Thread(() -> {
             try {
-                Servidor servidor = new Servidor(8080, receptor);
+                Servidor servidor = new Servidor(8080);
                 servidor.iniciar();
             } catch (Exception e) {
                 System.out.println("error al iniciar el servidor: " + e.getMessage());

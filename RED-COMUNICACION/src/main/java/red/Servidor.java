@@ -1,62 +1,67 @@
 package red;
 
-import Entidades.Lobby;
-import interfaces.IReceptorMensajes;
-
+import Nodos.NodoCliente;
+import broker.Broker;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Servidor {
-    public static final List<ServidorHilo> hilosConectados = new CopyOnWriteArrayList<>();
-    private final int puerto;
-    private final IReceptorMensajes receptor;
-    private final Lobby lobby;
-    private boolean escuchando;
 
-    public Servidor(int puerto, IReceptorMensajes receptor) {
+    private final int puerto;
+    private final String ip;
+    private final Broker brokerCentral;
+    private final ManejadorPartidaServidor manejadorPartida;
+    private volatile boolean escuchando;
+
+    public Servidor(int puerto, String ip) {
         this.puerto = puerto;
-        this.receptor = receptor;
-        this.lobby = new Lobby();
+        this.ip = ip;
+        this.brokerCentral = new Broker();
+        this.manejadorPartida = new ManejadorPartidaServidor(this.brokerCentral);
         this.escuchando = true;
     }
-    //metodo para iniciar el servidors
+
     public void iniciar() {
-        try(ServerSocket serverSocket = new ServerSocket(puerto)) {
-            System.out.println("servidor iniciado en el puerto: " + puerto);
+        try (ServerSocket serverSocket = new ServerSocket(puerto)) {
+            System.out.println("[Servidor Red] Servidor iniciado en el puerto: " + puerto + "y en la ip: " + ip);
 
-            while(escuchando) {
+            int contadorJugadores = 1;
+
+            while (escuchando) {
+
                 Socket socketCliente = serverSocket.accept();
-                try{
+
+                try {
                     System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
+                    ServidorHilo nuevoHilo = new ServidorHilo(socketCliente, brokerCentral);
+                    String nombreTemporal = "Jugador_" + contadorJugadores++;
+                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, nuevoHilo);
 
-                    ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
-                    out.flush();
-                    ObjectInputStream in = new ObjectInputStream(socketCliente.getInputStream());
+                    manejadorPartida.registrarNuevoJugador(nuevoNodo);
 
-                    ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
-                    hilosConectados.add(nuevoHilo);
-                    nuevoHilo.start();
-                    
-                    System.out.println("[Socket] Flujos inicializados para nueva conexion. Esperando registro...");
-                }
-                catch (IOException e){
-                    System.err.println("Error al manejar la conexion del cliente: " + e.getMessage());
-                    socketCliente.close();
+                    Thread hilo = new Thread(nuevoHilo, "ServidorHilo-" + nombreTemporal);
+                    hilo.start();
+
+                    System.out.println("[Servidor Red] Jugador registrado en el sistema. Esperando mensajes...");
+
+                } catch (Exception e) {
+                    System.err.println("Error al manejar la configuración del cliente: " + e.getMessage());
+                    try {
+                        socketCliente.close();
+                    } catch (IOException ignored) {
+                    }
                 }
             }
-        }catch (IOException e){
-            System.err.println("error en el servidor en el puerto: " + puerto);
+        } catch (IOException e) {
+            System.err.println("Error crítico en el servidor en el puerto: " + puerto);
             e.printStackTrace();
         }
     }
-    //metodo para apagar el servidor
-    public void apagar(){
+
+    public void apagar() {
         this.escuchando = false;
-        System.out.println("apagando servidor.....");
+        System.out.println("[Servidor Red] Apagando servidor...");
+
     }
 }
