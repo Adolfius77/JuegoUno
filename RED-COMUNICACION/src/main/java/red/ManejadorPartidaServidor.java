@@ -1,9 +1,11 @@
-package broker;
+package red;
 
 import Entidades.Estados.IEstadoPartida;
 import Entidades.fabricas.ICartaFactory;
 import Entidades.fabricas.IMazoFactory;
+import Interfacez.IBroker;
 import Mappers.PartidaMapper;
+import broker.Broker;
 import dtos.MensajeDTO;
 import dtos.PartidaDTO;
 import facades.GestorJuegoFacade;
