@@ -93,7 +93,12 @@ public class ClienteProxy extends Thread implements IProxy {
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
 
                 if (accionAlRecibirMensaje != null) {
-                    accionAlRecibirMensaje.accept(mensaje);
+                    if (accionAlRecibirMensaje != null) {
+                        accionAlRecibirMensaje.accept(mensaje);
+                    }
+
+                }else{
+                   System.out.println("ClienteProxy: Se recibio un mensaje que no se pudo deserializar."); 
                 }
             }
         } catch (Exception e) {

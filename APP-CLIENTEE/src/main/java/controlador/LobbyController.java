@@ -1,8 +1,6 @@
 package controlador;
 
 import Interfaces.IVista;
-import java.util.ArrayList;
-import Controladores.ServerController;
 import dtos.MensajeDTO;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeRegistroDTO;
@@ -12,76 +10,74 @@ import vista.GameView;
 
 public class LobbyController {
 
-    private final IVista vista;
-    private final ServerController gestor;
+    private IVista vista;
     private ClienteProxy clienteProxy;
 
-    public LobbyController(IVista vista, ServerController gestor, ClienteProxy clienteProxy) {
-        if (vista == null || gestor == null) {
-            throw new IllegalArgumentException("vista y gestor son obligatorios");
+    public LobbyController(ClienteProxy clienteProxy) {
+        if (clienteProxy == null) {
+            throw new IllegalArgumentException("El ClienteProxy es obligatorio para la red.");
         }
         this.clienteProxy = clienteProxy;
-        this.vista = vista;
-        this.gestor = gestor;
-        configurarRecepetorRed();
+        configurarReceptorRed();
     }
 
-    private void configurarRecepetorRed() {
+    public void setVista(IVista vista) {
+        this.vista = vista;
+    }
+
+    private void configurarReceptorRed() {
         clienteProxy.setReceptor(mensaje -> {
             procesarEventoRed(mensaje);
         });
     }
 
-    public boolean agregarJugador(String nombreJugador) {
-        try {
-            if (nombreJugador == null) {
-                vista.mostrarMensaje("el nombre del jugador es obligatorio");
-                return false;
-            }
-            gestor.procesarRegistro(nombreJugador);
-            return true;
-        } catch (IllegalArgumentException e) {
-            vista.mostrarMensaje(e.getMessage());
-            return false;
-        }
-    }
-    public void registrarJugador(String nombreJugador,String avatar){
+    public void registrarJugador(String nombreJugador, String avatar) {
         if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
-            System.out.println("Controlador: Registrando a " + nombreJugador + " con el " + avatar);
+            System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
+
             MensajeRegistroDTO msjRegistro = new MensajeRegistroDTO();
             msjRegistro.setNombre(nombreJugador);
             msjRegistro.setNombreAvatar(avatar);
             msjRegistro.setTipo("REGISTRO_JUGADOR");
-            
+
             clienteProxy.enviarMensaje(msjRegistro);
-        }
-    }
-    public void iniciarPartida() {
-        try {
-            gestor.iniciarPartida();
-        } catch (Exception e) {
-            vista.mostrarMensaje("error al iniciar partida: " + e.getMessage());
+        } else {
+            if (vista != null) {
+                vista.mostrarMensaje("El nombre del jugador es obligatorio");
+            }
         }
     }
 
-    public ServerController obtenerGestor() {
-        return gestor;
+    public void iniciarPartida() {
+        System.out.println("Controlador: Solicitando al servidor iniciar la partida...");
+        MensajeDTO msjInicio = new MensajeDTO("PETICION_INICIAR_PARTIDA", null);
+        clienteProxy.enviarMensaje(msjInicio);
     }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
-        if ("PARTIDA_INICIADA".equals(mensaje)) {
-            System.out.println("la partida va a comenzar cambiando de pantalla..");
-            vista.cerrarVista();
-            GameView vistaJuego = new GameView();
-            GameController controladorJuego = new GameController(gestor, vista, new ArrayList<>());
-            controladorJuego.procesarEventoRed(mensaje);
-        } else if ("LISTA_ACTUALIZADA".equals(mensaje)) {
+
+        String tipoMensaje = mensaje.getTipo();
+
+        if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
+            System.out.println("La partida va a comenzar, cambiando de pantalla...");
+
+            SwingUtilities.invokeLater(() -> {
+                if (vista != null) {
+                    vista.cerrarVista();
+                }
+
+                GameView vistaJuego = new GameView();
+                // Nota: Aquí deberás instanciar tu GameController pasándole el clienteProxy y la vistaJuego
+                vistaJuego.setVisible(true);
+            });
+
+        } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
             MensajeListaJugadoresDTO listaDTO = (MensajeListaJugadoresDTO) mensaje;
 
             SwingUtilities.invokeLater(() -> {
                 System.out.println("Actualizando pantalla con los nuevos jugadores...");
-            });
 
+            });
         }
     }
 }
