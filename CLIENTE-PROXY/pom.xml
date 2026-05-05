@@ -17,6 +17,11 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>RED-COMUNICACION</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

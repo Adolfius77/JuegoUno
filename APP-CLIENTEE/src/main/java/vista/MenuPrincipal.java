@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import controlador.LobbyController;
 import red.ClienteRed;
 import utileria.GestorAudio;
 import javax.swing.*;
@@ -23,25 +24,32 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
 
     private int avatarSeleccionado = 0;
     private final javax.swing.JLabel etiquetaAvatar = new javax.swing.JLabel();
-
+    private LobbyController controlador;
     /**
      * Creates new form NewJFrame
      */
-    public MenuPrincipal() {
+    
+    
+
+    public MenuPrincipal(LobbyController controlador) {
+        this.controlador = controlador;
+        
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
         this.addWindowListener(new java.awt.event.WindowAdapter() {;
-            @Override
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                ventanaActual();
-            }
+                @Override
+                public void windowOpened(java.awt.event.WindowEvent evt) {
+                    ventanaActual();
+                }
         });
         GestorAudio.getInstancia().reproducirMusica("/img/lobby.wav");
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
-
+    public MenuPrincipal() {
+        this(null);
+    }
     private void ventanaActual() {
         System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
@@ -271,19 +279,13 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         }
         final String avatar = obtenerAvatarSeleccionado();
 
-        new Thread(() -> {
-            try {
-                ClienteRed red = ClienteRed.getInstance();
-                red.setVistaMenu(this, nombreJugador, avatar);
-
-                red.conectar();
-
-                red.enviarMensaje(new dtos.MensajeRegistroDTO(nombreJugador, avatar));
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }).start();
+        if(controlador != null){
+            controlador.registrarJugador(nombreJugador,avatar);
+        }else{
+            mostrarMensaje("error el controlador no esta conectado ala vista");
+            setFormularioHabilitado(true);
+        }
+        
     }
 
     private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed

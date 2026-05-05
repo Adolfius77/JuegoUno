@@ -24,7 +24,6 @@ vista\podioView.class
 vista\CrearPartida$3.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
-controlador\Factorys\MVCFactory.class
 vista\SeleccionPartida.class
 controlador\ManoController.class
 vista\SeleccionPartida$1.class

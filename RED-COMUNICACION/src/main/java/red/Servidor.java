@@ -36,7 +36,8 @@ public class Servidor {
                     System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
                     ServidorHilo nuevoHilo = new ServidorHilo(socketCliente, brokerCentral);
                     String nombreTemporal = "Jugador_" + contadorJugadores++;
-                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, nuevoHilo);
+                    String nombreFotoTemporal = "no hay";
+                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, nuevoHilo,nombreFotoTemporal);
 
                     manejadorPartida.registrarNuevoJugador(nuevoNodo);
 

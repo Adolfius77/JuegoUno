@@ -7,30 +7,26 @@ import Entidades.fabricas.ICartaFactory;
 import Entidades.fabricas.IMazoFactory;
 import Entidades.fabricas.MazoClasicoFactory;
 
-// Importaciones corregidas para tu arquitectura
-import Interfacez.IBroker; 
+import Interfacez.IBroker;
 import Interfacez.IProxy;
 import Mappers.PartidaMapper;
-import Nodos.ManejadorNodos; 
-import Nodos.NodoCliente;    
+import Nodos.ManejadorNodos;
+import Nodos.NodoCliente;
 
 import dtos.MensajeDTO;
-import dtos.MensajeDesconexionDTO; // Agregado para manejar la nueva desconexión
+import dtos.MensajeDesconexionDTO;
 import dtos.MensajeEstadoPartidaDTO;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeNotificacionDTO;
+import dtos.MensajeRegistroDTO;
 import dtos.PartidaDTO;
 import facades.GestorJuegoFacade;
 
 import java.util.List;
 
-/**
- * Cerebro del servidor que maneja las reglas del juego.
- * Interactúa con la red únicamente a través del IBroker.
- */
 public class ManejadorPartidaServidor {
-    
-    private final IBroker broker; // Usamos la interfaz en lugar de la clase concreta
+
+    private final IBroker broker;
     private final ManejadorNodos manejadorNodos;
     private final ICartaFactory cartaFactory;
     private final IMazoFactory mazoFactory;
@@ -55,23 +51,46 @@ public class ManejadorPartidaServidor {
         this.estadoInicial = estadoInicial;
         this.fachadaJuego = new GestorJuegoFacade(this.cartaFactory, this.mazoFactory, this.estadoInicial);
 
-        // Suscripciones a los eventos de la red
         this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", this::procesarInicioPartida);
-        // Actualizado para escuchar el evento exacto que lanza tu ServerProxy
-        this.broker.subscribirse("JUGADOR_DESCONECTADO", this::procesarConexionCerrada); 
+
+        this.broker.subscribirse("JUGADOR_DESCONECTADO", this::procesarConexionCerrada);
+        this.broker.subscribirse("SOLICITUD_REGISTRO", this::procesarRegistroJugador);
     }
 
-    /**
-     * Registra un nodo recién conectado en la lógica del juego.
-     */
+    private void procesarRegistroJugador(MensajeDTO mensaje) {
+        if (mensaje instanceof MensajeRegistroDTO) {
+            MensajeRegistroDTO registroDTO = (MensajeRegistroDTO) mensaje;
+
+            String nombreReal = registroDTO.getNombre();
+            String avatar = registroDTO.getNombreAvatar();
+            String canalRespuesta = registroDTO.getTipo();
+
+            System.out.println("ManejadorPartidaServidor: Registrando a " + nombreReal + " con avatar " + avatar);
+
+            for (NodoCliente nodo : manejadorNodos.obtenerNodosConectados()) {
+                if (nodo.getNombre().startsWith("Jugador_")) {
+                    String idTemporal = nodo.getNombre();
+
+                    nodo.setAvatar(avatar);
+
+                    manejadorNodos.actualizarIdentidadNodo(idTemporal, nombreReal);
+                    break;
+                }
+            }
+
+            MensajeNotificacionDTO respuestaExito = new MensajeNotificacionDTO("SERVIDOR", false, "Registro exitoso");
+            respuestaExito.setTipo(canalRespuesta);
+            broker.publicar(canalRespuesta, respuestaExito);
+
+            difundirListaJugadores();
+        }
+    }
+
     public void registrarNuevoJugador(NodoCliente nuevoNodo) {
         manejadorNodos.registrarNuevoJugador(nuevoNodo);
         difundirListaJugadores();
     }
 
-    /**
-     * Inicia la partida si se cumplen las reglas (mínimo 2 jugadores).
-     */
     private void procesarInicioPartida(MensajeDTO mensaje) {
         List<String> nombresJugadores = manejadorNodos.obtenerNombresDeNodosConectados();
 
@@ -93,36 +112,26 @@ public class ManejadorPartidaServidor {
         }
     }
 
-    /**
-     * Procesa la desconexión de un jugador y lo saca de la partida.
-     */
     private void procesarConexionCerrada(MensajeDTO mensaje) {
-        // Verificamos si el mensaje es de la clase correcta que configuramos en ServerProxy
         if (mensaje instanceof MensajeDesconexionDTO) {
             MensajeDesconexionDTO desconexionDTO = (MensajeDesconexionDTO) mensaje;
             String nombreJugador = desconexionDTO.getNombreUsuario();
-            
+
             if (nombreJugador != null && !nombreJugador.isEmpty()) {
                 System.out.println("ManejadorPartidaServidor: Retirando a " + nombreJugador + " de la partida.");
-                
-                // Buscamos el nodo en la lista actual basándonos en su nombre
+
                 for (NodoCliente nodo : manejadorNodos.obtenerNodosConectados()) {
                     if (nombreJugador.equals(nodo.getNombre())) {
-                        // Una vez encontrado, usamos tu método original para eliminarlo usando su proxy
                         manejadorNodos.eliminarPorProxy(nodo.getProxy());
-                        break; // Terminamos la búsqueda
+                        break;
                     }
                 }
-                
-                // Actualizamos las pantallas de los demás jugadores
+
                 difundirListaJugadores();
             }
         }
     }
 
-    /**
-     * Envía la lista actualizada a todos los nodos conectados.
-     */
     private void difundirListaJugadores() {
         MensajeListaJugadoresDTO listaActualizada = new MensajeListaJugadoresDTO(manejadorNodos.obtenerNombresDeNodosConectados());
         listaActualizada.setTipo("LISTA_ACTUALIZADA");
@@ -132,9 +141,6 @@ public class ManejadorPartidaServidor {
         }
     }
 
-    /**
-     * Envía un mensaje global de notificación.
-     */
     private void difundirNotificacion(String texto) {
         MensajeNotificacionDTO notificacion = new MensajeNotificacionDTO("SERVIDOR", true, texto);
         notificacion.setTipo("NOTIFICACION_SERVIDOR");

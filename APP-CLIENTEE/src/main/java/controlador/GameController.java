@@ -4,6 +4,7 @@ import Entidades.Jugador;
 import Interfaces.IVista;
 import dtos.CartaDTO;
 import dtos.JugadorDTO;
+import dtos.MensajeDTO;
 import dtos.PartidaDTO;
 import interfaces.IGestorPartida;
 
@@ -29,7 +30,7 @@ public class GameController {
                 : new ArrayList<>(nombreJugadores);
         
     }
-    public void procesarEventoRed(String evento){
+    public void procesarEventoRed(MensajeDTO evento){
         if("PARTIDA_INICIADA".equals(evento)){
             PartidaDTO estadoPartida = gestor.obtenerEstadoPartida();
             

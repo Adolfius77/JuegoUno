@@ -1,71 +1,122 @@
-package cliente;
+package red; // O el paquete que corresponda en tu proyecto cliente
 
+import dtos.MensajeDTO;
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
-import dtos.MensajeDTO;
+import Lector.LectorConfiguracion;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
-public class ClienteProxy implements IProxy {
+public class ClienteProxy extends Thread implements IProxy {
+
+    private static ClienteProxy instance;
     private Socket socket;
+
+    private BufferedReader in;
+    private PrintWriter out;
+
+    private boolean escuchando = false;
     private ISerializador serializador;
-    private OutputStream salida;
-    private InputStream entrada;
+
     private Consumer<MensajeDTO> accionAlRecibirMensaje;
 
-    public ClienteProxy(Socket socket,ISerializador serializador) {
-        this.socket = socket;
+    private ClienteProxy() {
+    }
+
+    public static ClienteProxy getInstance() {
+        if (instance == null) {
+            instance = new ClienteProxy();
+        }
+        return instance;
+    }
+
+    public void setSerializador(ISerializador serializador) {
         this.serializador = serializador;
     }
 
-    // la accion la recibira mediante el controlador
-    public void setReceptor(Consumer<MensajeDTO> accion){
+    public void setReceptor(Consumer<MensajeDTO> accion) {
         this.accionAlRecibirMensaje = accion;
     }
+
+    public void conectar() throws Exception {
+        if (serializador == null) {
+            throw new IllegalStateException("ClienteProxy: ISerializador no configurado.");
+        }
+
+        if (socket == null || socket.isClosed()) {
+            LectorConfiguracion config = new LectorConfiguracion();
+            String ip = config.getIpServidor();
+            int puerto = config.getPuertoServidor();
+
+            System.out.println("ClienteProxy: Conectando a " + ip + ":" + puerto);
+            socket = new Socket(ip, puerto);
+
+            out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+
+            escuchando = true;
+
+            if (!this.isAlive()) {
+                this.start();
+            }
+        }
+    }
+
     @Override
-    public void enviarMensaje(MensajeDTO mensaje) {
-        try{
-            PrintWriter escritor = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-            String json =  serializador.serealizar(mensaje);
-            escritor.println(json);
-        }catch (Exception e){
-            System.out.println("error enviando los datos" + e.getMessage());
-            e.printStackTrace();
+    public synchronized void enviarMensaje(MensajeDTO mensaje) {
+        try {
+            if (out != null) {
+
+                String json = serializador.serealizar(mensaje);
+                out.println(json);
+            }
+        } catch (Exception e) {
+            System.err.println("ClienteProxy: Error al enviar mensaje - " + e.getMessage());
         }
     }
 
     @Override
     public void run() {
         try {
-            this.entrada = socket.getInputStream();
-            salida = socket.getOutputStream();
-            BufferedReader lector = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8));
-            while(true){
-                String jsonRecibido = lector.readLine();
-                if(jsonRecibido == null){
+            while (escuchando) {
+                String jsonRecibido = in.readLine();
+                if (jsonRecibido == null) {
                     break;
                 }
+
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
-                if(accionAlRecibirMensaje != null){
+
+                if (accionAlRecibirMensaje != null) {
                     accionAlRecibirMensaje.accept(mensaje);
                 }
             }
-
-        }catch (Exception e){
-            System.out.println("error en la red" + e.getMessage());
-        }finally {
+        } catch (Exception e) {
+            System.err.println("ClienteProxy: Desconectado - " + e.getMessage());
+            escuchando = false;
+        } finally {
             cerrarConexion();
         }
     }
-    private void cerrarConexion(){
-        try{
-            if (socket != null && !socket.isClosed()) socket.close();
-            System.out.println("Conexion cerrada");
-        } catch (IOException e) {
-            throw new RuntimeException("error cerrando conexion" + e.getMessage());
+
+    private void cerrarConexion() {
+        try {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
