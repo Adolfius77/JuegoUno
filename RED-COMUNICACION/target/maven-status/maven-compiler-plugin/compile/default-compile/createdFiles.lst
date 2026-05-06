@@ -1,12 +1,9 @@
 interfaces\IComandoServidor.class
-interfaces\IReceptorMensajes.class
-comandos\comandoIniciarPartida.class
-interfaces\IGestorPartida.class
-Lector\LectorConfiguracion.class
-comandos\ComandoRegistrarJugador.class
 red\Servidor.class
-interfaces\IConexionFactory.class
+comandos\comandoIniciarPartida.class
 red\servidorMain.class
 red\LobbyServidor.class
 red\JuegoServidor.class
+Lector\LectorConfiguracion.class
+comandos\ComandoRegistrarJugador.class
 comandos\ComandoDesconectarJugador.class
