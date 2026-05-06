@@ -1,12 +1,16 @@
 package red;
 
 import Interfacez.IProxy;
+import Interfacez.ISerializador;
 import broker.Broker;
 import dtos.MensajeDTO;
+import java.io.BufferedReader;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,22 +19,26 @@ public class ServidorHilo implements Runnable, IProxy {
 
     private final Socket socketCliente;
     private final Broker broker;
-    private final ObjectInputStream in;
-    private final ObjectOutputStream out;
+    private final BufferedReader in;
+    private final PrintWriter out;
+    private final ISerializador serializador;
     private volatile boolean escuchando;
 
-    public ServidorHilo(Socket socketCliente, Broker broker) throws IOException {
+    public ServidorHilo(Socket socketCliente, Broker broker, ISerializador serializador) throws IOException {
         if (socketCliente == null) {
-            throw new IllegalArgumentException("El socket del cliente no puede ser nulo.");
+            throw new IllegalArgumentException("[Servidor-hilo] El socket del cliente no puede ser nulo.");
         }
         if (broker == null) {
-            throw new IllegalArgumentException("El broker no puede ser nulo.");
+            throw new IllegalArgumentException("[Servidor-hilo] El broker no puede ser nulo.");
+        }
+        if (serializador == null) {
+            throw new IllegalArgumentException("[Servidor-hilo] El serializador no puede ser nulo.");
         }
         this.socketCliente = socketCliente;
         this.broker = broker;
-        this.out = new ObjectOutputStream(socketCliente.getOutputStream());
-        this.out.flush();
-        this.in = new ObjectInputStream(socketCliente.getInputStream());
+        this.serializador = serializador;
+        this.out = new PrintWriter(socketCliente.getOutputStream(), true);
+        this.in = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
         this.escuchando = true;
     }
 
@@ -38,8 +46,14 @@ public class ServidorHilo implements Runnable, IProxy {
     public void run() {
         try {
             while (escuchando) {
-                Object objeto = in.readObject();
-                if (!(objeto instanceof MensajeDTO mensaje)) {
+                String jsonRecibido = in.readLine();
+
+                if (jsonRecibido == null) {
+                    break;
+                }
+                MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
+                if (mensaje == null) {
+                    System.out.println("[ServidorHilo] No se pudo deserializar el mensaje: " + jsonRecibido);
                     continue;
                 }
                 if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
@@ -47,7 +61,7 @@ public class ServidorHilo implements Runnable, IProxy {
                 }
                 broker.publicar(mensaje.getTipo(), mensaje);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             System.out.println("[ServidorHilo] Conexion finalizada: " + e.getMessage());
         } finally {
             cerrarConexion();
@@ -60,10 +74,9 @@ public class ServidorHilo implements Runnable, IProxy {
             return;
         }
         try {
-            out.writeObject(mensaje);
-            out.reset();
-            out.flush();
-        } catch (IOException e) {
+            String jsonEnviar = serializador.serealizar(mensaje);
+            out.println(jsonEnviar);
+        } catch (Exception e) {
             System.out.println("[ServidorHilo] Error enviando mensaje: " + e.getMessage());
         }
     }
@@ -80,15 +93,23 @@ public class ServidorHilo implements Runnable, IProxy {
         broker.publicar("CONEXION_CERRADA", eventoDesconexion);
 
         try {
-            in.close();
+            if (in != null) {
+                in.close();
+            }
         } catch (IOException ignored) {
         }
+
         try {
-            out.close();
-        } catch (IOException ignored) {
+            if (out != null) {
+                out.close();
+            }
+        } catch (Exception ignored) {
         }
+
         try {
-            socketCliente.close();
+            if (socketCliente != null) {
+                socketCliente.close();
+            }
         } catch (IOException ignored) {
         }
     }

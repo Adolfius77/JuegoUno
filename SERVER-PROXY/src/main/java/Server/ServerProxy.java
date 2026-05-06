@@ -32,14 +32,14 @@ public class ServerProxy implements IProxy, Runnable {
             this.escritor = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
             this.lector = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
         } catch (IOException e) {
-            System.err.println("Error al inicializar los flujos del proxy: " + e.getMessage());
+            System.err.println("[Server-proxy] Error al inicializar los flujos del proxy: " + e.getMessage());
         }
     }
 
     @Override
     public void run() {
         try {
-            System.out.println("Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
+            System.out.println("[Server-proxy] Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
 
             String canalDeRespuesta = "RESPUESTA_REGISTRO_" + socket.getPort();
             broker.subscribirse(canalDeRespuesta, mensajeRespuesta -> {
@@ -60,18 +60,18 @@ public class ServerProxy implements IProxy, Runnable {
                     peticionRegistro.setTipo(canalDeRespuesta);
 
                     broker.publicar("SOLICITUD_REGISTRO", peticionRegistro);
-                    System.out.println("Solicitud publicada para: " + this.nombreJugador);
+                    System.out.println("[Server-proxy] Solicitud publicada para: " + this.nombreJugador);
                 } else if (mensaje instanceof MensajeDesconexionDTO) {
                     MensajeDesconexionDTO desconexion = (MensajeDesconexionDTO) mensaje;
-                    System.out.println("Jugador solicitó desconexión: " + desconexion.getNombreUsuario());
+                    System.out.println("[Server-proxy] Jugador solicito desconexion: " + desconexion.getNombreUsuario());
                     break;
                 } else {
                     broker.publicar(mensaje.getTipo(), mensaje);
-                    System.out.println("Mensaje recibido y publicado: " + mensaje.getTipo());
+                    System.out.println("[Server-proxy] Mensaje recibido y publicado: " + mensaje.getTipo());
                 }
             }
         } catch (Exception e) {
-            System.out.println("El cliente se ha desconectado o hay un error: " + e.getMessage());
+            System.out.println("[Server-proxy] El cliente se ha desconectado o hay un error: " + e.getMessage());
         } finally {
             limpiarYNotificarDesconexion();
         }
@@ -83,7 +83,7 @@ public class ServerProxy implements IProxy, Runnable {
             String json = serializador.serealizar(mensaje);
             escritor.println(json);
         } catch (Exception e) {
-            System.out.println("Error enviando los datos: " + e.getMessage());
+            System.out.println("[Server-proxy] Error enviando los datos: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -108,7 +108,7 @@ public class ServerProxy implements IProxy, Runnable {
                 socket.close();
             }
         } catch (IOException e) {
-            System.err.println("Error cerrando recursos del proxy: " + e.getMessage());
+            System.err.println("[Server-proxy] Error cerrando recursos del proxy: " + e.getMessage());
         }
     }
 }

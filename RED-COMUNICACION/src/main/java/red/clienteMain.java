@@ -7,6 +7,9 @@ import interfaces.IConexionFactory;
 import interfaces.IGestorPartida;
 import java.io.IOException;
 
+
+
+
 public class clienteMain {
    
     public static void main(String[] args) throws IOException {

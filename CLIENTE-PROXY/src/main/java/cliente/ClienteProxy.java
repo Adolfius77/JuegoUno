@@ -46,7 +46,7 @@ public class ClienteProxy extends Thread implements IProxy {
 
     public void conectar() throws Exception {
         if (serializador == null) {
-            throw new IllegalStateException("ClienteProxy: ISerializador no configurado.");
+            throw new IllegalStateException("[Cliente-Proxy] ISerializador no configurado.");
         }
 
         if (socket == null || socket.isClosed()) {
@@ -54,7 +54,7 @@ public class ClienteProxy extends Thread implements IProxy {
             String ip = config.getIpServidor();
             int puerto = config.getPuertoServidor();
 
-            System.out.println("ClienteProxy: Conectando a " + ip + ":" + puerto);
+            System.out.println("[Cliente-Proxy] Conectando a " + ip + ":" + puerto);
             socket = new Socket(ip, puerto);
 
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
@@ -77,7 +77,7 @@ public class ClienteProxy extends Thread implements IProxy {
                 out.println(json);
             }
         } catch (Exception e) {
-            System.err.println("ClienteProxy: Error al enviar mensaje - " + e.getMessage());
+            System.err.println("[Cliente-Proxy] Error al enviar mensaje - " + e.getMessage());
         }
     }
 
@@ -97,12 +97,12 @@ public class ClienteProxy extends Thread implements IProxy {
                         accionAlRecibirMensaje.accept(mensaje);
                     }
 
-                }else{
-                   System.out.println("ClienteProxy: Se recibio un mensaje que no se pudo deserializar."); 
+                } else {
+                    System.out.println("[Cliente-Proxy] Se recibio un mensaje que no se pudo deserializar.");
                 }
             }
         } catch (Exception e) {
-            System.err.println("ClienteProxy: Desconectado - " + e.getMessage());
+            System.err.println("[Cliente-Proxy] Desconectado - " + e.getMessage());
             escuchando = false;
         } finally {
             cerrarConexion();

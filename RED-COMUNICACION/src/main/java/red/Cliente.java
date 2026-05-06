@@ -57,7 +57,7 @@ public class Cliente {
                 socket.close();
             }
         } catch (IOException e) {
-            System.out.printf("Error al desconectar el servidor\n" + e.getMessage());
+            System.out.printf("[cliente] Error al desconectar el servidor\n" + e.getMessage());
             e.printStackTrace();
         }
     }

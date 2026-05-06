@@ -6,7 +6,7 @@ package vista;
 
 import Interfaces.IVista;
 import controlador.LobbyController;
-import red.ClienteRed;
+
 import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;

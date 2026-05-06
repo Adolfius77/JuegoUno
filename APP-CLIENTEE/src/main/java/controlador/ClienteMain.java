@@ -27,6 +27,7 @@ public class ClienteMain {
             LobbyController controlador = new LobbyController(proxy);
 
             java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {
 
                     MenuPrincipal menu = new MenuPrincipal(controlador);

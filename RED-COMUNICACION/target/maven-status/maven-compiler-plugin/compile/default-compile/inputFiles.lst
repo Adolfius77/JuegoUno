@@ -1,8 +1,12 @@
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\comandos\ComandoDesconectarJugador.java
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\comandos\comandoIniciarPartida.java
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\comandos\ComandoRegistrarJugador.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\Controladores\ServerController.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\factorys\ClienteHiloFactory.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\factorys\ConexionFactoryImpl.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\factorys\SocketFactory.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\factorys\StreamFactory.java
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interfaces\IComandoServidor.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interfaces\IConexionFactory.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interfaces\IGestorPartida.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interfaces\IReceptorMensajes.java
@@ -10,7 +14,8 @@ C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\Lector\Le
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\Cliente.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\ClienteHilo.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\clienteMain.java
-C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\ManejadorPartidaServidor.java
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\JuegoServidor.java
+C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\LobbyServidor.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\Servidor.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\ServidorHilo.java
 C:\Users\USER\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\servidorMain.java

@@ -31,16 +31,16 @@ public class ClienteHilo extends Thread {
                 else if (objeto instanceof MensajeEstadoPartidaDTO) {
                     MensajeEstadoPartidaDTO msg = (MensajeEstadoPartidaDTO) objeto;
                     gestor.actualizarEstadoPartida(msg.getPartida());
-                    System.out.println("[Cliente] Partida recibida. ¡A jugar!");
+                    System.out.println("[cliente-hilo] Partida recibida. ¡A jugar!");
 
                 }
                 else if (objeto instanceof MensajeNotificacionDTO) {
                     MensajeNotificacionDTO notif = (MensajeNotificacionDTO) objeto;
-                    System.out.println("Notificacion: " + notif.getTextoMensaje());
+                    System.out.println("[cliente-hilo] Notificacion: " + notif.getTextoMensaje());
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Conexion con el servidor perdida.");
+            System.err.println("[cliente-hilo] Conexion con el servidor perdida.");
             escuchando = false;
         }
     }

@@ -4,9 +4,13 @@ import Interfaces.IVista;
 import dtos.MensajeDTO;
 import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeRegistroDTO;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.SwingUtilities;
 import red.ClienteProxy;
 import vista.GameView;
+import vista.SeleccionPartida;
 
 public class LobbyController {
 
@@ -35,11 +39,17 @@ public class LobbyController {
         if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
             System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
 
+            //aqui aplico el patron sobre
+            //en esta parte defino el sobre
             MensajeRegistroDTO msjRegistro = new MensajeRegistroDTO();
-            msjRegistro.setNombre(nombreJugador);
-            msjRegistro.setNombreAvatar(avatar);
             msjRegistro.setTipo("REGISTRO_JUGADOR");
-
+            msjRegistro.setRemitente("CLIENTE");
+            //metemos los datos al mapa esto es basicamente el contenido del sobre
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("nombre", nombreJugador);
+            datos.put("avatar", avatar);
+            //sellamos el sobre y lo enviamos
+            msjRegistro.setDatos(datos);
             clienteProxy.enviarMensaje(msjRegistro);
         } else {
             if (vista != null) {
@@ -55,9 +65,21 @@ public class LobbyController {
     }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
-
+        if (mensaje == null) {
+            return;
+        }
         String tipoMensaje = mensaje.getTipo();
-
+        if ("REGISTRO_EXITOSO".equals(tipoMensaje)) {
+            System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
+            SwingUtilities.invokeLater(() -> {
+                if (vista != null) {
+                    vista.cerrarVista();
+                }
+                SeleccionPartida seleccionVista = new SeleccionPartida();
+                seleccionVista.setVisible(true);
+                this.setVista(seleccionVista);
+            });
+        }
         if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
@@ -72,7 +94,9 @@ public class LobbyController {
             });
 
         } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
-            MensajeListaJugadoresDTO listaDTO = (MensajeListaJugadoresDTO) mensaje;
+            if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
+                List<String> listaJugadores = (List<String>) mensaje.getDatos().get("jugadores");
+            }
 
             SwingUtilities.invokeLater(() -> {
                 System.out.println("Actualizando pantalla con los nuevos jugadores...");

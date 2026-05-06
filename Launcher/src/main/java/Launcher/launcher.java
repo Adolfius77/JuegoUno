@@ -1,40 +1,39 @@
-////package Launcher;
-////
-////import red.Servidor;
-////import vista.MenuPrincipal;
-////
-////import java.awt.*;
-////
-////public class launcher {
-////    public static void main(String[] args) {
-////        Thread hiloServidor = new Thread(() -> {
-////            try {
-////                Servidor servidor = new Servidor(8080);
-////                servidor.iniciar();
-////            } catch (Exception e) {
-////                System.out.println("error al iniciar el servidor: " + e.getMessage());
-////            }
-////        });
-////        hiloServidor.start();
-////        try {
-////            Thread.sleep(500);
-////        } catch (InterruptedException e) {
-////            e.printStackTrace();
-////        }
-////        System.out.println("[cliente] construyendo interfaces y controladores");
-////        EventQueue.invokeLater(new Runnable() {
-////            @Override
-////            public void run() {
-////                try {
-////                    MenuPrincipal menu = new MenuPrincipal();
-////                    menu.setVisible(true);
-////
-////                } catch (Exception e) {
-////                    System.out.println("error al iniciar la interfaz grafica: " + e.getMessage());
-////                }
-////            }
-////        });
-////    }
-////}
-////
-////
+package controlador; // Asegúrate de poner el paquete correcto
+
+import Controladores.ServerController;
+import Interfaces.IVista;
+import red.ClienteProxy; // Ajusta los imports según tus paquetes
+import serealizador.serializador;
+import vista.MenuPrincipal;
+
+/**
+ * Clase principal que arranca la aplicación del cliente.
+ */
+public class launcher {
+
+    public static void main(String[] args) {
+
+        try {
+
+            ClienteProxy proxy = ClienteProxy.getInstance();
+            serializador sere = new serializador();
+            proxy.setSerializador(sere);
+            proxy.conectar();
+
+            LobbyController controlador = new LobbyController(proxy);
+
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+
+                    MenuPrincipal menu = new MenuPrincipal(controlador);
+                    menu.setVisible(true);
+                }
+            });
+
+        } catch (Exception e) {
+            System.err.println("Error crítico al iniciar el juego: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
