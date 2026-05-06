@@ -1,6 +1,6 @@
 package controlador; // Asegúrate de poner el paquete correcto
 
-import Controladores.ServerController;
+
 import Interfaces.IVista;
 import red.ClienteProxy; // Ajusta los imports según tus paquetes
 import serealizador.serializador;

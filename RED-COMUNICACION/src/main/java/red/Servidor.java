@@ -1,5 +1,6 @@
 package red;
 
+import Server.ServerProxy;
 import Entidades.fabricas.CartaFactory;
 import Entidades.fabricas.EstadoFactory;
 import Entidades.fabricas.MazoClasicoFactory;
@@ -49,15 +50,15 @@ public class Servidor {
                 try {
                     System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
                     
-                    ServidorHilo nuevoHilo = new ServidorHilo(socketCliente, brokerCentral, serializador);
+                    ServerProxy serverProxy = new ServerProxy(socketCliente, brokerCentral, serializador);
                     String nombreTemporal = "Jugador_" + contadorJugadores++;
                     String nombreFotoTemporal = "no hay";
-                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, nuevoHilo, nombreFotoTemporal);
+                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, serverProxy, nombreFotoTemporal);
 
                    
                     lobbyServidor.registrarNuevoJugadorTemporal(nuevoNodo);
 
-                    Thread hilo = new Thread(nuevoHilo, "ServidorHilo-" + nombreTemporal);
+                    Thread hilo = new Thread(serverProxy, "ServidorHilo-" + nombreTemporal);
                     hilo.start();
 
                     System.out.println("[Servidor Red] Jugador conectado temporalmente. Esperando mensaje de registro...");

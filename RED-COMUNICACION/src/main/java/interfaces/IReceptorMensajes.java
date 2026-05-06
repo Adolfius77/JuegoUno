@@ -1,7 +1,7 @@
 package interfaces;
 import dtos.paqueteRedDTO;
-import red.ServidorHilo;
+import Server.ServerProxy;
 
 public interface IReceptorMensajes {
-    void procesarMensaje(paqueteRedDTO paquete, ServidorHilo hiloRemintente);
+    void procesarMensaje(paqueteRedDTO paquete, ServerProxy hiloRemintente);
 }

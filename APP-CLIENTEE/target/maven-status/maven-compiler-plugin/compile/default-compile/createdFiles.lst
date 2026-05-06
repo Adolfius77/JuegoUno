@@ -22,7 +22,6 @@ vista\DiseñosExtras\botonCircular.class
 vista\DiseñosExtras\PanelCarta.class
 vista\podioView.class
 vista\CrearPartida$3.class
-controlador\ClienteMain.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
 vista\SeleccionPartida.class
@@ -37,10 +36,8 @@ vista\DiseñosExtras\GameView.class
 controlador\PodioController.class
 vista\GameView$1.class
 vista\LobbyView.class
-red\ClienteRed.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class
 controlador\GameController.class
 vista\CrearPartida$2.class
-controlador\ClienteMain$1.class
 vista\unirsePartidaView$2.class
