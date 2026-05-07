@@ -11,7 +11,8 @@ import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import cliente.ClienteProxy;
+
+import red.ClienteProxy;
 import serealizador.serializador;
 
 /**
@@ -335,7 +336,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
 
         /* Create and display the form */
         try {
-            cliente.ClienteProxy proxy = cliente.ClienteProxy.getInstance();
+            ClienteProxy proxy = ClienteProxy.getInstance();
             serealizador.serializador sere = new serealizador.serializador();
             proxy.setSerializador(sere);
             proxy.conectar();

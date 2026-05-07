@@ -45,6 +45,7 @@ public class ServerProxy implements Runnable, IProxy {
         try {
             while (escuchando) {
                 String jsonRecibido = in.readLine();
+                System.out.println("[SERVER-PROXY] recibi el json pa : " + jsonRecibido);
 
                 if (jsonRecibido == null) {
                     break;

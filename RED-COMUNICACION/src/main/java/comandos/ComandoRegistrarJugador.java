@@ -23,6 +23,7 @@ public class ComandoRegistrarJugador implements IComandoServidor{
 
     @Override
     public void ejecutar(MensajeDTO mensaje) {
+        System.out.println("me pillo el broker desde el conmando registrar");
         String nombreJugador = (String) mensaje.getDatos().get("nombre");
         String nombreAvatar = (String) mensaje.getDatos().get("avatar");
         IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
