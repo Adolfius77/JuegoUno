@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package red;
 
-import Comandos.ComandoIniciarPartida;
 import Interfacez.IBroker;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
@@ -27,6 +22,7 @@ public class LobbyServidor {
         this.juegoServidor = juegoServidor;
         //comandos de la lobby
         this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", new comandoIniciarPartida(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("REGISTRO_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
     }
 
     public void registrarNuevoJugadorTemporal(NodoCliente nuevoNodo) {

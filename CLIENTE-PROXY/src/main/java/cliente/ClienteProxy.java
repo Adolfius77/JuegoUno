@@ -1,4 +1,4 @@
-package red; // O el paquete que corresponda en tu proyecto cliente
+package cliente; // O el paquete que corresponda en tu proyecto cliente
 
 import dtos.MensajeDTO;
 import Interfacez.IProxy;
