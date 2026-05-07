@@ -8,13 +8,10 @@ import java.io.BufferedReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import serealizador.serializador;
 
 public class ServerProxy implements Runnable, IProxy {
 
@@ -60,6 +57,14 @@ public class ServerProxy implements Runnable, IProxy {
                 if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
                     continue;
                 }
+                
+                if ("REGISTRO_JUGADOR".equals(mensaje.getTipo())) {
+                    if (mensaje.getDatos() == null) {
+                        mensaje.setDatos(new HashMap<>());
+                    }
+                    mensaje.getDatos().put("proxy", this);
+                }
+
                 broker.publicar(mensaje.getTipo(), mensaje);
             }
         } catch (IOException e) {
