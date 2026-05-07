@@ -74,7 +74,7 @@ public class LobbyController {
             System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
             SwingUtilities.invokeLater(() -> {
                 if (vista != null) {
-                    vista.cerrarVista();
+                    this.vista.cerrarVista();
                 }
                 SeleccionPartida seleccionVista = new SeleccionPartida();
                 seleccionVista.setVisible(true);
@@ -86,7 +86,7 @@ public class LobbyController {
 
             SwingUtilities.invokeLater(() -> {
                 if (vista != null) {
-                    vista.cerrarVista();
+                    this.vista.cerrarVista();
                 }
 
                 GameView vistaJuego = new GameView();

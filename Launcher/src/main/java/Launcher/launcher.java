@@ -1,8 +1,9 @@
-package controlador; // Asegúrate de poner el paquete correcto
+package Launcher;
 
 
-import Interfaces.IVista;
-import red.ClienteProxy; // Ajusta los imports según tus paquetes
+
+import cliente.ClienteProxy;
+import controlador.LobbyController;
 import serealizador.serializador;
 import vista.MenuPrincipal;
 
@@ -27,6 +28,7 @@ public class launcher {
                 public void run() {
 
                     MenuPrincipal menu = new MenuPrincipal(controlador);
+                    controlador.setVista(menu);
                     menu.setVisible(true);
                 }
             });
