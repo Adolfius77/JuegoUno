@@ -10,10 +10,9 @@ import controlador.LobbyController;
 import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.net.URL;
+import cliente.ClienteProxy;
+import serealizador.serializador;
 
 /**
  *
@@ -333,11 +332,25 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MenuPrincipal().setVisible(true);
-            }
-        });
+        try {
+            cliente.ClienteProxy proxy = cliente.ClienteProxy.getInstance();
+            serealizador.serializador sere = new serealizador.serializador();
+            proxy.setSerializador(sere);
+            proxy.conectar();
+
+            LobbyController controlador = new LobbyController(proxy);
+
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new MenuPrincipal(controlador).setVisible(true);
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("[MenuPrincipal] Error crítico al iniciar: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
