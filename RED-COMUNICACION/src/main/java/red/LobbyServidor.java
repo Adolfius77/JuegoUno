@@ -8,6 +8,7 @@ package red;
 import Interfacez.IBroker;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
+import comandos.ComandoRegistrarJugador;
 import comandos.comandoIniciarPartida;
 
 /**
@@ -26,6 +27,7 @@ public class LobbyServidor {
         this.juegoServidor = juegoServidor;
         //comandos de la lobby
         this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", new comandoIniciarPartida(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("REGISTRAR_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
     }
 
     public void registrarNuevoJugadorTemporal(NodoCliente nuevoNodo) {
