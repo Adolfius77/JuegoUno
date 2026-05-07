@@ -23,8 +23,8 @@ public class ComandoRegistrarJugador implements IComandoServidor{
 
     @Override
     public void ejecutar(MensajeDTO mensaje) {
-        String nombreJugador = (String) mensaje.getDatos().get("nombreJugador");
-        String nombreAvatar = (String) mensaje.getDatos().get("nombreAvatar");
+        String nombreJugador = (String) mensaje.getDatos().get("nombre");
+        String nombreAvatar = (String) mensaje.getDatos().get("avatar");
         IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
 
         if (nombreJugador == null || nombreJugador.trim().isEmpty()) {
@@ -62,7 +62,7 @@ public class ComandoRegistrarJugador implements IComandoServidor{
         respuestaRegistro.setTipo("REGISTRO_EXITOSO");
         respuestaRegistro.setRemitente("SERVIDOR");
         Map<String, Object> datosRespuesta = new HashMap<>();
-        datosRespuesta.put("nombreJugador", nombreJugador);
+        datosRespuesta.put("nombre", nombreJugador);
         respuestaRegistro.setDatos(datosRespuesta);
         proxy.enviarMensaje(respuestaRegistro);
 
