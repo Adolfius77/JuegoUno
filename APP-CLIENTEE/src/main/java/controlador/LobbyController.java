@@ -1,15 +1,15 @@
 package controlador;
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
 import dtos.MensajeDTO;
-import dtos.MensajeListaJugadoresDTO;
 import dtos.MensajeRegistroDTO;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 
-import red.ClienteProxy;
+
 import vista.GameView;
 import vista.SeleccionPartida;
 

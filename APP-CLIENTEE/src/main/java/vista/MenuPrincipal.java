@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
 import controlador.LobbyController;
 
 import utileria.GestorAudio;
@@ -12,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-import red.ClienteProxy;
+
 import serealizador.serializador;
 
 /**
