@@ -27,13 +27,13 @@ public class ServerProxy implements Runnable, IProxy {
 
     public ServerProxy (Socket socketCliente, Broker broker, ISerializador serializador) throws IOException {
         if (socketCliente == null) {
-            throw new IllegalArgumentException("[Servidor-hilo] El socket del cliente no puede ser nulo.");
+            throw new IllegalArgumentException("[Servidor-proxy] El socket del cliente no puede ser nulo.");
         }
         if (broker == null) {
-            throw new IllegalArgumentException("[Servidor-hilo] El broker no puede ser nulo.");
+            throw new IllegalArgumentException("[Servidor-proxy]  El broker no puede ser nulo.");
         }
         if (serializador == null) {
-            throw new IllegalArgumentException("[Servidor-hilo] El serializador no puede ser nulo.");
+            throw new IllegalArgumentException("[Servidor-proxy]  El serializador no puede ser nulo.");
         }
         this.socketCliente = socketCliente;
         this.broker = broker;
@@ -54,7 +54,7 @@ public class ServerProxy implements Runnable, IProxy {
                 }
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
                 if (mensaje == null) {
-                    System.out.println("[ServidorHilo] No se pudo deserializar el mensaje: " + jsonRecibido);
+                    System.out.println("[Servidor-proxy]  No se pudo deserializar el mensaje: " + jsonRecibido);
                     continue;
                 }
                 if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
@@ -63,7 +63,7 @@ public class ServerProxy implements Runnable, IProxy {
                 broker.publicar(mensaje.getTipo(), mensaje);
             }
         } catch (IOException e) {
-            System.out.println("[ServidorHilo] Conexion finalizada: " + e.getMessage());
+            System.out.println("[Servidor-proxy]  Conexion finalizada: " + e.getMessage());
         } finally {
             cerrarConexion();
         }
@@ -78,7 +78,7 @@ public class ServerProxy implements Runnable, IProxy {
             String jsonEnviar = serializador.serealizar(mensaje);
             out.println(jsonEnviar);
         } catch (Exception e) {
-            System.out.println("[ServidorHilo] Error enviando mensaje: " + e.getMessage());
+            System.out.println("[Servidor-proxy]  Error enviando mensaje: " + e.getMessage());
         }
     }
 
