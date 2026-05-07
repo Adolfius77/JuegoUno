@@ -4,11 +4,10 @@
  */
 package red;
 
-import Comandos.ComandoIniciarPartida;
+
 import Interfacez.IBroker;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
-import comandos.ComandoRegistrarJugador;
 import comandos.comandoIniciarPartida;
 
 /**
