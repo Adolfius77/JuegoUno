@@ -28,7 +28,7 @@ public class LobbyServidor {
         this.juegoServidor = juegoServidor;
         //comandos de la lobby
         this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", new comandoIniciarPartida(manejadorNodos, juegoServidor)::ejecutar);
-        this.broker.subscribirse("REGISTRAR_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
+        this.broker.subscribirse("REGISTRO_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
     }
 
     public void registrarNuevoJugadorTemporal(NodoCliente nuevoNodo) {

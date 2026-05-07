@@ -1,4 +1,4 @@
-package red; // O el paquete que corresponda en tu proyecto cliente
+package cliente;
 
 import dtos.MensajeDTO;
 import Interfacez.IProxy;
@@ -86,7 +86,9 @@ public class ClienteProxy extends Thread implements IProxy {
         try {
             while (escuchando) {
                 String jsonRecibido = in.readLine();
+                System.out.println("[CLIENTE-PROXY] eh recibido el json colega: " + jsonRecibido);
                 if (jsonRecibido == null) {
+                    System.out.println("opa");
                     break;
                 }
 
