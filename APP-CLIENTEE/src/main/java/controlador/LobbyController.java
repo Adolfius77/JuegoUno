@@ -14,9 +14,10 @@ import vista.GameView;
 import vista.SeleccionPartida;
 
 public class LobbyController {
-
     private IVista vista;
-    private ClienteProxy clienteProxy;
+    private final ClienteProxy clienteProxy;
+    private String nombreJugadorTemporal;
+    private String nombreAvatarTemporal;
 
     public LobbyController(ClienteProxy clienteProxy) {
         if (clienteProxy == null) {
@@ -39,6 +40,9 @@ public class LobbyController {
     public void registrarJugador(String nombreJugador, String avatar) {
         if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
             System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
+
+            this.nombreJugadorTemporal = nombreJugador;
+            this.nombreAvatarTemporal = avatar;
 
             //aqui aplico el patron sobre
             //en esta parte defino el sobre
@@ -76,7 +80,7 @@ public class LobbyController {
                 if (vista != null) {
                     vista.cerrarVista();
                 }
-                SeleccionPartida seleccionVista = new SeleccionPartida();
+                SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal);
                 seleccionVista.setVisible(true);
                 this.setVista(seleccionVista);
             });

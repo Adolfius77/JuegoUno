@@ -13,7 +13,7 @@ import java.awt.*;
  *
  * @author emiim
  */
-public class SeleccionPartida extends javax.swing.JFrame implements IVista{
+public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();

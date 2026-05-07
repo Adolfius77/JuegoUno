@@ -1,7 +1,6 @@
 package red;
 
 
-import Interfacez.ISerializador;
 import Lector.LectorConfiguracion;
 import serealizador.serializador;
 
