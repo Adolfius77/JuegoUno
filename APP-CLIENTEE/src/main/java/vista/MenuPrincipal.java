@@ -27,6 +27,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     /**
      * Creates new form NewJFrame
      */
+    
+    
 
     public MenuPrincipal(LobbyController controlador) {
         this.controlador = controlador;

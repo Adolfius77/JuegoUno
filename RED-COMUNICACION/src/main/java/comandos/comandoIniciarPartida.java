@@ -27,7 +27,8 @@ public class comandoIniciarPartida implements IComandoServidor{
         this.ManejadorNodos = ManejadorNodos;
         this.JuegoServidor = JuegoServidor;
     }
-
+    
+    
     @Override
     public void ejecutar(MensajeDTO mensaje) {
         List<String> jugadores = ManejadorNodos.obtenerNombresDeNodosConectados();
@@ -44,7 +45,7 @@ public class comandoIniciarPartida implements IComandoServidor{
         Map<String, Object> datos = new HashMap();
         datos.put("partida", estadoInicialDTO);
         estadoPartida.setDatos(datos);
-
+        
         //enviamos el sobre a todos los jugadores
         for(NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()){
             nodo.enviarMensaje(estadoPartida);

@@ -1,0 +1,9 @@
+interfaces\IComandoServidor.class
+red\Servidor.class
+comandos\comandoIniciarPartida.class
+red\servidorMain.class
+red\LobbyServidor.class
+red\JuegoServidor.class
+Lector\LectorConfiguracion.class
+comandos\ComandoRegistrarJugador.class
+comandos\ComandoDesconectarJugador.class
