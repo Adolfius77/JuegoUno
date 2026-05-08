@@ -55,14 +55,21 @@ public class GameView extends javax.swing.JFrame implements IVista {
             }
         });
 
+        panelJugador2.setOpaque(false);
+        panelJugador3.setOpaque(false);
+        panelJugador4.setOpaque(false);
+        panelNumeroCartas1.setOpaque(false);
+        panelNumeroCartas2.setOpaque(false);
+        panelNumeroCartas3.setOpaque(false);
+        panelNumeroCartas4.setOpaque(false);
         setLocationRelativeTo(null);
     }
 
     private void robarCarta() {
         try {
             dtos.MensajeDTO msg = new dtos.MensajeDTO("ROBAR_CARTA", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-            System.out.println("[GameView] Solicitando robar carta...");
+            msg.getDatos().put("codigoSala", red.ClienteControlador.getInstance().getCodigoSala()); // ← agregar
+            red.ClienteControlador.getInstance().enviarMensaje(msg);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -86,6 +93,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     }
                     break;
                 }
+
             }
         }
 
@@ -114,7 +122,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
         if (cantidadCartas == 1) {
             separacion = 0;
         } else {
-            separacion = Math.min(40, (anchoPanel - anchoCarta) / (cantidadCartas - 1));
+            separacion = Math.min(55, (anchoPanel - anchoCarta) / (cantidadCartas - 1));
         }
 
         int anchoTotal = anchoCarta + (separacion * (cantidadCartas - 1));
@@ -128,6 +136,18 @@ public class GameView extends javax.swing.JFrame implements IVista {
             int posX = xInicio + (i * separacion);
             cartaVisual.setBounds(posX, yInicio, anchoCarta, altoCarta);
             panelJugadorPrincipal.add(cartaVisual);
+        }
+
+        javax.swing.JPanel[] panelesOtros = {panelJugador2, panelJugador3, panelJugador4};
+        int panelIdx = 0;
+
+        for (dtos.JugadorDTO j : partidaDTO.getJugadores()) {
+            if (!j.getNombre().equals(jugadorLocal.getNombre()) && panelIdx < panelesOtros.length) {
+                int cantidad = (j.getMano() != null && j.getMano().getCartas() != null)
+                        ? j.getMano().getCartas().size() : 0;
+                mostrarCartasReverso(panelesOtros[panelIdx], cantidad);
+                panelIdx++;
+            }
         }
 
         panelJugadorPrincipal.revalidate();
@@ -170,9 +190,24 @@ public class GameView extends javax.swing.JFrame implements IVista {
         return null;
     }
 
+    private void enviarCartaAlServidor(CartaDTO carta, String colorElegido) {
+        try {
+            dtos.MensajeDTO msg = new dtos.MensajeDTO("JUGAR_CARTA", "CLIENTE");
+            msg.getDatos().put("color", carta.getColor());
+            msg.getDatos().put("valor", carta.getValor());
+            msg.getDatos().put("codigoSala", red.ClienteControlador.getInstance().getCodigoSala()); // ← agregar
+            if (colorElegido != null) {
+                msg.getDatos().put("colorElegido", colorElegido);
+            }
+            red.ClienteControlador.getInstance().enviarMensaje(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void mostrarSelectorColor(CartaDTO carta) {
         String[] colores = {"ROJO", "AZUL", "VERDE", "AMARILLO"};
-        String[] etiquetas = {"🔴 Rojo", "🔵 Azul", "🟢 Verde", "🟡 Amarillo"};
+        String[] etiquetas = {"Rojo", "Azul", "Verde", "Amarillo"};
 
         String seleccion = (String) JOptionPane.showInputDialog(
                 this,
@@ -185,25 +220,25 @@ public class GameView extends javax.swing.JFrame implements IVista {
         );
 
         if (seleccion == null) {
-            return; // canceló
+            return;
         }
 
         String colorElegido = colores[java.util.Arrays.asList(etiquetas).indexOf(seleccion)];
         enviarCartaAlServidor(carta, colorElegido);
     }
 
-    private void enviarCartaAlServidor(CartaDTO carta, String colorElegido) {
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("JUGAR_CARTA", "CLIENTE");
-            msg.getDatos().put("color", carta.getColor());
-            msg.getDatos().put("valor", carta.getValor());
-            if (colorElegido != null) {
-                msg.getDatos().put("colorElegido", colorElegido); // ← color nuevo
-            }
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public void mostrarCartasReverso(javax.swing.JPanel panel, int cantidad) {
+        panel.removeAll();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, -15, 5));
+        panel.setOpaque(false);
+
+        for (int i = 0; i < cantidad; i++) {
+            PanelCarta reverso = new PanelCarta(0);
+            reverso.setPreferredSize(new Dimension(75, 110));
+            panel.add(reverso);
         }
+        panel.revalidate();
+        panel.repaint();
     }
 
     /**
@@ -561,8 +596,30 @@ public class GameView extends javax.swing.JFrame implements IVista {
     public void actualizar(String evento) {
         System.out.println("evento recibido en gameView: " + evento);
         if ("ACTUALIZACION_PARTIDA".equals(evento)) {
-            // La partida se actualiza via inicializarPartida()
-            // que es llamado desde ClienteRed después de actualizar()
+
+        } else if (evento != null && evento.startsWith("PARTIDA_TERMINADA:")) {
+            String ganador = evento.split(":")[1];
+
+            java.util.List<dtos.JugadorDTO> ordenados = new java.util.ArrayList<>();
+            if (partidaDTO != null && partidaDTO.getJugadores() != null) {
+                ordenados = new java.util.ArrayList<>(partidaDTO.getJugadores());
+                ordenados.sort((a, b) -> {
+                    int cartasA = (a.getMano() != null && a.getMano().getCartas() != null)
+                            ? a.getMano().getCartas().size() : 0;
+                    int cartasB = (b.getMano() != null && b.getMano().getCartas() != null)
+                            ? b.getMano().getCartas().size() : 0;
+                    return Integer.compare(cartasA, cartasB);
+                });
+            }
+
+            java.util.List<String> nombresOrdenados = new java.util.ArrayList<>();
+            for (dtos.JugadorDTO j : ordenados) {
+                nombresOrdenados.add(j.getNombre());
+            }
+
+            red.ClienteControlador.getInstance().setVistaActual(null);
+            this.dispose();
+            new podioView(ganador, nombresOrdenados).setVisible(true);
         }
     }
 }

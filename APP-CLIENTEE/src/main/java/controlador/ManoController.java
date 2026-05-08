@@ -22,11 +22,11 @@ public class ManoController {
         return Collections.unmodifiableList(new ArrayList<>(modelo.getCartas()));
     }
 
-    public List<Carta> obtenerCartasJugables(Carta cartaActiva) {
+    public List<Carta> obtenerCartasJugables(Carta cartaActiva, Entidades.enums.Color colorActivo) {
         if (cartaActiva == null) {
             return Collections.emptyList();
         }
-        return Collections.unmodifiableList(modelo.ObtenerCartasJugables(cartaActiva));
+        return Collections.unmodifiableList(modelo.ObtenerCartasJugables(cartaActiva, colorActivo));
     }
 
     public boolean tieneCarta(Carta carta) {

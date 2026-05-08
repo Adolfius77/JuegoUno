@@ -1,5 +1,6 @@
 package red;
 
+import broker.GestorSalas;
 import Entidades.Estados.IEstadoPartida;
 import Entidades.Lobby;
 import Entidades.Logica.Partida;
@@ -270,6 +271,13 @@ public class ServidorHilo extends Thread {
 
         String color = (String) mensaje.getDatos().get("color");
         String valor = (String) mensaje.getDatos().get("valor");
+        String colorElegido = (String) mensaje.getDatos().get("colorElegido");
+
+        System.out.println(">>> JUGAR_CARTA: color=" + color + " valor=" + valor + " colorElegido=" + colorElegido);
+        jugador.getMano().getCartas().forEach(c -> {
+            dtos.CartaDTO dto = new Mappers.CartaMapper().toDTO(c);
+            System.out.println("    EN MANO: color=" + dto.getColor() + " valor=" + dto.getValor());
+        });
 
         Entidades.Carta cartaAJugar = jugador.getMano().getCartas().stream()
                 .filter(c -> {
@@ -285,24 +293,38 @@ public class ServidorHilo extends Thread {
 
         partida.jugarCarta(cartaAJugar, jugador);
 
-        PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
-        MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
-        respuesta.setTipo("ACTUALIZACION_PARTIDA");
-        respuesta.setPartida(partidaDTO);
-
-        for (ServidorHilo cliente : Servidor.hilosConectados) {
-            if (codigoSala.equals(cliente.codigoSala)) {
-                cliente.enviarDatos(respuesta);
-            }
-        }
-
-        String colorElegido = (String) mensaje.getDatos().get("colorElegido");
         if (colorElegido != null) {
             partida.getPilaCartas().setColorActivo(
                     Entidades.enums.Color.valueOf(colorElegido));
         }
-        
-        System.out.println("[Servidor] " + nombreJugador + " jugó: " + color + " " + valor);
+
+        Entidades.Jugador ganador = partida.getJugadores().stream()
+                .filter(j -> j.getMano().getCartas().isEmpty())
+                .findFirst().orElse(null);
+
+        if (ganador != null) {
+            System.out.println("[Servidor] Partida terminada, ganador: " + ganador.getNombre());
+            MensajeNotificacionDTO notif = new MensajeNotificacionDTO(
+                    "SERVIDOR", false, "PARTIDA_TERMINADA:" + ganador.getNombre());
+            for (ServidorHilo cliente : Servidor.hilosConectados) {
+                if (codigoSala.equals(cliente.codigoSala)) {
+                    cliente.enviarDatos(notif);
+                }
+            }
+        } else {
+            PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
+            MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
+            respuesta.setTipo("ACTUALIZACION_PARTIDA");
+            respuesta.setPartida(partidaDTO);
+            for (ServidorHilo cliente : Servidor.hilosConectados) {
+                if (codigoSala.equals(cliente.codigoSala)) {
+                    cliente.enviarDatos(respuesta);
+                }
+            }
+            System.out.println("[Servidor] " + nombreJugador + " jugó: " + color + " " + valor
+                    + (colorElegido != null ? " → color activo: " + colorElegido : ""));
+        }
+
     }
 
     private void procesarInicioPartida() {

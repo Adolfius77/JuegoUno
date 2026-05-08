@@ -17,6 +17,43 @@ public class podioView extends javax.swing.JFrame {
         initComponents();
     }
 
+    public podioView(String ganador, java.util.List<String> todosLosJugadores) {
+        initComponents();
+        mostrarResultados(ganador, todosLosJugadores);
+    }
+
+    private void mostrarResultados(String ganador, java.util.List<String> jugadores) {
+        java.util.List<String> orden = new java.util.ArrayList<>();
+        orden.add(ganador);
+        for (String j : jugadores) {
+            if (!j.equals(ganador)) {
+                orden.add(j);
+            }
+        }
+
+        javax.swing.JPanel[] paneles = {panelJugador1, panelJuagador2, panelJugador3, panelJugador4};
+
+        for (int i = 0; i < paneles.length; i++) {
+            paneles[i].removeAll();
+            paneles[i].setLayout(new java.awt.BorderLayout());
+            if (i < orden.size()) {
+                javax.swing.JLabel lbl = new javax.swing.JLabel(
+                        (i == 0 ? "🏆 " : (i + 1) + ". ") + orden.get(i),
+                        javax.swing.SwingConstants.CENTER
+                );
+                lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18));
+                paneles[i].add(lbl, java.awt.BorderLayout.CENTER);
+            }
+            paneles[i].revalidate();
+            paneles[i].repaint();
+        }
+
+        btnContinuar.addActionListener(e -> {
+            this.dispose();
+            new MenuPrincipal().setVisible(true);
+        });
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

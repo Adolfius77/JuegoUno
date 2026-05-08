@@ -275,13 +275,9 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
             return;
         }
 
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("UNIRSE_A_SALA", "CLIENTE");
-            msg.getDatos().put("codigoSala", codigo.toUpperCase());
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        dtos.MensajeDTO msg = new dtos.MensajeDTO("UNIRSE_A_SALA", "CLIENTE");
+        msg.getDatos().put("codigoSala", codigo.toUpperCase());
+        red.ClienteControlador.getInstance().enviarMensaje(msg);
     }//GEN-LAST:event_btnUnirseActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -352,14 +348,10 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     public void mostrarVista() {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        try {
-            dtos.MensajeDTO solicitud = new dtos.MensajeDTO();
-            solicitud.setTipo("SOLICITAR_LISTA_PARTIDAS");
-            solicitud.setRemitente("CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(solicitud);
-        } catch (Exception ex) {
-            mostrarMensaje("Error al solicitar partidas.");
-        }
+        dtos.MensajeDTO solicitud = new dtos.MensajeDTO();
+        solicitud.setTipo("SOLICITAR_LISTA_PARTIDAS");
+        solicitud.setRemitente("CLIENTE");
+        red.ClienteControlador.getInstance().enviarMensaje(solicitud);
     }
 
     @Override
@@ -378,10 +370,10 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
             String codigo = evento.split(":")[1];
             javax.swing.SwingUtilities.invokeLater(() -> {
                 dtos.JugadorDTO jugador = new dtos.JugadorDTO();
-                jugador.setNombre(red.ClienteRed.getInstance().getNombreJugador());
-                jugador.setAvatar(red.ClienteRed.getInstance().getNombreAvatar());
+                jugador.setNombre(red.ClienteControlador.getInstance().getNombreJugador());
+                jugador.setAvatar(red.ClienteControlador.getInstance().getNombreAvatar());
                 LobbyView lobby = new LobbyView(jugador, codigo);
-                red.ClienteRed.getInstance().setVistaActual(lobby);
+                red.ClienteControlador.getInstance().setVistaActual(lobby);
                 lobby.setVisible(true);
                 this.dispose();
             });

@@ -11,8 +11,9 @@ public class MensajeListaJugadoresDTO extends MensajeDTO implements Serializable
     }
 
     public MensajeListaJugadoresDTO(List<String> jugadores) {
-        super("LISTA_JUGADORES", "SERVIDOR"); 
+        super("LISTA_JUGADORES", "SERVIDOR");
         this.nombres = jugadores;
+        getDatos().put("jugadores", jugadores);
     }
 
     public List<String> getJugadores() {

@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import red.ClienteControlador;
 import red.ClienteRed;
 import utileria.GestorAudio;
 import javax.swing.*;
@@ -268,30 +269,22 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
     }
 
     private void registrarUsuario() {
-        final String nombreJugador = txtNombreUsuario.getText().trim();
+        String nombreJugador = txtNombreUsuario.getText().trim();
         if (nombreJugador.isEmpty()) {
             mostrarMensaje("Ingresa un nombre.");
             return;
         }
-
         setFormularioHabilitado(false);
 
-        final String avatar = obtenerAvatarSeleccionado();
+        String avatar = obtenerAvatarSeleccionado();
 
-        new Thread(() -> {
-            try {
-                ClienteRed red = ClienteRed.getInstance();
-                red.setVistaMenu(this, nombreJugador, avatar);
-                red.conectar();
-                red.enviarMensaje(new dtos.MensajeRegistroDTO(nombreJugador, avatar));
-            } catch (Exception ex) {
-                java.awt.EventQueue.invokeLater(() -> {
-                    setFormularioHabilitado(true);
-                    mostrarMensaje("No se pudo conectar con el servidor.");
-                });
-                ex.printStackTrace();
-            }
-        }).start();
+        ClienteControlador controlador = ClienteControlador.getInstance();
+        controlador.setDatosJugador(nombreJugador, avatar);
+        controlador.setVistaActual(this);
+
+        dtos.MensajeRegistroDTO registro = new dtos.MensajeRegistroDTO();
+        registro.setNombre(nombreJugador);
+        controlador.enviarMensaje(registro);
     }
 
     private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed
@@ -369,15 +362,14 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-        System.out.println("[MenuPrincipal] Evento recibido: '" + evento + "'");
         switch (evento.trim().toUpperCase()) {
             case "REGISTRO_EXITOSO":
-                SeleccionPartida pantallaSeleccion = new SeleccionPartida(
-                        txtNombreUsuario.getText().trim(),
-                        obtenerAvatarSeleccionado()
+                SeleccionPartida pantalla = new SeleccionPartida(
+                        ClienteControlador.getInstance().getNombreJugador(),
+                        ClienteControlador.getInstance().getNombreAvatar()
                 );
-                ClienteRed.getInstance().setVistaActual(pantallaSeleccion);
-                pantallaSeleccion.setVisible(true);
+                ClienteControlador.getInstance().setVistaActual(pantalla);
+                pantalla.setVisible(true);
                 this.dispose();
                 break;
             default:

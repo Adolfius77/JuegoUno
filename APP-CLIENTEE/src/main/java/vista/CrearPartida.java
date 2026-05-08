@@ -35,19 +35,15 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         jLabel3.setText(jugadorHost != null ? jugadorHost.getNombre() : "");
         configurarEventos();
     }
-    // limite de jugadores seleccionado (2,3,4)
     private int limiteJugadores = 4;
 
     private void configurarEventos() {
-        // botones para seleccionar limite
         btn2jugadores.addActionListener(e -> seleccionarLimite(2));
         btn3jugadore.addActionListener(e -> seleccionarLimite(3));
         btn4jugadores.addActionListener(e -> seleccionarLimite(4));
 
-        // crear partida: abrir vista de lobby y marcar host
         btnCrearPartida.addActionListener(e -> crearPartida());
 
-        // volver a la pantalla anterior
         btnVolver.addActionListener(e -> {
             SeleccionPartida sel = new SeleccionPartida(jugadorHost.getNombre(), jugadorHost.getAvatar());
             sel.setVisible(true);
@@ -71,14 +67,9 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
 
         btnCrearPartida.setEnabled(false);
 
-        try {
-            dtos.MensajeCrearPartidaDTO msg = new dtos.MensajeCrearPartidaDTO(nombreSala, limiteJugadores);
-            red.ClienteRed.getInstance().setVistaActual(this);
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            btnCrearPartida.setEnabled(true);
-            ex.printStackTrace();
-        }
+        dtos.MensajeCrearPartidaDTO msg = new dtos.MensajeCrearPartidaDTO(nombreSala, limiteJugadores);
+        red.ClienteControlador.getInstance().setVistaActual(this);
+        red.ClienteControlador.getInstance().enviarMensaje(msg);
     }
 
     /**
@@ -463,7 +454,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
             String codigo = evento.split(":")[1];
             javax.swing.SwingUtilities.invokeLater(() -> {
                 LobbyView lobby = new LobbyView(jugadorHost, codigo);
-                red.ClienteRed.getInstance().setVistaActual(lobby);
+                red.ClienteControlador.getInstance().setVistaActual(lobby);
                 lobby.setVisible(true);
                 this.dispose();
             });
@@ -482,7 +473,6 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        // sin popup, solo log por ahora
         System.out.println("[CrearPartida] " + mensaje);
     }
 }

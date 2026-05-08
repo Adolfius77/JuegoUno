@@ -7,9 +7,7 @@ C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interf
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\interfaces\IReceptorMensajes.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\Cliente.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\ClienteHilo.java
-C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\clienteMain.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\GestorPartida.java
-C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\GestorSalas.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\Servidor.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\ServidorHilo.java
 C:\Users\Usuario\Documents\GitHub\JuegoUno\RED-COMUNICACION\src\main\java\red\servidorMain.java

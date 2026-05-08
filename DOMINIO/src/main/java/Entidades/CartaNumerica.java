@@ -4,7 +4,6 @@
  */
 package Entidades;
 
-
 import Entidades.Logica.Partida;
 import Entidades.enums.Color;
 
@@ -13,7 +12,7 @@ import Entidades.enums.Color;
  * @author LABCISCO-PC080
  */
 public class CartaNumerica extends Carta {
-    
+
     private int valor;
 
     public CartaNumerica(int valor, String id, Color color) {
@@ -28,16 +27,14 @@ public class CartaNumerica extends Carta {
     public void setValor(int valor) {
         this.valor = valor;
     }
-    
-    
 
     @Override
-    public boolean esJugable(Carta cartaTablero) {
-        if(this.color == cartaTablero.getColor()) return true;
-        
-        if(cartaTablero instanceof CartaNumerica){
-            return this.valor == ((CartaNumerica)cartaTablero).getValor();
-            
+    public boolean esJugable(Carta cartaTablero, Color colorActivo) {
+        if (this.color == colorActivo) {
+            return true;
+        }
+        if (cartaTablero instanceof CartaNumerica) {
+            return this.valor == ((CartaNumerica) cartaTablero).getValor();
         }
         return false;
     }
@@ -46,5 +43,5 @@ public class CartaNumerica extends Carta {
     public boolean aplicarEfecto(Partida partida) {
         return true;
     }
-    
+
 }

@@ -40,7 +40,15 @@ public class PanelCarta extends JPanel {
         });
     }
 
-    // ← guardar yOriginal la primera vez
+    public PanelCarta(int cantidad) {
+        this.carta = null;
+        this.esCarta = false; // no clickeable, no seleccionable
+        setPreferredSize(new Dimension(75, 110));
+        setOpaque(false);
+    }
+
+    private boolean esCarta = true;
+
     private void guardarYOriginal() {
         if (yOriginal == -1) {
             yOriginal = getBounds().y;
@@ -61,19 +69,24 @@ public class PanelCarta extends JPanel {
     }
 
     public void setSeleccionada(boolean sel) {
-        if (sel) seleccionar();
-        else deseleccionar();
+        if (sel) {
+            seleccionar();
+        } else {
+            deseleccionar();
+        }
     }
 
-    public boolean isSeleccionada() { return seleccionada; }
-    public CartaDTO getCarta() { return carta; }
+    public boolean isSeleccionada() {
+        return seleccionada;
+    }
+
+    public CartaDTO getCarta() {
+        return carta;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (carta == null) {
-            return;
-        }
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -82,9 +95,44 @@ public class PanelCarta extends JPanel {
         int ancho = getWidth();
         int alto = getHeight();
 
+        if (!esCarta) {
+            g2.setColor(Color.WHITE);
+            g2.fillRoundRect(0, 0, ancho, alto, 15, 15);
+
+            g2.setColor(new Color(180, 0, 0)); // rojo oscuro
+            g2.fillRoundRect(5, 5, ancho - 10, alto - 10, 10, 10);
+
+            g2.setColor(new Color(140, 0, 0));
+            g2.setStroke(new BasicStroke(1.5f));
+            for (int y = -alto; y < alto * 2; y += 12) {
+                for (int x = -ancho; x < ancho * 2; x += 12) {
+                    g2.drawLine(x, y, x + 10, y + 10);
+                    g2.drawLine(x + 10, y, x, y + 10);
+                }
+            }
+
+            g2.setColor(Color.BLACK);
+            g2.fillOval(ancho / 2 - 18, alto / 2 - 28, 36, 56);
+            g2.setColor(new Color(180, 0, 0));
+            g2.fillOval(ancho / 2 - 14, alto / 2 - 24, 28, 48);
+
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 11));
+            FontMetrics fm = g2.getFontMetrics();
+            g2.drawString("UNO", (ancho - fm.stringWidth("UNO")) / 2, alto / 2 + 4);
+
+            g2.setColor(Color.BLACK);
+            g2.setStroke(new BasicStroke(2));
+            g2.drawRoundRect(1, 1, ancho - 3, alto - 3, 15, 15);
+            return;
+        }
+
+        if (carta == null) {
+            return;
+        }
+
         java.awt.Color colorFondo = obtenerColorSwing(carta.getColor());
 
-        // ← borde dorado si está seleccionada
         if (seleccionada) {
             g2.setColor(new java.awt.Color(255, 215, 0));
             g2.setStroke(new BasicStroke(4));

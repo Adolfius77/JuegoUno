@@ -4,23 +4,22 @@
  */
 package Entidades;
 
-
 import Entidades.Logica.Partida;
 import Entidades.enums.Color;
-
 
 /**
  *
  * @author LABCISCO-PC080
  */
-public class cartaComodin extends Carta{
+public class cartaComodin extends Carta {
+
     private final boolean EsMasCuatro;
 
     public cartaComodin(boolean EsMasCuatro, String id, Color color) {
         super(id, color.NEGRO);
         this.EsMasCuatro = EsMasCuatro;
     }
-    
+
     @Override
     public String getId() {
         return id;
@@ -32,20 +31,21 @@ public class cartaComodin extends Carta{
     }
 
     @Override
-    public boolean esJugable(Carta cartaTablero) {
+    public boolean esJugable(Carta cartaTablero, Color colorActivo) {
         return true;
     }
 
     @Override
     public boolean aplicarEfecto(Partida partida) {
-        if(this.EsMasCuatro){
+        if (this.EsMasCuatro) {
             partida.acomularCartas(4);
-            partida.saltarTurno();
+            partida.setSaltarTurno(true);
         }
         return true;
     }
-    public boolean esMasCuatro(){
+
+    public boolean esMasCuatro() {
         return EsMasCuatro;
     }
-    
+
 }

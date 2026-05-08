@@ -19,11 +19,13 @@ vista\GameView.class
 vista\unirsePartidaView.class
 vista\MenuPrincipal.class
 vista\avatarForm.class
+red\clienteMain.class
 vista\DiseñosExtras\botonCircular.class
 vista\DiseñosExtras\PanelCarta.class
 vista\podioView.class
 vista\DiseñosExtras\PanelCarta$1.class
 vista\CrearPartida$3.class
+red\ClienteControlador.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
 vista\LobbyView$2.class

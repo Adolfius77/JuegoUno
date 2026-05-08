@@ -23,7 +23,7 @@ public abstract class Carta {
         this.color = color;
     }
 
-    public abstract boolean esJugable(Carta cartaTablero);
+    public abstract boolean esJugable(Carta cartaTablero, Color colorActivo);
 
     public abstract boolean aplicarEfecto(Partida partida);
 

@@ -286,17 +286,17 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
         jugadorHost.setNombre(nombreUsuario);
 
         CrearPartida proximaVista = new CrearPartida(jugadorHost);
-        red.ClienteRed.getInstance().setVistaActual(proximaVista);
+        red.ClienteControlador.getInstance().setVistaActual(proximaVista);
         abrirVentana(proximaVista);
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
         unirsePartidaView proximaVista = new unirsePartidaView();
-        red.ClienteRed.getInstance().setVistaActual(proximaVista);
+        red.ClienteControlador.getInstance().setVistaActual(proximaVista);
         abrirVentana(proximaVista);    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        red.ClienteRed.getInstance().desconectar();
+        red.ClienteControlador.getInstance().desconectar();
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 

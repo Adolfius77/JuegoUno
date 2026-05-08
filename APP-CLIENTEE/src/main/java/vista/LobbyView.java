@@ -7,6 +7,7 @@ package vista;
 import Interfaces.IVista;
 import dtos.JugadorDTO;
 import red.GestorPartida;
+import red.ClienteControlador;
 
 /**
  *
@@ -46,7 +47,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         btnCancelar.addActionListener(e -> {
             SeleccionPartida sel = new SeleccionPartida(
                     jugadorLocal.getNombre(), jugadorLocal.getAvatar());
-            red.ClienteRed.getInstance().setVistaActual(sel);
+            red.ClienteControlador.getInstance().setVistaActual(sel);
             sel.setVisible(true);
             dispose();
         });
@@ -55,7 +56,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     private void solicitarUnirseAlLobby() {
         try {
             dtos.MensajeDTO msg = new dtos.MensajeDTO("SOLICITUD_UNIRSE_LOBBY", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
+            msg.getDatos().put("codigoSala", codigoSala); // ← agregar esto
+            ClienteControlador.getInstance().enviarMensaje(msg);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -64,7 +66,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     private void enviarListo() {
         try {
             dtos.MensajeDTO msg = new dtos.MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
+            msg.getDatos().put("codigoSala", codigoSala); // ← agregar esto
+            ClienteControlador.getInstance().enviarMensaje(msg);
             btnEstoyListo.setEnabled(false);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -490,8 +493,9 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         System.out.println("[LobbyView] Evento: " + evento);
         if ("ACTUALIZACION_PARTIDA".equals(evento)) {
             javax.swing.SwingUtilities.invokeLater(() -> {
+                ClienteControlador.getInstance().setCodigoSala(codigoSala); // ← agregar
                 GameView juego = new GameView(jugadorLocal);
-                red.ClienteRed.getInstance().setVistaActual(juego);
+                ClienteControlador.getInstance().setVistaActual(juego);
                 juego.setVisible(true);
                 dispose();
             });

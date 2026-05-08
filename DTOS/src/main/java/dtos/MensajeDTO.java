@@ -4,21 +4,24 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public  class MensajeDTO implements Serializable {
-    private static final long getSerialVersionUID =  1L;
+public class MensajeDTO implements Serializable {
+
+    private static final long getSerialVersionUID = 1L;
     private String tipo;
     private String remitente;
-    private Map<String,Object> datos;
+    private Map<String, Object> datos;
     private long timestamp;
 
     public MensajeDTO() {
+        this.datos = new HashMap<>();
+        this.timestamp = System.currentTimeMillis();
     }
 
     public MensajeDTO(String remitente) {
         this(null, remitente);
     }
 
-    public MensajeDTO(String tipo,String remitente) {
+    public MensajeDTO(String tipo, String remitente) {
         this.tipo = tipo;
         this.remitente = remitente;
         this.datos = new HashMap<>();
@@ -59,11 +62,11 @@ public  class MensajeDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "MensajeDTO{" +
-                "tipo='" + tipo + '\'' +
-                ", remitente='" + remitente + '\'' +
-                ", datos=" + datos +
-                ", timestamp=" + timestamp +
-                '}';
+        return "MensajeDTO{"
+                + "tipo='" + tipo + '\''
+                + ", remitente='" + remitente + '\''
+                + ", datos=" + datos
+                + ", timestamp=" + timestamp
+                + '}';
     }
 }

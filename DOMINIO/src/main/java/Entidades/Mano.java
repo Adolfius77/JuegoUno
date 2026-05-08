@@ -4,6 +4,7 @@
  */
 package Entidades;
 
+import Entidades.enums.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author LABCISCO-PC080
  */
 public class Mano {
+
     private List<Carta> cartas;
 
     public Mano() {
@@ -22,26 +24,27 @@ public class Mano {
     public Mano(List<Carta> cartas) {
         this.cartas = cartas;
     }
-    
-    public Carta agregarCarta(Carta carta){
+
+    public Carta agregarCarta(Carta carta) {
         cartas.add(carta);
-        
+
         return carta;
     }
-    
-    public Carta eliminarCarta(Carta carta){
+
+    public Carta eliminarCarta(Carta carta) {
         cartas.remove(carta);
-        
+
         return carta;
     }
-    public List<Carta> getCartas(){
+
+    public List<Carta> getCartas() {
         return Collections.unmodifiableList(cartas);
     }
-    
-    public List<Carta> ObtenerCartasJugables(Carta cartaActiva){
+
+    public List<Carta> ObtenerCartasJugables(Carta cartaActiva, Color colorActivo) {
         List<Carta> jugables = new ArrayList<>();
-        for(Carta c : cartas){
-            if(c.esJugable(cartaActiva)){
+        for (Carta c : cartas) {
+            if (c.esJugable(cartaActiva, colorActivo)) {
                 jugables.add(c);
             }
         }

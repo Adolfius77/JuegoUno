@@ -15,9 +15,11 @@ public class MensajeCrearPartidaDTO extends MensajeDTO {
     private int limiteJugadores;
 
     public MensajeCrearPartidaDTO(String nombreSala, int limiteJugadores) {
-        super("CREAR_PARTIDA", "CLIENTE"); // tipo, remitente
+        super("CREAR_PARTIDA", "CLIENTE");
         this.nombreSala = nombreSala;
         this.limiteJugadores = limiteJugadores;
+        getDatos().put("nombreSala", nombreSala);
+        getDatos().put("limiteJugadores", limiteJugadores);
     }
 
     public String getNombreSala() {

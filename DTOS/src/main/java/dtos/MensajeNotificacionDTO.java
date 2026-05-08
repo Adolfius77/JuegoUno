@@ -1,6 +1,7 @@
 package dtos;
 
 public class MensajeNotificacionDTO extends MensajeDTO {
+
     private static final long serialVersionUID = 1L;
     private String textoMensaje;
     private boolean esError;//para movimientos invalidos
@@ -9,9 +10,11 @@ public class MensajeNotificacionDTO extends MensajeDTO {
     }
 
     public MensajeNotificacionDTO(String idRemitente, boolean esError, String textoMensaje) {
-        super("SERVIDOR");
+        super("NOTIFICACION", idRemitente);
         this.esError = esError;
         this.textoMensaje = textoMensaje;
+        getDatos().put("textoMensaje", textoMensaje);
+        getDatos().put("esError", esError);
     }
 
     public String getTextoMensaje() {

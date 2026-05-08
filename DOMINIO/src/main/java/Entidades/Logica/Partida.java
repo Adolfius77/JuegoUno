@@ -38,7 +38,7 @@ public class Partida implements IObservable {
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
         this.estado = estado;
-        this.id = java.util.UUID.randomUUID().toString(); 
+        this.id = java.util.UUID.randomUUID().toString();
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
         this.saltarTurno = false;
@@ -50,14 +50,13 @@ public class Partida implements IObservable {
     }
 
     public Jugador agregarJugador(Jugador jugador) {
-        estado.agregarJugador(this,jugador);
+        estado.agregarJugador(this, jugador);
         return jugador;
     }
 
-
     public void verificarGanador() {
         for (Jugador jugador : jugadores) {
-            if (jugador.getMano().getCartas().isEmpty()){
+            if (jugador.getMano().getCartas().isEmpty()) {
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
                 notificarObservador("PARTIDA_FINALIZADA" + jugador.getNombre());
                 return;
@@ -66,8 +65,8 @@ public class Partida implements IObservable {
     }
 
     public void jugarCarta(Carta carta, Jugador jugador) {
-       estado.jugarCarta(this, jugador, carta);
-       verificarGanador();
+        estado.jugarCarta(this, jugador, carta);
+        verificarGanador();
     }
 
     public void tomarCarta(Jugador jugador) {
@@ -85,7 +84,6 @@ public class Partida implements IObservable {
 
     public void saltarTurno() {
         this.saltarTurno = true;
-        pasarTurno();
     }
 
     public void cambiarSentido() {
@@ -101,9 +99,10 @@ public class Partida implements IObservable {
         if (mazo.estaVacio()) {
             mazo.recargar(pilaCartas);
         }
-        Jugador actual =  getJugadorActual();
+        int siguienteIndice = calcularSiguienteIndice();
+        Jugador siguiente = jugadores.get(siguienteIndice);
         for (int i = 0; i < cantidad; i++) {
-            actual.recibirCarta(mazo.tomarCarta());
+            siguiente.recibirCarta(mazo.tomarCarta());
         }
         notificarObservador("CARTAS_ACUMULADAS");
     }
@@ -119,9 +118,15 @@ public class Partida implements IObservable {
         }
     }
 
+    public void setSaltarTurno(boolean saltar) {
+        this.saltarTurno = saltar;
+    }
+
     public int calcularSiguienteIndice() {
         int numeroJugadores = jugadores.size();
-        if (numeroJugadores == 0) return 0;
+        if (numeroJugadores == 0) {
+            return 0;
+        }
 
         int siguiente;
         if (this.sentido == Sentido.HORARIO) {
