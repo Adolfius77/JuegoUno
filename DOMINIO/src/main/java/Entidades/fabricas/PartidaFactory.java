@@ -30,6 +30,11 @@ public final class PartidaFactory {
         Mazo mazoNuevo = mazoFactory.crearMazo(cartaFactory);
         PilaCartas pilaNueva = new PilaCartas();
         List<Jugador> listaJugadores = jugadores == null ? new ArrayList<>() : jugadores;
+
+        if (!listaJugadores.isEmpty()) {
+            listaJugadores.get(0).setEsHost(true);
+        }
+
         return new Partida(listaJugadores, mazoNuevo, pilaNueva,estado);
     }
 

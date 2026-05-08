@@ -49,12 +49,6 @@ public class Partida implements IObservable {
         estado.iniciarPartida(this);
     }
 
-    public Jugador agregarJugador(Jugador jugador) {
-        estado.agregarJugador(this,jugador);
-        return jugador;
-    }
-
-
     public void verificarGanador() {
         for (Jugador jugador : jugadores) {
             if (jugador.getMano().getCartas().isEmpty()){
@@ -117,6 +111,14 @@ public class Partida implements IObservable {
         } else {
             notificarObservador("TURNO_CAMBIADO");
         }
+    }
+
+    public Jugador agregarJugador(Jugador jugador) {
+        if (this.jugadores.isEmpty()) {
+            jugador.setEsHost(true);
+        }
+        estado.agregarJugador(this,jugador);
+        return jugador;
     }
 
     public int calcularSiguienteIndice() {
