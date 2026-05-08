@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public  class MensajeDTO implements Serializable {
-    private static final long getSerialVersionUID =  1L;
+    private static final long serialVersionUID = 1L;
     private String tipo;
     private String remitente;
     private Map<String,Object> datos;

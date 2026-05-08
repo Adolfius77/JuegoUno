@@ -1,96 +1,123 @@
 package Server;
 
-import Interfacez.IBroker;
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
+import broker.Broker;
 import dtos.MensajeDTO;
-import dtos.MensajeDesconexionDTO;
-import dtos.MensajeRegistroDTO;
+import java.io.BufferedReader;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ServerProxy implements IProxy {
-    private Socket socket;
-    private IBroker broker;
-    private String nombreJugador;
-    private ISerializador serializador;
+public class ServerProxy implements Runnable, IProxy {
 
-    private InputStream entrada;
-    private OutputStream salida;
+    private final Socket socketCliente;
+    private final Broker broker;
+    private final BufferedReader in;
+    private final PrintWriter out;
+    private final ISerializador serializador;
+    private volatile boolean escuchando;
 
-    public ServerProxy(IBroker broker, Socket socket, ISerializador serializador) {
+    public ServerProxy (Socket socketCliente, Broker broker, ISerializador serializador) throws IOException {
+        if (socketCliente == null) {
+            throw new IllegalArgumentException("[Servidor-proxy] El socket del cliente no puede ser nulo.");
+        }
+        if (broker == null) {
+            throw new IllegalArgumentException("[Servidor-proxy]  El broker no puede ser nulo.");
+        }
+        if (serializador == null) {
+            throw new IllegalArgumentException("[Servidor-proxy]  El serializador no puede ser nulo.");
+        }
+        this.socketCliente = socketCliente;
         this.broker = broker;
-        this.socket = socket;
-        this.nombreJugador = null;
         this.serializador = serializador;
+        this.out = new PrintWriter(socketCliente.getOutputStream(), true);
+        this.in = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+        this.escuchando = true;
     }
 
     @Override
     public void run() {
         try {
-            this.entrada = socket.getInputStream();
-            this.salida = socket.getOutputStream();
-            BufferedReader lector = new BufferedReader(new InputStreamReader(entrada, StandardCharsets.UTF_8));
+            while (escuchando) {
+                String jsonRecibido = in.readLine();
+                System.out.println("[SERVER-PROXY] recibi el json pa : " + jsonRecibido);
 
-            System.out.println("Escuchando a jugador desde: " + socket.getInetAddress() + ":" + socket.getPort());
-
-
-            String canalDeRespuesta = "RESPUESTA_REGISTRO_" + socket.getPort();
-            broker.subscribirse(canalDeRespuesta, mensajeRespuesta -> {
-                this.enviarMensaje(mensajeRespuesta);
-            });
-
-            while(true){
-                String jsonRecibido = lector.readLine();
-                if(jsonRecibido == null){
+                if (jsonRecibido == null) {
                     break;
                 }
-
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
-
-                if (mensaje instanceof MensajeRegistroDTO) {
-                    MensajeRegistroDTO peticionRegistro = (MensajeRegistroDTO) mensaje;
-                    this.nombreJugador = peticionRegistro.getNombre();
-
-                    peticionRegistro.setTipo(canalDeRespuesta);
-
-                    broker.publicar("SOLICITUD_REGISTRO", peticionRegistro);
-                    System.out.println("Solicitud publicada para: " + this.nombreJugador);
+                if (mensaje == null) {
+                    System.out.println("[Servidor-proxy]  No se pudo deserializar el mensaje: " + jsonRecibido);
+                    continue;
                 }
-                else if (mensaje instanceof MensajeDesconexionDTO) {
-                    MensajeDesconexionDTO desconexion = (MensajeDesconexionDTO) mensaje;
-                    broker.eliminarNodo(desconexion.getNombreUsuario());
-                    System.out.println("Jugador desconectado: " + desconexion.getNombreUsuario());
-                    break;
+                if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
+                    continue;
                 }
-                else {
-                    broker.publicar(mensaje.getTipo(), mensaje);
-                    System.out.println("Mensaje recibido y publicado: " + mensaje.getTipo());
+                
+                if ("REGISTRO_JUGADOR".equals(mensaje.getTipo())) {
+                    if (mensaje.getDatos() == null) {
+                        mensaje.setDatos(new HashMap<>());
+                    }
+                    mensaje.getDatos().put("proxy", this);
                 }
+
+                broker.publicar(mensaje.getTipo(), mensaje);
             }
-        } catch (Exception e) {
-            System.out.println("El cliente se ha desconectado o hay un error: " + e.getMessage());
-            if (nombreJugador != null && !nombreJugador.isEmpty()) {
-                broker.eliminarNodo(nombreJugador);
-            }
+        } catch (IOException e) {
+            System.out.println("[Servidor-proxy]  Conexion finalizada: " + e.getMessage());
         } finally {
-            if (nombreJugador != null && !nombreJugador.isEmpty()) {
-                broker.eliminarNodo(nombreJugador);
-            }
+            cerrarConexion();
         }
     }
 
     @Override
-    public void enviarMensaje(MensajeDTO mensaje) {
-        try{
-            PrintWriter escritor = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-            String json =  serializador.serealizar(mensaje);
-            escritor.println(json);
-        }catch (Exception e){
-            System.out.println("Error enviando los datos" + e.getMessage());
-            e.printStackTrace();
+    public synchronized void enviarMensaje(MensajeDTO mensaje) {
+        if (mensaje == null) {
+            return;
+        }
+        try {
+            String jsonEnviar = serializador.serealizar(mensaje);
+            out.println(jsonEnviar);
+        } catch (Exception e) {
+            System.out.println("[Servidor-proxy]  Error enviando mensaje: " + e.getMessage());
+        }
+    }
+
+    private void cerrarConexion() {
+        escuchando = false;
+
+        MensajeDTO eventoDesconexion = new MensajeDTO();
+        eventoDesconexion.setTipo("CONEXION_CERRADA");
+        eventoDesconexion.setRemitente("SERVIDOR");
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("proxy", this);
+        eventoDesconexion.setDatos(datos);
+        broker.publicar("CONEXION_CERRADA", eventoDesconexion);
+
+        try {
+            if (in != null) {
+                in.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        try {
+            if (out != null) {
+                out.close();
+            }
+        } catch (Exception ignored) {
+        }
+
+        try {
+            if (socketCliente != null) {
+                socketCliente.close();
+            }
+        } catch (IOException ignored) {
         }
     }
 }

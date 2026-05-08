@@ -1,19 +1,25 @@
 package red;
 
 
-import dtos.paqueteRedDTO;
-import interfaces.IReceptorMensajes;
+import Interfacez.ISerializador;
+import Lector.LectorConfiguracion;
+import serealizador.serializador;
 
 public class servidorMain {
 
-    public static void main(String[] args) throws InterruptedException {
-        IReceptorMensajes receptor = new IReceptorMensajes() {
-            @Override
-            public void procesarMensaje(paqueteRedDTO paquete, ServidorHilo hiloRemintente) {
-                System.out.println("el servidor responde: " + paquete.getClass().getSimpleName());
-            }
-        };
-        Servidor servidor = new Servidor(9091, receptor);
+    public static void main(String[] args) {
+        LectorConfiguracion config = new LectorConfiguracion();
+        serializador seri = new serializador();
+        int puerto = config.getPuertoServidor();
+        String ip = config.getIpServidor();
+        Servidor servidor = new Servidor(puerto,ip,seri);
         servidor.iniciar();
+
+        try {
+            Thread.currentThread().join();
+        } catch (Exception e) {
+            System.out.println("el hilo principal se interrumpio");
+        }
+        
     }
 }

@@ -5,47 +5,52 @@
 package vista;
 
 import Interfaces.IVista;
-import red.ClienteRed;
+import cliente.ClienteProxy;
+import controlador.LobbyController;
+
 import utileria.GestorAudio;
 import javax.swing.*;
 import java.awt.*;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.net.URL;
+
+
+import serealizador.serializador;
 
 /**
  *
  * @author emiim
  */
-public class MenuPrincipal extends javax.swing.JFrame implements IVista {
-
+public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
 
     private int avatarSeleccionado = 0;
     private final javax.swing.JLabel etiquetaAvatar = new javax.swing.JLabel();
-
+    private LobbyController controlador;
     /**
      * Creates new form NewJFrame
      */
-    public MenuPrincipal() {
+    
+    
+
+    public MenuPrincipal(LobbyController controlador) {
+        this.controlador = controlador;
+        
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
-        ClienteRed.getInstance().setVistaActual(this);
-
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            ;
-            @Override
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                ventanaActual();
-            }
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+                @Override
+                public void windowOpened(java.awt.event.WindowEvent evt) {
+                    ventanaActual();
+                }
         });
         GestorAudio.getInstancia().reproducirMusica("/img/lobby.wav");
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
     }
-
+    public MenuPrincipal() {
+        this(null);
+    }
     private void ventanaActual() {
         System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
@@ -260,7 +265,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
         return AVATARES[avatarSeleccionado];
     }
 
-    public void setFormularioHabilitado(boolean habilitado) {
+    private void setFormularioHabilitado(boolean habilitado) {
         txtNombreUsuario.setEnabled(habilitado);
         btnEntrar.setEnabled(habilitado);
         btnAvanzar.setEnabled(habilitado);
@@ -273,25 +278,15 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
             mostrarMensaje("Ingresa un nombre.");
             return;
         }
-
-        setFormularioHabilitado(false);
-
         final String avatar = obtenerAvatarSeleccionado();
 
-        new Thread(() -> {
-            try {
-                ClienteRed red = ClienteRed.getInstance();
-                red.setVistaMenu(this, nombreJugador, avatar);
-                red.conectar();
-                red.enviarMensaje(new dtos.MensajeRegistroDTO(nombreJugador, avatar));
-            } catch (Exception ex) {
-                java.awt.EventQueue.invokeLater(() -> {
-                    setFormularioHabilitado(true);
-                    mostrarMensaje("No se pudo conectar con el servidor.");
-                });
-                ex.printStackTrace();
-            }
-        }).start();
+        if(controlador != null){
+            controlador.registrarJugador(nombreJugador,avatar);
+        }else{
+            mostrarMensaje("error el controlador no esta conectado ala vista");
+            setFormularioHabilitado(true);
+        }
+        
     }
 
     private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed
@@ -341,11 +336,25 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MenuPrincipal().setVisible(true);
-            }
-        });
+        try {
+            ClienteProxy proxy = ClienteProxy.getInstance();
+            serealizador.serializador sere = new serealizador.serializador();
+            proxy.setSerializador(sere);
+            proxy.conectar();
+
+            LobbyController controlador = new LobbyController(proxy);
+
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new MenuPrincipal(controlador).setVisible(true);
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("[MenuPrincipal] Error crítico al iniciar: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -369,21 +378,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-        System.out.println("[MenuPrincipal] Evento recibido: '" + evento + "'");
-        switch (evento.trim().toUpperCase()) {
-            case "REGISTRO_EXITOSO":
-                SeleccionPartida pantallaSeleccion = new SeleccionPartida(
-                        txtNombreUsuario.getText().trim(),
-                        obtenerAvatarSeleccionado()
-                );
-                ClienteRed.getInstance().setVistaActual(pantallaSeleccion);
-                pantallaSeleccion.setVisible(true);
-                this.dispose();
-                break;
-            default:
-                setFormularioHabilitado(true);
-                break;
-        }
+        revalidate();
+        repaint();
     }
 
     @Override

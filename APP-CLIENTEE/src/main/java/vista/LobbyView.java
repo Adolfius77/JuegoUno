@@ -4,73 +4,29 @@
  */
 package vista;
 
+
 import Interfaces.IVista;
-import dtos.JugadorDTO;
-import red.GestorPartida;
+
+import controlador.LobbyController;
 
 /**
  *
  * @author emiim
  */
 //cc
-public class LobbyView extends javax.swing.JFrame implements IVista {
+public class LobbyView extends javax.swing.JFrame implements IVista{
 
-    private GestorPartida gestor;
-    private JugadorDTO jugadorLocal;
-    private String codigoSala;
-
+   
+    private LobbyController controlador;
     public LobbyView() {
         initComponents();
         setLocationRelativeTo(null);
     }
-
-    public LobbyView(JugadorDTO jugadorHost, String codigoSala) {
-        this.jugadorLocal = jugadorHost;
-        this.codigoSala = codigoSala;
-        initComponents();
-        setLocationRelativeTo(null);
-        jLabel3.setText(jugadorHost != null ? jugadorHost.getNombre() : "");
-        txtCodigoSala.setText(codigoSala);
-        txtCodigoSala.setEditable(false);
-        configurarEventos();
-        solicitarUnirseAlLobby();
+   
+    public void setControlador(LobbyController controlador){
+        this.controlador = controlador;
     }
-
-    public void setModeloGestor(GestorPartida gestor) {
-        this.gestor = gestor;
-        this.gestor.agregarObservador(this);
-
-    }
-
-    private void configurarEventos() {
-        btnCancelar.addActionListener(e -> {
-            SeleccionPartida sel = new SeleccionPartida(
-                    jugadorLocal.getNombre(), jugadorLocal.getAvatar());
-            red.ClienteRed.getInstance().setVistaActual(sel);
-            sel.setVisible(true);
-            dispose();
-        });
-    }
-
-    private void solicitarUnirseAlLobby() {
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("SOLICITUD_UNIRSE_LOBBY", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void enviarListo() {
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-            btnEstoyListo.setEnabled(false);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -151,9 +107,13 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         jLabel18.setForeground(new java.awt.Color(255, 255, 255));
         jLabel18.setText("asfdsg");
 
+        jButton5.setBackground(new java.awt.Color(255, 255, 255));
+        jButton5.setForeground(new java.awt.Color(0, 0, 0));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/equis.png"))); // NOI18N
         jButton5.setText("Cancelar");
 
+        jButton7.setBackground(new java.awt.Color(255, 255, 255));
+        jButton7.setForeground(new java.awt.Color(0, 0, 0));
         jButton7.setText("Salir del Lobby");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -239,11 +199,6 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         btnEstoyListo.setColorClick(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setColorOver(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        btnEstoyListo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEstoyListoActionPerformed(evt);
-            }
-        });
 
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setText("Cancelar");
@@ -408,10 +363,6 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnEstoyListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstoyListoActionPerformed
-        enviarListo();
-    }//GEN-LAST:event_btnEstoyListoActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -487,46 +438,21 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-        System.out.println("[LobbyView] Evento: " + evento);
-        if ("ACTUALIZACION_PARTIDA".equals(evento)) {
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                GameView juego = new GameView(jugadorLocal);
-                red.ClienteRed.getInstance().setVistaActual(juego);
-                juego.setVisible(true);
-                dispose();
-            });
-        }
-    }
-
-    public void actualizarJugadores(java.util.List<String> nombres) {
-        javax.swing.JPanel[] paneles = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
-        for (int i = 0; i < paneles.length; i++) {
-            paneles[i].removeAll();
-            if (i < nombres.size()) {
-                paneles[i].setLayout(new java.awt.BorderLayout());
-                javax.swing.JLabel lbl = new javax.swing.JLabel(nombres.get(i));
-                lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-                lbl.setForeground(java.awt.Color.BLACK);
-                lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-                paneles[i].add(lbl, java.awt.BorderLayout.CENTER);
-            }
-            paneles[i].revalidate();
-            paneles[i].repaint();
-        }
+        
     }
 
     @Override
     public void mostrarVista() {
-        setVisible(true);
+        
     }
 
     @Override
     public void cerrarVista() {
-        dispose();
+        
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        System.out.println("[LobbyView] " + mensaje);
+        
     }
 }

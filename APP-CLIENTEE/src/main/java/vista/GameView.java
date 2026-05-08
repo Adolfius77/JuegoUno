@@ -6,10 +6,7 @@ package vista;
 
 import Interfaces.IVista;
 import dtos.CartaDTO;
-import dtos.JugadorDTO;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
@@ -20,10 +17,7 @@ import vista.DiseñosExtras.PanelCarta;
  *
  * @author USER
  */
-public class GameView extends javax.swing.JFrame implements IVista {
-
-    private JugadorDTO jugadorLocal;
-    private dtos.PartidaDTO partidaDTO;
+public class GameView extends javax.swing.JFrame implements IVista{
 
     /**
      * Creates new form GameView
@@ -33,122 +27,46 @@ public class GameView extends javax.swing.JFrame implements IVista {
         panelFondo.setImagen("/img/juegoUno (2).jpg");
         panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
         setLocationRelativeTo(null);
-    }
 
-    public GameView(JugadorDTO jugadorLocal) {
-        this.jugadorLocal = jugadorLocal;
-        initComponents();
-        panelFondo.setImagen("/img/juegoUno (2).jpg");
-
-        panelJugadorPrincipal.setLayout(null);
-        jScrollPane1.setHorizontalScrollBarPolicy(
-                javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(
-                javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane1.setBorder(null);
-
-        panelPilaCartas.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        panelPilaCartas.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                robarCarta();
-            }
-        });
-
-        setLocationRelativeTo(null);
-    }
-
-    private void robarCarta() {
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("ROBAR_CARTA", "CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-            System.out.println("[GameView] Solicitando robar carta...");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void inicializarPartida(dtos.PartidaDTO partida) {
-        this.partidaDTO = partida;
-
-        System.out.println("[GameView] Jugadores en partida: "
-                + (partida.getJugadores() != null ? partida.getJugadores().size() : "null"));
-
-        if (partida.getJugadores() != null) {
-            for (dtos.JugadorDTO j : partida.getJugadores()) {
-                System.out.println("[GameView] Jugador: " + j.getNombre()
-                        + " | Mano: " + (j.getMano() != null ? j.getMano().getCartas().size() + " cartas" : "null"));
-
-                if (j.getNombre().equals(jugadorLocal.getNombre())) {
-                    if (j.getMano() != null && j.getMano().getCartas() != null) {
-                        System.out.println("[GameView] Mostrando " + j.getMano().getCartas().size() + " cartas");
-                        mostrarCartas(j.getMano().getCartas());
-                    }
-                    break;
-                }
-            }
-        }
-
-        if (partida.getCartaCentro() != null) {
-            System.out.println("[GameView] Carta centro: "
-                    + partida.getCartaCentro().getColor() + " " + partida.getCartaCentro().getValor());
-            actualizar(partida.getCartaCentro());
-        }
-
-        actualizarMazo(partida.getCartasRestantesMazo());
     }
 
     public void mostrarCartas(List<CartaDTO> manoDelServidor) {
         panelJugadorPrincipal.removeAll();
         int cantidadCartas = manoDelServidor.size();
-        if (cantidadCartas == 0) {
-            return;
-        }
-
-        int anchoPanel = jScrollPane1.getWidth() - 10;
-        int altoPanel = jScrollPane1.getHeight() - 10;
+        if(cantidadCartas == 0)return;
+        
         int anchoCarta = 75;
+        int separacion = 40;
         int altoCarta = 110;
-
-        int separacion;
-        if (cantidadCartas == 1) {
-            separacion = 0;
-        } else {
-            separacion = Math.min(40, (anchoPanel - anchoCarta) / (cantidadCartas - 1));
-        }
-
-        int anchoTotal = anchoCarta + (separacion * (cantidadCartas - 1));
-        int xInicio = Math.max(0, (anchoPanel - anchoTotal) / 2);
-        int yInicio = (altoPanel - altoCarta) / 2;
-
-        panelJugadorPrincipal.setPreferredSize(new Dimension(anchoPanel, altoPanel));
-
-        for (int i = 0; i < cantidadCartas; i++) {
+        
+        int anchoTotalMano = anchoCarta + ((cantidadCartas -1 ) * separacion);
+        panelJugadorPrincipal.setPreferredSize(new Dimension(anchoTotalMano + 20, altoCarta + 20));
+        
+        for(int i = 0; i < cantidadCartas; i++){
             PanelCarta cartaVisual = new PanelCarta(manoDelServidor.get(i));
-            int posX = xInicio + (i * separacion);
-            cartaVisual.setBounds(posX, yInicio, anchoCarta, altoCarta);
-            panelJugadorPrincipal.add(cartaVisual);
+            int posicionX = i * separacion;
+            
+            cartaVisual.setBounds(posicionX, 5, anchoCarta,altoCarta);
+            panelJugadorPrincipal.add(cartaVisual, 0);
         }
-
         panelJugadorPrincipal.revalidate();
         panelJugadorPrincipal.repaint();
+        
     }
-
-    public void actualizar(CartaDTO cartaActual) {
-        panelCartaMedio.removeAll();
-
-        if (cartaActual != null) {
-            PanelCarta cartaVisual = new PanelCarta(cartaActual);
-            panelCartaMedio.add(cartaVisual, BorderLayout.CENTER);
-        }
-        panelCartaMedio.revalidate();
-        panelCartaMedio.repaint();
-
+    public void actualizar(CartaDTO cartaActual){
+       panelCartaMedio.removeAll();
+        
+       if(cartaActual != null){
+           PanelCarta cartaVisual = new PanelCarta(cartaActual);
+           panelCartaMedio.add(cartaVisual,BorderLayout.CENTER);
+       }
+       panelCartaMedio.revalidate();
+       panelCartaMedio.repaint();
+       
     }
-
-    public void actualizarMazo(int cantidadCartas) {
+    public void actualizarMazo(int cantidadCartas){
         panelPilaCartas.removeAll();
-        if (cantidadCartas > 0) {
+        if(cantidadCartas > 0){
             CartaDTO reversoMazo = new CartaDTO("ROJO", "UNO");
             PanelCarta cartaVisual = new PanelCarta(reversoMazo);
             cartaVisual.setToolTipText("cartas restantes:" + cantidadCartas);
@@ -156,54 +74,6 @@ public class GameView extends javax.swing.JFrame implements IVista {
         }
         panelPilaCartas.revalidate();
         panelPilaCartas.repaint();
-    }
-
-    public CartaDTO obtenerCartaSeleccionada() {
-        for (Component c : panelJugadorPrincipal.getComponents()) {
-            if (c instanceof PanelCarta) {
-                PanelCarta panel = (PanelCarta) c;
-                if (panel.isSeleccionada()) {
-                    return panel.getCarta();
-                }
-            }
-        }
-        return null;
-    }
-
-    private void mostrarSelectorColor(CartaDTO carta) {
-        String[] colores = {"ROJO", "AZUL", "VERDE", "AMARILLO"};
-        String[] etiquetas = {"🔴 Rojo", "🔵 Azul", "🟢 Verde", "🟡 Amarillo"};
-
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Elige un color:",
-                "Color del comodín",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                etiquetas,
-                etiquetas[0]
-        );
-
-        if (seleccion == null) {
-            return; // canceló
-        }
-
-        String colorElegido = colores[java.util.Arrays.asList(etiquetas).indexOf(seleccion)];
-        enviarCartaAlServidor(carta, colorElegido);
-    }
-
-    private void enviarCartaAlServidor(CartaDTO carta, String colorElegido) {
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("JUGAR_CARTA", "CLIENTE");
-            msg.getDatos().put("color", carta.getColor());
-            msg.getDatos().put("valor", carta.getValor());
-            if (colorElegido != null) {
-                msg.getDatos().put("colorElegido", colorElegido); // ← color nuevo
-            }
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**
@@ -278,11 +148,6 @@ public class GameView extends javax.swing.JFrame implements IVista {
         btnJugarCarta.setColorClick(new java.awt.Color(30, 136, 56));
         btnJugarCarta.setColorOver(new java.awt.Color(30, 136, 56));
         btnJugarCarta.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        btnJugarCarta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnJugarCartaActionPerformed(evt);
-            }
-        });
         panelFondo.add(btnJugarCarta, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 710, 140, -1));
 
         panelAvatar1.setBackground(new java.awt.Color(255, 255, 255));
@@ -470,21 +335,6 @@ public class GameView extends javax.swing.JFrame implements IVista {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnJugarCartaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJugarCartaActionPerformed
-        CartaDTO cartaSeleccionada = obtenerCartaSeleccionada();
-        if (cartaSeleccionada == null) {
-            return;
-        }
-
-        if ("MAS_4".equals(cartaSeleccionada.getValor())
-                || "CAMBIO_COLOR".equals(cartaSeleccionada.getValor())) {
-            mostrarSelectorColor(cartaSeleccionada);
-            return;
-        }
-
-        enviarCartaAlServidor(cartaSeleccionada, null);
-    }//GEN-LAST:event_btnJugarCartaActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -560,9 +410,5 @@ public class GameView extends javax.swing.JFrame implements IVista {
     @Override
     public void actualizar(String evento) {
         System.out.println("evento recibido en gameView: " + evento);
-        if ("ACTUALIZACION_PARTIDA".equals(evento)) {
-            // La partida se actualiza via inicializarPartida()
-            // que es llamado desde ClienteRed después de actualizar()
-        }
     }
 }

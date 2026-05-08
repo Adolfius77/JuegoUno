@@ -10,20 +10,13 @@ import Interfaces.IVista;
  *
  * @author USER
  */
-public class unirsePartidaView extends javax.swing.JFrame implements IVista {
+public class unirsePartidaView extends javax.swing.JFrame implements IVista{
 
     /**
      * Creates new form unirsePartidaView
      */
     public unirsePartidaView() {
         initComponents();
-    }
-
-    public unirsePartidaView(String nombreUsuario, String avatarUsuario) {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        jLabel7.setText(nombreUsuario != null ? nombreUsuario : "Jugador");
-        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
     }
 
     /**
@@ -164,11 +157,6 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
         btnCancelar.setColorClick(new java.awt.Color(204, 0, 0));
         btnCancelar.setColorOver(new java.awt.Color(204, 0, 0));
         btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
 
         btnUnirse.setForeground(new java.awt.Color(255, 255, 255));
         btnUnirse.setText("Unirse");
@@ -270,25 +258,8 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
-        String codigo = txtCodigoSala.getText().trim();
-        if (codigo.isEmpty()) {
-            return;
-        }
-
-        try {
-            dtos.MensajeDTO msg = new dtos.MensajeDTO("UNIRSE_A_SALA", "CLIENTE");
-            msg.getDatos().put("codigoSala", codigo.toUpperCase());
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        // TODO add your handling code here:
     }//GEN-LAST:event_btnUnirseActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-
-        SeleccionPartida menu = new SeleccionPartida();
-        menu.mostrarVista();
-        this.cerrarVista();    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -350,67 +321,21 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     @Override
     public void mostrarVista() {
-        this.setVisible(true);
-        this.setLocationRelativeTo(null);
-        try {
-            dtos.MensajeDTO solicitud = new dtos.MensajeDTO();
-            solicitud.setTipo("SOLICITAR_LISTA_PARTIDAS");
-            solicitud.setRemitente("CLIENTE");
-            red.ClienteRed.getInstance().enviarMensaje(solicitud);
-        } catch (Exception ex) {
-            mostrarMensaje("Error al solicitar partidas.");
-        }
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void cerrarVista() {
-        this.dispose();
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        javax.swing.JOptionPane.showMessageDialog(this, mensaje);
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void actualizar(String evento) {
-        if (evento.startsWith("SALA_UNIDO:")) {
-            String codigo = evento.split(":")[1];
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                dtos.JugadorDTO jugador = new dtos.JugadorDTO();
-                jugador.setNombre(red.ClienteRed.getInstance().getNombreJugador());
-                jugador.setAvatar(red.ClienteRed.getInstance().getNombreAvatar());
-                LobbyView lobby = new LobbyView(jugador, codigo);
-                red.ClienteRed.getInstance().setVistaActual(lobby);
-                lobby.setVisible(true);
-                this.dispose();
-            });
-        } else if (evento.startsWith("SALA_NO_EXISTE") || evento.startsWith("SALA_LLENA")) {
-            javax.swing.SwingUtilities.invokeLater(()
-                    -> mostrarMensaje(evento.equals("SALA_LLENA")
-                            ? "La sala está llena." : "El código de sala no existe."));
-        }
-    }
-
-    private void actualizarListaVisual(String datos) {
-        panelDianamicoPartidas.removeAll();
-        panelDianamicoPartidas.setLayout(new javax.swing.BoxLayout(panelDianamicoPartidas, javax.swing.BoxLayout.Y_AXIS));
-
-        String[] partidas = datos.split(",");
-
-        for (String idPartida : partidas) {
-            javax.swing.JButton btnPartida = new javax.swing.JButton("Unirse a: " + idPartida);
-            btnPartida.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-
-            btnPartida.addActionListener(e -> {
-                txtCodigoSala.setText(idPartida);
-            });
-
-            panelDianamicoPartidas.add(btnPartida);
-            panelDianamicoPartidas.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
-        }
-
-        panelDianamicoPartidas.revalidate();
-        panelDianamicoPartidas.repaint();
+    public void actualizar(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

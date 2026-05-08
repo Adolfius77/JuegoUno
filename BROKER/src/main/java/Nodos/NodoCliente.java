@@ -9,11 +9,17 @@ public class NodoCliente {
     private String nombre;
     private Socket socket;
     private IProxy proxy;
+    private String avatar;
 
-    public NodoCliente(Socket socket, IProxy proxy, String nombre) {
+    public NodoCliente(String nombre, IProxy proxy, String avatar) {
+        this(null, proxy, nombre,avatar);
+    }
+
+    public NodoCliente(Socket socket, IProxy proxy, String nombre, String avatar) {
         this.socket = socket;
         this.proxy = proxy;
         this.nombre = nombre;
+        this.avatar = avatar;
     }
 
     public void enviarMensaje(MensajeDTO mensaje) {
@@ -23,7 +29,15 @@ public class NodoCliente {
     }
     //getters y setters
 
+    public String getAvatar() {
+        return avatar;
+    }
 
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    
     public String getNombre() {
         return nombre;
     }

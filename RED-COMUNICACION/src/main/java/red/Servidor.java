@@ -1,62 +1,84 @@
 package red;
 
-import Entidades.Lobby;
-import interfaces.IReceptorMensajes;
-
+import Server.ServerProxy;
+import Entidades.fabricas.CartaFactory;
+import Entidades.fabricas.EstadoFactory;
+import Entidades.fabricas.MazoClasicoFactory;
+import Interfacez.ISerializador;
+import Nodos.NodoCliente;
+import broker.Broker;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Servidor {
-    public static final List<ServidorHilo> hilosConectados = new CopyOnWriteArrayList<>();
+
     private final int puerto;
-    private final IReceptorMensajes receptor;
-    private final Lobby lobby;
-    private boolean escuchando;
+    private final String ip;
+    private final Broker brokerCentral;
+    private final ISerializador serializador;
+    private volatile boolean escuchando;
+    private final LobbyServidor lobbyServidor;
 
-    public Servidor(int puerto, IReceptorMensajes receptor) {
+    public Servidor(int puerto, String ip, ISerializador serializador) {
         this.puerto = puerto;
-        this.receptor = receptor;
-        this.lobby = new Lobby();
+        this.ip = ip;
+        this.brokerCentral = new Broker();
+        
+        JuegoServidor juego = new JuegoServidor(
+            this.brokerCentral, 
+            new CartaFactory(), 
+            new MazoClasicoFactory(), 
+            EstadoFactory.crearEstadoEsperando()
+        );
+        
+        this.lobbyServidor = new LobbyServidor(this.brokerCentral, juego);
         this.escuchando = true;
+        this.serializador = serializador;
     }
-    //metodo para iniciar el servidors
+
     public void iniciar() {
-        try(ServerSocket serverSocket = new ServerSocket(puerto)) {
-            System.out.println("servidor iniciado en el puerto: " + puerto);
+        try (ServerSocket serverSocket = new ServerSocket(puerto)) {
+            System.out.println("[Servidor Red] Servidor iniciado en el puerto: " + puerto + " y en la ip: " + ip);
 
-            while(escuchando) {
+            int contadorJugadores = 1; 
+
+            while (escuchando) {
+
                 Socket socketCliente = serverSocket.accept();
-                try{
+
+                try {
                     System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + socketCliente.getInetAddress().getHostAddress());
-
-                    ObjectOutputStream out = new ObjectOutputStream(socketCliente.getOutputStream());
-                    out.flush();
-                    ObjectInputStream in = new ObjectInputStream(socketCliente.getInputStream());
-
-                    ServidorHilo nuevoHilo = new ServidorHilo(in, out, this.lobby);
-                    hilosConectados.add(nuevoHilo);
-                    nuevoHilo.start();
                     
-                    System.out.println("[Socket] Flujos inicializados para nueva conexion. Esperando registro...");
-                }
-                catch (IOException e){
-                    System.err.println("Error al manejar la conexion del cliente: " + e.getMessage());
-                    socketCliente.close();
+                    ServerProxy serverProxy = new ServerProxy(socketCliente, brokerCentral, serializador);
+                    String nombreTemporal = "Jugador_" + contadorJugadores++;
+                    String nombreFotoTemporal = "no hay";
+                    NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, serverProxy, nombreFotoTemporal);
+
+                   
+                    lobbyServidor.registrarNuevoJugadorTemporal(nuevoNodo);
+
+                    Thread hilo = new Thread(serverProxy, "ServidorHilo-" + nombreTemporal);
+                    hilo.start();
+
+                    System.out.println("[Servidor Red] Jugador conectado temporalmente. Esperando mensaje de registro...");
+
+                } catch (Exception e) {
+                    System.err.println("[Servidor Red] Error al manejar la configuración del cliente: " + e.getMessage());
+                    try {
+                        socketCliente.close();
+                    } catch (IOException ignored) {
+                    }
                 }
             }
-        }catch (IOException e){
-            System.err.println("error en el servidor en el puerto: " + puerto);
+        } catch (IOException e) {
+            System.err.println("[Servidor Red] Error critico en el servidor en el puerto: " + puerto);
             e.printStackTrace();
         }
     }
-    //metodo para apagar el servidor
-    public void apagar(){
+
+    public void apagar() {
         this.escuchando = false;
-        System.out.println("apagando servidor.....");
+        System.out.println("[Servidor Red] Apagando servidor...");
     }
 }

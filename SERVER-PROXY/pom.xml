@@ -17,12 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>INTERFACEZ</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.itson</groupId>
             <artifactId>DTOS</artifactId>
@@ -30,10 +25,14 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>RED-COMUNICACION</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SEREALIZADOR</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>BROKER</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

@@ -7,18 +7,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="BROKER" />
-        <module name="INTERFACEZ" />
         <module name="DTOS" />
         <module name="RED-COMUNICACION" />
         <module name="MAPPERS" />
         <module name="CLIENTE-PROXY" />
         <module name="SEREALIZADOR" />
+        <module name="INTERFACES" />
         <module name="Launcher" />
         <module name="DOMINIO" />
         <module name="SERVER-PROXY" />
-        <module name="Dominio" />
         <module name="APP-CLIENTEE" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

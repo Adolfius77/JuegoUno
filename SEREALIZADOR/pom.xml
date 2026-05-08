@@ -30,10 +30,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>INTERFACEZ</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>INTERFACES</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
