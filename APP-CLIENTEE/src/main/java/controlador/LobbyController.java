@@ -1,6 +1,7 @@
 package controlador;
 
 import Interfaces.IVista;
+
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
+
 
 
 import vista.GameView;
@@ -81,7 +83,7 @@ public class LobbyController {
                 this.setVista(seleccionVista);
             });
         }
-        if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
+        if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
             SwingUtilities.invokeLater(() -> {
