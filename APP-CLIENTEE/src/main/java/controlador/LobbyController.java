@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 
 import vista.GameView;
+import vista.LobbyView;
 import vista.SeleccionPartida;
 
 public class LobbyController {
@@ -70,12 +71,22 @@ public class LobbyController {
         MensajeDTO msjInicio = new MensajeDTO("PETICION_INICIAR_PARTIDA", null);
         clienteProxy.enviarMensaje(msjInicio);
     }
+    public void crearPartida(String nombreJugador) {
+        System.out.println("solicitando al server crear una sala");
+
+        MensajeDTO msjCrear = new MensajeDTO();
+        msjCrear.setTipo("CREAR_PARTIDA");
+        msjCrear.setRemitente("CLIENTE");
+        msjCrear.getDatos().put("nombre", nombreJugador);
+        clienteProxy.enviarMensaje(msjCrear);
+    }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
         if (mensaje == null) {
             return;
         }
         String tipoMensaje = mensaje.getTipo();
+        //CU EMILIANO MARQUEZ
         if ("REGISTRO_EXITOSO".equals(tipoMensaje)) {
             System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
             SwingUtilities.invokeLater(() -> {
@@ -87,6 +98,23 @@ public class LobbyController {
                 this.setVista(seleccionVista);
             });
         }
+        //CU SANTIAGO LEON
+
+        if ("SALA_CREADA".equals(tipoMensaje)) {
+            System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
+            String codigoGenerado = (String)mensaje.getDatos().get("codigoSala");
+            String host = (String)mensaje.getDatos().get("host");
+
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("sala creada con el codigo: " + codigoGenerado + " y el host es: " + host);
+                if (vista != null) {
+                    this.vista.cerrarVista();
+                }
+                LobbyView lobbyView = new LobbyView(codigoGenerado,host);
+                this.setVista(lobbyView);
+            });
+        }
+        //CU ADOLFO ORTEGA
         if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
