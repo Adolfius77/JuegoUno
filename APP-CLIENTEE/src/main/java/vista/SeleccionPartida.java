@@ -296,6 +296,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
         abrirVentana(proximaVista);    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        red.ClienteRed.getInstance().desconectar();
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 

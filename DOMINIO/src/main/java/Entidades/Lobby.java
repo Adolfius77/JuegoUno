@@ -1,7 +1,5 @@
 package Entidades;
 
-
-
 import Observer.IObservable;
 import Observer.IObserver;
 
@@ -13,6 +11,7 @@ public class Lobby implements IObservable {
 
     private final List<String> nombreJugadores = new CopyOnWriteArrayList<>();
     private List<IObserver> observadores = new ArrayList<>();
+    private int limiteJugadores = 4;
 
     public synchronized boolean agregarJugador(String nombre) {
         for (String n : nombreJugadores) {
@@ -47,5 +46,17 @@ public class Lobby implements IObservable {
         for (IObserver obs : observadores) {
             obs.actualizar(evento);
         }
+    }
+
+    public int getLimiteJugadores() {
+        return limiteJugadores;
+    }
+
+    public void setLimiteJugadores(int limite) {
+        this.limiteJugadores = limite;
+    }
+
+    public boolean estaLleno() {
+        return nombreJugadores.size() >= limiteJugadores;
     }
 }

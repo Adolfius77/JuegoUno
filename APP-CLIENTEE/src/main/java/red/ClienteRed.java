@@ -9,8 +9,10 @@ import javax.swing.SwingUtilities;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import vista.GameView;
+import vista.LobbyView;
 
-public class ClienteRed { 
+public class ClienteRed {
 
     private static ClienteRed instance;
 
@@ -22,10 +24,13 @@ public class ClienteRed {
     private String nombreAvatar;
     private MenuPrincipal vista;
 
-    private volatile IVista vistaActual;  // volatile: visibilidad entre hilos
-    private Thread hiloEscucha;           // hilo separado, recreable
+    private boolean escuchando = true;
 
-    private ClienteRed() {}
+    private volatile IVista vistaActual;
+    private Thread hiloEscucha;
+
+    private ClienteRed() {
+    }
 
     public static ClienteRed getInstance() {
         if (instance == null) {
@@ -35,7 +40,9 @@ public class ClienteRed {
     }
 
     public void conectar() throws Exception {
-        if (socket != null && !socket.isClosed()) return;
+        if (socket != null && !socket.isClosed()) {
+            return;
+        }
 
         socket = new Socket("127.0.0.1", 9091);
         out = new ObjectOutputStream(socket.getOutputStream());
@@ -82,20 +89,36 @@ public class ClienteRed {
                     procesarNotificacion((MensajeNotificacionDTO) objeto);
 
                 } else if (objeto instanceof MensajeListaJugadoresDTO) {
+                    MensajeListaJugadoresDTO lista = (MensajeListaJugadoresDTO) objeto;
                     SwingUtilities.invokeLater(() -> {
-                        if (vistaActual != null) vistaActual.actualizar("LISTA_ACTUALIZADA");
+                        if (vistaActual instanceof LobbyView) {
+                            ((LobbyView) vistaActual).actualizarJugadores(lista.getJugadores());
+                        }
+                        if (vistaActual != null) {
+                            vistaActual.actualizar("LISTA_ACTUALIZADA");
+                        }
                     });
 
                 } else if (objeto instanceof MensajeEstadoPartidaDTO) {
                     MensajeEstadoPartidaDTO estado = (MensajeEstadoPartidaDTO) objeto;
+                    final dtos.PartidaDTO partida = estado.getPartida();
                     SwingUtilities.invokeLater(() -> {
-                        if (vistaActual != null) vistaActual.actualizar(estado.getTipo());
+                        if (vistaActual != null) {
+                            vistaActual.actualizar(estado.getTipo()); 
+                        }
+                        SwingUtilities.invokeLater(() -> {
+                            if (vistaActual instanceof GameView && partida != null) {
+                                ((GameView) vistaActual).inicializarPartida(partida);
+                            }
+                        });
                     });
 
                 } else if (objeto instanceof String) {
                     String msj = ((String) objeto).trim();
                     SwingUtilities.invokeLater(() -> {
-                        if (vistaActual != null) vistaActual.actualizar(msj);
+                        if (vistaActual != null) {
+                            vistaActual.actualizar(msj);
+                        }
                     });
                 }
             }
@@ -105,7 +128,7 @@ public class ClienteRed {
     }
 
     private void procesarNotificacion(MensajeNotificacionDTO notif) {
-        String texto = notif.getTextoMensaje(); // ← getter correcto confirmado
+        String texto = notif.getTextoMensaje();
         boolean esError = notif.isEsError();
 
         System.out.println("[ClienteRed] Notificación: texto='"
@@ -115,8 +138,12 @@ public class ClienteRed {
 
         if (esError) {
             SwingUtilities.invokeLater(() -> {
-                if (vistaActual != null) vistaActual.mostrarMensaje(texto);
-                if (vista != null) vista.setFormularioHabilitado(true);
+                if (vistaActual != null) {
+                    vistaActual.mostrarMensaje(texto);
+                }
+                if (vista != null) {
+                    vista.setFormularioHabilitado(true);
+                }
             });
         } else {
             SwingUtilities.invokeLater(() -> {
@@ -127,5 +154,28 @@ public class ClienteRed {
                 }
             });
         }
+    }
+
+    public void desconectar() {
+        try {
+            escuchando = false;
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+            socket = null;
+            in = null;
+            out = null;
+            System.out.println("[ClienteRed] Desconectado.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getNombreJugador() {
+        return nombreJugador;
+    }
+
+    public String getNombreAvatar() {
+        return nombreAvatar;
     }
 }

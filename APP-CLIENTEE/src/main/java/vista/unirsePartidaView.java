@@ -19,6 +19,13 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
         initComponents();
     }
 
+    public unirsePartidaView(String nombreUsuario, String avatarUsuario) {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        jLabel7.setText(nombreUsuario != null ? nombreUsuario : "Jugador");
+        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -264,14 +271,16 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
         String codigo = txtCodigoSala.getText().trim();
-        if (!codigo.isEmpty()) {
-            try {
-                red.ClienteRed.getInstance().enviarMensaje("UNIRSE_PARTIDA:" + codigo);
-            } catch (Exception ex) {
-                mostrarMensaje("Error al intentar conectar con la sala.");
-            }
-        } else {
-            mostrarMensaje("Por favor, selecciona una partida o ingresa un código.");
+        if (codigo.isEmpty()) {
+            return;
+        }
+
+        try {
+            dtos.MensajeDTO msg = new dtos.MensajeDTO("UNIRSE_A_SALA", "CLIENTE");
+            msg.getDatos().put("codigoSala", codigo.toUpperCase());
+            red.ClienteRed.getInstance().enviarMensaje(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }//GEN-LAST:event_btnUnirseActionPerformed
 
@@ -343,11 +352,13 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     public void mostrarVista() {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-
         try {
-            red.ClienteRed.getInstance().enviarMensaje("SOLICITAR_LISTA_PARTIDAS");
+            dtos.MensajeDTO solicitud = new dtos.MensajeDTO();
+            solicitud.setTipo("SOLICITAR_LISTA_PARTIDAS");
+            solicitud.setRemitente("CLIENTE");
+            red.ClienteRed.getInstance().enviarMensaje(solicitud);
         } catch (Exception ex) {
-            System.getLogger(unirsePartidaView.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            mostrarMensaje("Error al solicitar partidas.");
         }
     }
 
@@ -363,16 +374,22 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-        if (evento.equals("PARTIDA_UNIDA")) {
-            
-            
+        if (evento.startsWith("SALA_UNIDO:")) {
+            String codigo = evento.split(":")[1];
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                dtos.JugadorDTO jugador = new dtos.JugadorDTO();
+                jugador.setNombre(red.ClienteRed.getInstance().getNombreJugador());
+                jugador.setAvatar(red.ClienteRed.getInstance().getNombreAvatar());
+                LobbyView lobby = new LobbyView(jugador, codigo);
+                red.ClienteRed.getInstance().setVistaActual(lobby);
+                lobby.setVisible(true);
+                this.dispose();
+            });
+        } else if (evento.startsWith("SALA_NO_EXISTE") || evento.startsWith("SALA_LLENA")) {
+            javax.swing.SwingUtilities.invokeLater(()
+                    -> mostrarMensaje(evento.equals("SALA_LLENA")
+                            ? "La sala está llena." : "El código de sala no existe."));
         }
-        if (evento.startsWith("LISTA_PARTIDAS:")) {
-            actualizarListaVisual(evento.replace("LISTA_PARTIDAS:", ""));
-        }
-
-        this.revalidate();
-        this.repaint();
     }
 
     private void actualizarListaVisual(String datos) {

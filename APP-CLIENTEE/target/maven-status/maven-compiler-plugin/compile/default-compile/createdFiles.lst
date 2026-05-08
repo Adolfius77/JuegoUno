@@ -1,4 +1,5 @@
 vista\unirsePartidaView$1.class
+vista\GameView$2.class
 vista\CrearPartida$5.class
 vista\SeleccionPartida$3.class
 vista\DiseñosExtras\botonCircular$1.class
@@ -21,6 +22,7 @@ vista\avatarForm.class
 vista\DiseñosExtras\botonCircular.class
 vista\DiseñosExtras\PanelCarta.class
 vista\podioView.class
+vista\DiseñosExtras\PanelCarta$1.class
 vista\CrearPartida$3.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
@@ -31,6 +33,7 @@ controlador\ManoController.class
 vista\SeleccionPartida$1.class
 vista\unirsePartidaView$3.class
 vista\podioView$1.class
+vista\GameView$3.class
 vista\DiseñosExtras\TextFieldRedondo.class
 controlador\ConfiguracionController.class
 vista\SeleccionPartida$4.class

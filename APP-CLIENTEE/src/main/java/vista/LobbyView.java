@@ -4,8 +4,8 @@
  */
 package vista;
 
-
 import Interfaces.IVista;
+import dtos.JugadorDTO;
 import red.GestorPartida;
 
 /**
@@ -13,21 +13,64 @@ import red.GestorPartida;
  * @author emiim
  */
 //cc
-public class LobbyView extends javax.swing.JFrame implements IVista{
+public class LobbyView extends javax.swing.JFrame implements IVista {
 
     private GestorPartida gestor;
-    
+    private JugadorDTO jugadorLocal;
+    private String codigoSala;
+
     public LobbyView() {
         initComponents();
         setLocationRelativeTo(null);
     }
-   
-    public void setModeloGestor(GestorPartida gestor){
+
+    public LobbyView(JugadorDTO jugadorHost, String codigoSala) {
+        this.jugadorLocal = jugadorHost;
+        this.codigoSala = codigoSala;
+        initComponents();
+        setLocationRelativeTo(null);
+        jLabel3.setText(jugadorHost != null ? jugadorHost.getNombre() : "");
+        txtCodigoSala.setText(codigoSala);
+        txtCodigoSala.setEditable(false);
+        configurarEventos();
+        solicitarUnirseAlLobby();
+    }
+
+    public void setModeloGestor(GestorPartida gestor) {
         this.gestor = gestor;
         this.gestor.agregarObservador(this);
-        
+
     }
-        
+
+    private void configurarEventos() {
+        btnCancelar.addActionListener(e -> {
+            SeleccionPartida sel = new SeleccionPartida(
+                    jugadorLocal.getNombre(), jugadorLocal.getAvatar());
+            red.ClienteRed.getInstance().setVistaActual(sel);
+            sel.setVisible(true);
+            dispose();
+        });
+    }
+
+    private void solicitarUnirseAlLobby() {
+        try {
+            dtos.MensajeDTO msg = new dtos.MensajeDTO("SOLICITUD_UNIRSE_LOBBY", "CLIENTE");
+            red.ClienteRed.getInstance().enviarMensaje(msg);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void enviarListo() {
+        try {
+            dtos.MensajeDTO msg = new dtos.MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
+            red.ClienteRed.getInstance().enviarMensaje(msg);
+            btnEstoyListo.setEnabled(false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -366,7 +409,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEstoyListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstoyListoActionPerformed
-        // TODO add your handling code here:
+        enviarListo();
     }//GEN-LAST:event_btnEstoyListoActionPerformed
 
     /**
@@ -444,21 +487,46 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
 
     @Override
     public void actualizar(String evento) {
-        
+        System.out.println("[LobbyView] Evento: " + evento);
+        if ("ACTUALIZACION_PARTIDA".equals(evento)) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                GameView juego = new GameView(jugadorLocal);
+                red.ClienteRed.getInstance().setVistaActual(juego);
+                juego.setVisible(true);
+                dispose();
+            });
+        }
+    }
+
+    public void actualizarJugadores(java.util.List<String> nombres) {
+        javax.swing.JPanel[] paneles = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
+        for (int i = 0; i < paneles.length; i++) {
+            paneles[i].removeAll();
+            if (i < nombres.size()) {
+                paneles[i].setLayout(new java.awt.BorderLayout());
+                javax.swing.JLabel lbl = new javax.swing.JLabel(nombres.get(i));
+                lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                lbl.setForeground(java.awt.Color.BLACK);
+                lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+                paneles[i].add(lbl, java.awt.BorderLayout.CENTER);
+            }
+            paneles[i].revalidate();
+            paneles[i].repaint();
+        }
     }
 
     @Override
     public void mostrarVista() {
-        
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        
+        System.out.println("[LobbyView] " + mensaje);
     }
 }

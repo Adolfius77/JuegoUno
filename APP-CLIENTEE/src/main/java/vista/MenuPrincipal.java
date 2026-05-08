@@ -370,18 +370,18 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
     @Override
     public void actualizar(String evento) {
         System.out.println("[MenuPrincipal] Evento recibido: '" + evento + "'");
-
         switch (evento.trim().toUpperCase()) {
             case "REGISTRO_EXITOSO":
-                SeleccionPartida pantallaSeleccion = new SeleccionPartida();
+                SeleccionPartida pantallaSeleccion = new SeleccionPartida(
+                        txtNombreUsuario.getText().trim(),
+                        obtenerAvatarSeleccionado()
+                );
                 ClienteRed.getInstance().setVistaActual(pantallaSeleccion);
                 pantallaSeleccion.setVisible(true);
                 this.dispose();
                 break;
-
             default:
                 setFormularioHabilitado(true);
-                System.out.println("[MenuPrincipal] Evento no manejado: " + evento);
                 break;
         }
     }

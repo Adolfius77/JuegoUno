@@ -23,6 +23,8 @@ public class ServidorHilo extends Thread {
     private IMazoFactory mazo;
     private IEstadoPartida estado;
     private String nombreJugador;
+    private String codigoSala;
+    private boolean listo = false;
 
     public ServidorHilo(ObjectInputStream in, ObjectOutputStream out, Lobby lobby) {
         this.in = in;
@@ -50,36 +52,257 @@ public class ServidorHilo extends Thread {
                 Object objeto = in.readObject();
 
                 if (objeto instanceof MensajeRegistroDTO) {
-                    MensajeRegistroDTO dto = (MensajeRegistroDTO) objeto;
-                    validarNombre(dto);
+                    validarNombre((MensajeRegistroDTO) objeto);
+
+                } else if (objeto instanceof MensajeCrearPartidaDTO) {
+                    procesarCrearPartida((MensajeCrearPartidaDTO) objeto);
+
                 } else if (objeto instanceof MensajeDTO) {
                     MensajeDTO mensaje = (MensajeDTO) objeto;
 
-                    if ("SOLICITUD_UNIRSE_LOBBY".equals(mensaje.getTipo())) {
-                        unirJugadorAlLobby();
-                    } else if ("INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())) {
-                        procesarInicioPartida();
+                    switch (mensaje.getTipo() != null ? mensaje.getTipo() : "") {
+                        case "SOLICITUD_UNIRSE_LOBBY":
+                            unirJugadorAlLobby();
+                            break;
+                        case "INTENCION_INICIAR_PARTIDA":
+                            procesarJugadorListo();
+                            break;
+                        case "UNIRSE_A_SALA":
+                            procesarUnirseASala(mensaje);
+                            break;
+                        case "SOLICITAR_LISTA_PARTIDAS":
+                            String lista = String.join(",",
+                                    GestorSalas.getInstance().getSalas().keySet());
+                            enviarDatos(new MensajeNotificacionDTO(
+                                    "SERVIDOR", false, "LISTA_PARTIDAS:" + lista));
+                            break;
+                        case "JUGAR_CARTA":
+                            procesarJugarCarta(mensaje);
+                            break;
+                        case "ROBAR_CARTA":
+                            procesarRobarCarta();
+                            break;
+                        default:
+                            System.out.println("[ServidorHilo] Tipo no reconocido: "
+                                    + mensaje.getTipo());
+                            break;
                     }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             if (this.nombreJugador != null && !this.nombreJugador.isBlank()) {
-                lobby.getNombreJugadores().removeIf(j -> j.equalsIgnoreCase(this.nombreJugador));
-                lobby.notificarObservador("LISTA_ACTUALIZADA");
-                System.out.println("Jugador removido del lobby: " + this.nombreJugador);
+                if (this.codigoSala != null) {
+                    Lobby sala = GestorSalas.getInstance().getSala(this.codigoSala);
+                    if (sala != null) {
+                        sala.getNombreJugadores().removeIf(
+                                j -> j.equalsIgnoreCase(this.nombreJugador));
+                        sala.notificarObservador("LISTA_ACTUALIZADA");
+                    }
+                }
+                System.out.println("Jugador desconectado: " + this.nombreJugador);
             }
             Servidor.hilosConectados.remove(this);
         }
     }
 
-    private void unirJugadorAlLobby() {
-        if (this.nombreJugador != null) {
-            boolean exito = lobby.agregarJugador(this.nombreJugador);
-            if (exito) {
-                System.out.println("[LOBBY] " + this.nombreJugador + " ha entrado a la sala de espera.");
-                difundirLista();
+    private void procesarRobarCarta() {
+        Partida partida = GestorSalas.getInstance().getPartida(codigoSala);
+        if (partida == null) {
+            return;
+        }
+
+        Entidades.Jugador jugador = partida.getJugadores().stream()
+                .filter(j -> j.getNombre().equalsIgnoreCase(this.nombreJugador))
+                .findFirst().orElse(null);
+
+        if (jugador == null) {
+            return;
+        }
+
+        if (!partida.getJugadorActual().equals(jugador)) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "NO_ES_TU_TURNO"));
+            return;
+        }
+
+        partida.tomarCarta(jugador);
+        partida.pasarTurno();
+
+        PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
+        MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
+        respuesta.setTipo("ACTUALIZACION_PARTIDA");
+        respuesta.setPartida(partidaDTO);
+
+        for (ServidorHilo cliente : Servidor.hilosConectados) {
+            if (codigoSala.equals(cliente.codigoSala)) {
+                cliente.enviarDatos(respuesta);
             }
         }
+        System.out.println("[Servidor] " + nombreJugador + " robó una carta.");
+    }
+
+    private void unirJugadorAlLobby() {
+        if (this.codigoSala == null || this.nombreJugador == null) {
+            return;
+        }
+
+        Lobby sala = GestorSalas.getInstance().getSala(this.codigoSala);
+        if (sala == null) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "SALA_NO_EXISTE"));
+            return;
+        }
+        if (sala.estaLleno()) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "SALA_LLENA"));
+            return;
+        }
+
+        boolean exito = sala.agregarJugador(this.nombreJugador);
+        if (exito) {
+            System.out.println("[LOBBY] " + nombreJugador + " entró a sala: " + codigoSala);
+            difundirLista();
+        }
+    }
+
+    private void procesarUnirseASala(MensajeDTO mensaje) {
+        String codigo = (String) mensaje.getDatos().get("codigoSala");
+        if (codigo == null || !GestorSalas.getInstance().existeSala(codigo)) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "SALA_NO_EXISTE"));
+            return;
+        }
+
+        Lobby sala = GestorSalas.getInstance().getSala(codigo);
+        if (sala.estaLleno()) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "SALA_LLENA"));
+            return;
+        }
+
+        this.codigoSala = codigo;
+        sala.agregarJugador(this.nombreJugador);
+        enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "SALA_UNIDO:" + codigo));
+        difundirLista();
+    }
+
+    private void procesarCrearPartida(MensajeCrearPartidaDTO dto) {
+        String codigo = GestorSalas.getInstance().crearSala(
+                dto.getNombreSala(), dto.getLimiteJugadores());
+
+        this.codigoSala = codigo;
+
+        Lobby sala = GestorSalas.getInstance().getSala(codigo);
+        sala.agregarJugador(this.nombreJugador);
+
+        System.out.println("[Servidor] Sala creada: " + codigo + " por " + nombreJugador);
+
+        enviarDatos(new MensajeNotificacionDTO("SERVIDOR", false, "SALA_CREADA:" + codigo));
+    }
+
+    private void procesarJugadorListo() {
+        this.listo = true;
+        System.out.println("[Servidor] " + nombreJugador + " marcado como listo");
+
+        Lobby sala = GestorSalas.getInstance().getSala(codigoSala);
+        System.out.println("[Servidor] codigoSala de este hilo: " + codigoSala);
+        if (sala == null) {
+            System.out.println("[Servidor] ⚠️ sala es NULL");
+            return;
+        }
+
+        long totalEnSala = Servidor.hilosConectados.stream()
+                .filter(h -> codigoSala.equals(h.codigoSala))
+                .count();
+
+        long totalListos = Servidor.hilosConectados.stream()
+                .filter(h -> codigoSala.equals(h.codigoSala) && h.listo)
+                .count();
+
+        System.out.println("[Servidor] En sala: " + totalEnSala + " | Listos: " + totalListos);
+
+        if (totalEnSala >= 2 && totalListos == totalEnSala) {
+            System.out.println("[Servidor] Todos listos, iniciando partida...");
+            iniciarPartidaEnSala();
+        }
+    }
+
+    private void iniciarPartidaEnSala() {
+        try {
+            Lobby sala = GestorSalas.getInstance().getSala(codigoSala);
+            GestorJuegoFacade facade = new GestorJuegoFacade(
+                    new Entidades.fabricas.CartaFactory(),
+                    new Entidades.fabricas.MazoClasicoFactory(),
+                    Entidades.fabricas.EstadoFactory.crearEstadoEsperando()
+            );
+            facade.prepararIniciarPartida(sala.getNombreJugadores());
+            Partida partida = facade.getPartidaActual();
+
+            GestorSalas.getInstance().guardarPartida(codigoSala, partida);
+
+            PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
+            MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
+            respuesta.setTipo("ACTUALIZACION_PARTIDA");
+            respuesta.setPartida(partidaDTO);
+
+            for (ServidorHilo cliente : Servidor.hilosConectados) {
+                if (codigoSala.equals(cliente.codigoSala)) {
+                    cliente.enviarDatos(respuesta);
+                }
+            }
+            System.out.println("[Servidor] Partida iniciada en sala: " + codigoSala);
+        } catch (Exception e) {
+            enviarError("Error al iniciar la partida: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void procesarJugarCarta(MensajeDTO mensaje) {
+        Partida partida = GestorSalas.getInstance().getPartida(codigoSala);
+        if (partida == null) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "PARTIDA_NO_ENCONTRADA"));
+            return;
+        }
+
+        Entidades.Jugador jugador = partida.getJugadores().stream()
+                .filter(j -> j.getNombre().equalsIgnoreCase(this.nombreJugador))
+                .findFirst().orElse(null);
+
+        if (jugador == null) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "JUGADOR_NO_ENCONTRADO"));
+            return;
+        }
+
+        String color = (String) mensaje.getDatos().get("color");
+        String valor = (String) mensaje.getDatos().get("valor");
+
+        Entidades.Carta cartaAJugar = jugador.getMano().getCartas().stream()
+                .filter(c -> {
+                    dtos.CartaDTO dto = new Mappers.CartaMapper().toDTO(c);
+                    return dto.getColor().equals(color) && dto.getValor().equals(valor);
+                })
+                .findFirst().orElse(null);
+
+        if (cartaAJugar == null) {
+            enviarDatos(new MensajeNotificacionDTO("SERVIDOR", true, "CARTA_NO_EN_MANO"));
+            return;
+        }
+
+        partida.jugarCarta(cartaAJugar, jugador);
+
+        PartidaDTO partidaDTO = PartidaMapper.toDTO(partida);
+        MensajeEstadoPartidaDTO respuesta = new MensajeEstadoPartidaDTO();
+        respuesta.setTipo("ACTUALIZACION_PARTIDA");
+        respuesta.setPartida(partidaDTO);
+
+        for (ServidorHilo cliente : Servidor.hilosConectados) {
+            if (codigoSala.equals(cliente.codigoSala)) {
+                cliente.enviarDatos(respuesta);
+            }
+        }
+
+        String colorElegido = (String) mensaje.getDatos().get("colorElegido");
+        if (colorElegido != null) {
+            partida.getPilaCartas().setColorActivo(
+                    Entidades.enums.Color.valueOf(colorElegido));
+        }
+        
+        System.out.println("[Servidor] " + nombreJugador + " jugó: " + color + " " + valor);
     }
 
     private void procesarInicioPartida() {
@@ -123,9 +346,20 @@ public class ServidorHilo extends Thread {
     }
 
     private void difundirLista() {
-        MensajeListaJugadoresDTO msgLista = new MensajeListaJugadoresDTO(lobby.getNombreJugadores());
+        if (codigoSala == null) {
+            return;
+        }
+        Lobby sala = GestorSalas.getInstance().getSala(codigoSala);
+        if (sala == null) {
+            return;
+        }
+
+        MensajeListaJugadoresDTO msgLista = new MensajeListaJugadoresDTO(sala.getNombreJugadores());
+
         for (ServidorHilo cliente : Servidor.hilosConectados) {
-            cliente.enviarDatos(msgLista);
+            if (codigoSala.equals(cliente.codigoSala)) {
+                cliente.enviarDatos(msgLista);
+            }
         }
     }
 }

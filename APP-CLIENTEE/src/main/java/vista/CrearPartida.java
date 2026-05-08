@@ -12,12 +12,12 @@ import dtos.JugadorDTO;
  * @author emiim
  */
 //cc
-public class CrearPartida extends javax.swing.JFrame implements IVista{
+public class CrearPartida extends javax.swing.JFrame implements IVista {
 
-     private JugadorDTO jugadorHost;
-     private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
+    private JugadorDTO jugadorHost;
+    private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
     private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "8080"));
-    
+
     /**
      * Creates new form CrearPartida
      */
@@ -30,7 +30,9 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
      */
     public CrearPartida(JugadorDTO jugadorHost) {
         this.jugadorHost = jugadorHost;
-        
+        initComponents(); // ← faltaba esto
+        this.setLocationRelativeTo(null);
+        jLabel3.setText(jugadorHost != null ? jugadorHost.getNombre() : "");
         configurarEventos();
     }
     // limite de jugadores seleccionado (2,3,4)
@@ -55,25 +57,28 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
 
     private void seleccionarLimite(int limite) {
         this.limiteJugadores = limite;
-        btn2jugadores.setColor(limite == 2 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
-        btn3jugadore.setColor(limite == 3 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
-        btn4jugadores.setColor(limite == 4 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204,0,0));
+        btn2jugadores.setColor(limite == 2 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204, 0, 0));
+        btn3jugadore.setColor(limite == 3 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204, 0, 0));
+        btn4jugadores.setColor(limite == 4 ? new java.awt.Color(255, 255, 255) : new java.awt.Color(204, 0, 0));
     }
 
     private void crearPartida() {
-        // crear la vista del lobby y pasarle el host
-        LobbyView lobby = new LobbyView();
-        // Intentar pasar el host a la vista del lobby mediante reflection (evita dependencia de método exacto)
-//        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
-//            try {
-//                java.lang.reflect.Method m = lobby.getClass().getMethod("setHost", String.class);
-//                m.invoke(lobby, this.nombreHost);
-//            } catch (Exception ex) {
-//                // si no existe el método no hacemos nada
-//            }
-//        }
-        lobby.setVisible(true);
-        dispose();
+        String nombreSala = txtNombreSala.getText().trim();
+        if (nombreSala.isEmpty()) {
+            txtNombreSala.requestFocus();
+            return;
+        }
+
+        btnCrearPartida.setEnabled(false);
+
+        try {
+            dtos.MensajeCrearPartidaDTO msg = new dtos.MensajeCrearPartidaDTO(nombreSala, limiteJugadores);
+            red.ClienteRed.getInstance().setVistaActual(this);
+            red.ClienteRed.getInstance().enviarMensaje(msg);
+        } catch (Exception ex) {
+            btnCrearPartida.setEnabled(true);
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -453,23 +458,31 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
     private vista.DiseñosExtras.TextFieldRedondo txtNombreSala;
     // End of variables declaration//GEN-END:variables
 
-    @Override
     public void actualizar(String evento) {
-        
+        if (evento.startsWith("SALA_CREADA:")) {
+            String codigo = evento.split(":")[1];
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                LobbyView lobby = new LobbyView(jugadorHost, codigo);
+                red.ClienteRed.getInstance().setVistaActual(lobby);
+                lobby.setVisible(true);
+                this.dispose();
+            });
+        }
     }
 
     @Override
     public void mostrarVista() {
-        
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        
+        // sin popup, solo log por ahora
+        System.out.println("[CrearPartida] " + mensaje);
     }
 }

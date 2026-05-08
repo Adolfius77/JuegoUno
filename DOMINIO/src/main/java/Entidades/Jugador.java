@@ -20,24 +20,29 @@ public class Jugador {
     private int puntaje;
 
     public Jugador() {
+        this.dijoUno = false;
     }
 
-    public Jugador(String nombre){
+    public Jugador(String nombre) {
         this.nombre = nombre;
+        this.dijoUno = false;
     }
 
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
+        this.dijoUno = false;
     }
-     
+
     public Carta recibirCarta(Carta carta) {
         return mano.agregarCarta(carta);
 
     }
-    public void seleccionarCarta(){
-        
+
+    public void seleccionarCarta() {
+
     }
+
     public Mano entregarCartas(List<Carta> cartasIniciales) {
         for (Carta cartasInicial : cartasIniciales) {
             mano.agregarCarta(cartasInicial);
@@ -48,19 +53,16 @@ public class Jugador {
     public Mano getMano() {
         return this.mano;
     }
-    public void removerCarta(Carta carta){
-        if(this.mano != null){
+
+    public void removerCarta(Carta carta) {
+        if (this.mano != null) {
             this.mano.eliminarCarta(carta);
         }
-    }
-    public void setDijoUno() {
-        this.dijoUno = dijoUno;
     }
 
     public boolean isDijoUno() {
         return this.dijoUno;
     }
-    //getters y setters
 
     public String getNombre() {
         return nombre;

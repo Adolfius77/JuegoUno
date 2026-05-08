@@ -5,6 +5,7 @@ dtos\MensajeGritarUnoDTO.class
 dtos\paqueteRedDTO.class
 dtos\MensajeJugarCartaDTO.class
 dtos\MensajeRobarCartaDTO.class
+dtos\MensajeCrearPartidaDTO.class
 dtos\MensajeDTO.class
 dtos\MensajeRegistroDTO.class
 dtos\MensajeListaJugadoresDTO.class
