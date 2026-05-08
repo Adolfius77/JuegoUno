@@ -13,7 +13,6 @@ public class BrokerMain {
 
         Broker broker = new Broker(9090, miSerializador, proxyFactory);
 
-        // Registrar el GameHandler — este maneja toda la lógica del juego
         new GameHandler(broker);
 
         broker.iniciarServidor();

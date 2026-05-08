@@ -66,6 +66,20 @@ public class NumeroDeCartasForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setNumero(int numero) {
+        jLabel1.setText(String.valueOf(numero));
+        jLabel1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 28));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.CENTER);
+
+        this.setLayout(new java.awt.BorderLayout());
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
+        this.removeAll();
+        this.add(jPanel1, java.awt.BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

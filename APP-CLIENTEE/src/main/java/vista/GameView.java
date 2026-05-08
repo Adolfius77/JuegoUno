@@ -13,6 +13,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import vista.DiseñosExtras.PanelCarta;
 
@@ -47,6 +49,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
                 javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setBorder(null);
 
+        panelPilaCartas.setLayout(new BorderLayout());
         panelPilaCartas.setCursor(new Cursor(Cursor.HAND_CURSOR));
         panelPilaCartas.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -55,6 +58,9 @@ public class GameView extends javax.swing.JFrame implements IVista {
             }
         });
 
+        jScrollPane1.setOpaque(false);
+        jScrollPane1.getViewport().setOpaque(false);
+        panelJugadorPrincipal.setOpaque(false);
         panelJugador2.setOpaque(false);
         panelJugador3.setOpaque(false);
         panelJugador4.setOpaque(false);
@@ -62,6 +68,17 @@ public class GameView extends javax.swing.JFrame implements IVista {
         panelNumeroCartas2.setOpaque(false);
         panelNumeroCartas3.setOpaque(false);
         panelNumeroCartas4.setOpaque(false);
+        panelCartaMedio.setOpaque(false);
+        panelPilaCartas.setOpaque(false);
+        panelAvatar1.setOpaque(false);
+        panelAvatar2.setOpaque(false);
+        panelAvatar3.setOpaque(false);
+        panelAvatar4.setOpaque(false);
+        panelNumeroCartas1.setOpaque(false);
+        panelNumeroCartas2.setOpaque(false);
+        panelNumeroCartas3.setOpaque(false);
+        panelNumeroCartas4.setOpaque(false);
+        panelJugadorPrincipal.setOpaque(false);
         setLocationRelativeTo(null);
     }
 
@@ -73,6 +90,26 @@ public class GameView extends javax.swing.JFrame implements IVista {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private ImageIcon cargarAvatar(String avatarId) {
+        if (avatarId == null || avatarId.isBlank()) {
+            java.net.URL recurso = getClass().getResource("/img/pfp.png");
+            return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+        }
+        String ruta = "/img/" + avatarId + ".png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+    }
+
+    private void mostrarAvatar(javax.swing.JPanel panel, String avatarId) {
+        panel.removeAll();
+        panel.setLayout(new java.awt.BorderLayout());
+        javax.swing.JLabel lbl = new javax.swing.JLabel(cargarAvatar(avatarId));
+        lbl.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        panel.add(lbl, java.awt.BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
     }
 
     public void inicializarPartida(dtos.PartidaDTO partida) {
@@ -94,6 +131,51 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     break;
                 }
 
+            }
+        }
+
+        mostrarAvatar(panelAvatar1, jugadorLocal.getAvatar());
+
+        javax.swing.JPanel[] panelesAvatar = {panelAvatar2, panelAvatar3, panelAvatar4};
+        int avatarIdx = 0;
+        for (dtos.JugadorDTO j : partida.getJugadores()) {
+            if (!j.getNombre().equals(jugadorLocal.getNombre()) && avatarIdx < panelesAvatar.length) {
+                mostrarAvatar(panelesAvatar[avatarIdx], null); // pfp genérico
+                avatarIdx++;
+            }
+        }
+
+        if (partida.getJugadores() != null) {
+            for (dtos.JugadorDTO j : partida.getJugadores()) {
+                if (j.getNombre().equals(jugadorLocal.getNombre())) {
+                    int cantidad = (j.getMano() != null && j.getMano().getCartas() != null)
+                            ? j.getMano().getCartas().size() : 0;
+                    NumeroDeCartasForm numLocal = new NumeroDeCartasForm();
+                    numLocal.setNumero(cantidad);
+                    panelNumeroCartas1.removeAll();
+                    panelNumeroCartas1.setLayout(new BorderLayout());
+                    panelNumeroCartas1.add(numLocal, BorderLayout.CENTER);
+                    panelNumeroCartas1.revalidate();
+                    panelNumeroCartas1.repaint();
+                    break;
+                }
+            }
+
+            javax.swing.JPanel[] panelesNum = {panelNumeroCartas2, panelNumeroCartas3, panelNumeroCartas4};
+            int numIdx = 0;
+            for (dtos.JugadorDTO j : partida.getJugadores()) {
+                if (!j.getNombre().equals(jugadorLocal.getNombre()) && numIdx < panelesNum.length) {
+                    int cantidad = (j.getMano() != null && j.getMano().getCartas() != null)
+                            ? j.getMano().getCartas().size() : 0;
+                    NumeroDeCartasForm numForm = new NumeroDeCartasForm();
+                    numForm.setNumero(cantidad);
+                    panelesNum[numIdx].removeAll();
+                    panelesNum[numIdx].setLayout(new BorderLayout());
+                    panelesNum[numIdx].add(numForm, BorderLayout.CENTER);
+                    panelesNum[numIdx].revalidate();
+                    panelesNum[numIdx].repaint();
+                    numIdx++;
+                }
             }
         }
 
@@ -168,12 +250,10 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
     public void actualizarMazo(int cantidadCartas) {
         panelPilaCartas.removeAll();
-        if (cantidadCartas > 0) {
-            CartaDTO reversoMazo = new CartaDTO("ROJO", "UNO");
-            PanelCarta cartaVisual = new PanelCarta(reversoMazo);
-            cartaVisual.setToolTipText("cartas restantes:" + cantidadCartas);
-            panelPilaCartas.add(cartaVisual, BorderLayout.CENTER);
-        }
+        PanelCarta reverso = new PanelCarta(0);
+        reverso.setBounds(0, 0, 80, 110);
+        panelPilaCartas.setLayout(null);
+        panelPilaCartas.add(reverso);
         panelPilaCartas.revalidate();
         panelPilaCartas.repaint();
     }
