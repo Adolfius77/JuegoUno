@@ -13,9 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-
-import serealizador.serializador;
-
 /**
  *
  * @author emiim
@@ -26,31 +23,33 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private int avatarSeleccionado = 0;
     private final javax.swing.JLabel etiquetaAvatar = new javax.swing.JLabel();
     private LobbyController controlador;
-    /**
-     * Creates new form NewJFrame
-     */
-    
-    
-
+   
     public MenuPrincipal(LobbyController controlador) {
         this.controlador = controlador;
-        
         initComponents();
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {;
                 @Override
                 public void windowOpened(java.awt.event.WindowEvent evt) {
                     ventanaActual();
                 }
         });
+
         GestorAudio.getInstancia().reproducirMusica("/img/lobby.wav");
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
+
+        if (this.controlador != null){
+            this.controlador.setVista(this);
+        }
     }
+
     public MenuPrincipal() {
         this(null);
     }
+
     private void ventanaActual() {
         System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }

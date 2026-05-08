@@ -18,6 +18,8 @@ public class Jugador {
     private Mano mano;
     private Boolean dijoUno;
     private int puntaje;
+    private boolean esHost;
+
 
     public Jugador() {
     }
@@ -104,5 +106,13 @@ public class Jugador {
 
     public void setPuntaje(int puntaje) {
         this.puntaje = puntaje;
+    }
+
+    public boolean isEsHost() {
+        return esHost;
+    }
+
+    public void setEsHost(boolean esHost) {
+        this.esHost = esHost;
     }
 }
