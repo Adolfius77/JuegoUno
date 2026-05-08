@@ -22,6 +22,7 @@ public class GameController {
         if (proxy == null || vista == null) {
             throw new IllegalArgumentException("proxy y vista son obligatorios");
         }
+        this.proxy = proxy;
         this.proxy.setReceptor(mensaje ->{
             procesarEventoRed(mensaje);
         });

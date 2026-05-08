@@ -92,7 +92,8 @@ public class LobbyController {
                 }
 
                 GameView vistaJuego = new GameView();
-                // Nota: Aquí deberás instanciar tu GameController pasándole el clienteProxy y la vistaJuego
+                //me falta que reciba el nombre de los jugadores y el estado
+                GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, null);
                 vistaJuego.setVisible(true);
             });
 

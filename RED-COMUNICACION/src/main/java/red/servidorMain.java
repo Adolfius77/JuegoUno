@@ -3,6 +3,7 @@ package red;
 
 import Interfacez.ISerializador;
 import Lector.LectorConfiguracion;
+import factorys.ServerFactory;
 import serealizador.serializador;
 
 public class servidorMain {
@@ -12,7 +13,7 @@ public class servidorMain {
         serializador seri = new serializador();
         int puerto = config.getPuertoServidor();
         String ip = config.getIpServidor();
-        Servidor servidor = new Servidor(puerto,ip,seri);
+        Servidor servidor = ServerFactory.fabricarServidor(puerto, ip, seri);
         servidor.iniciar();
 
         try {
