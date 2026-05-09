@@ -31,12 +31,13 @@ public class comandoIniciarPartida implements IComandoServidor{
     
     @Override
     public void ejecutar(MensajeDTO mensaje) {
+        System.out.println("[COMANDO-INICIAR-PARTIDA] el broker recibio el msj");
         List<String> jugadores = ManejadorNodos.obtenerNombresDeNodosConectados();
         if(jugadores.size() < 2){
             System.out.println("comando iniciar partida: faltan jugadores deben ser mas de 2 jugadores");
             return;
         }
-        PartidaDTO estadoInicialDTO = JuegoServidor.iniciarNuevoJuego(jugadores);
+        PartidaDTO estadoInicialDTO = JuegoServidor.iniciarNuevoJuego(jugadores, this.ManejadorNodos);
         MensajeDTO estadoPartida = new MensajeDTO();
         estadoPartida.setTipo("PARTIDA_INICIADA");
         estadoPartida.setRemitente("SERVIDOR");

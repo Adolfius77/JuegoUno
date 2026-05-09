@@ -18,7 +18,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
 
    
     private LobbyController controlador;
-    public LobbyView() {
+    public LobbyView(String codigoGenerado, String host) {
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -394,7 +394,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LobbyView().setVisible(true);
+                new LobbyView(codigoGenerado, host).setVisible(true);
             }
         });
     }

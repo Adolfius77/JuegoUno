@@ -63,7 +63,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista{
 
     private void crearPartida() {
         // crear la vista del lobby y pasarle el host
-        LobbyView lobby = new LobbyView();
+        LobbyView lobby = new LobbyView(codigoGenerado, host);
         // Intentar pasar el host a la vista del lobby mediante reflection (evita dependencia de método exacto)
         if (this.nombreHost != null && !this.nombreHost.isBlank()) {
             try {

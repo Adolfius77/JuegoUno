@@ -1,9 +1,8 @@
 package facades;
 
+import Entidades.*;
 import Entidades.Estados.IEstadoPartida;
-import Entidades.Jugador;
 import Entidades.Logica.Partida;
-import Entidades.Mano;
 import Entidades.fabricas.*;
 
 import java.util.ArrayList;
@@ -33,6 +32,17 @@ public class GestorJuegoFacade {
             listaJugadores.add(nuevoJugador);
         }
         this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory, this.estado);
+        Mazo mazoActual = this.partidaActual.getMazo();
+        PilaCartas pilaActual = this.partidaActual.getPilaCartas();
+        mazoActual.barajear();
+
+        //entregar 7 cartas
+        for (Jugador jugador : this.partidaActual.getJugadores()) {
+            jugador.entregarCartas(mazoActual.entregarCartas());
+        }
+        Carta primeraCarta = mazoActual.tomarCarta();
+        pilaActual.agregarCarta(primeraCarta);
+
         System.out.println("fachada: construyendo mazo y partida....");
 
     }

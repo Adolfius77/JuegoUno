@@ -5,12 +5,16 @@
 package red;
 
 import Entidades.Estados.IEstadoPartida;
+import Entidades.Logica.Partida;
 import Entidades.fabricas.ICartaFactory;
 import Entidades.fabricas.IMazoFactory;
 import Interfacez.IBroker;
 import Mappers.PartidaMapper;
+import Nodos.ManejadorNodos;
 import dtos.PartidaDTO;
 import facades.GestorJuegoFacade;
+import observador.observadorRed;
+
 import java.util.List;
 
 /**
@@ -32,9 +36,14 @@ public class JuegoServidor {
         //aqui pondremos los comandos para el caso de uso inicial que es ejercer turno
     }
     
-    public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores){
+    public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
         this.fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
         this.fachadaJuego.prepararIniciarPartida(nombreJugadores);
+
+        Partida partida = this.fachadaJuego.getPartidaActual();
+        observadorRed observador = new observadorRed(partida, manejadorNodos);
+        partida.agregarObservador(observador);
+
         return PartidaMapper.toDTO(this.fachadaJuego.getPartidaActual());
     }
 }

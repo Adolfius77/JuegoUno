@@ -1,6 +1,7 @@
 package controlador;
 
 import Interfaces.IVista;
+
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
@@ -10,13 +11,16 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 
 
+
 import vista.GameView;
+import vista.LobbyView;
 import vista.SeleccionPartida;
 
 public class LobbyController {
-
     private IVista vista;
-    private ClienteProxy clienteProxy;
+    private final ClienteProxy clienteProxy;
+    private String nombreJugadorTemporal;
+    private String nombreAvatarTemporal;
 
     public LobbyController(ClienteProxy clienteProxy) {
         if (clienteProxy == null) {
@@ -39,6 +43,9 @@ public class LobbyController {
     public void registrarJugador(String nombreJugador, String avatar) {
         if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
             System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
+
+            this.nombreJugadorTemporal = nombreJugador;
+            this.nombreAvatarTemporal = avatar;
 
             //aqui aplico el patron sobre
             //en esta parte defino el sobre
@@ -64,24 +71,51 @@ public class LobbyController {
         MensajeDTO msjInicio = new MensajeDTO("PETICION_INICIAR_PARTIDA", null);
         clienteProxy.enviarMensaje(msjInicio);
     }
+    public void crearPartida(String nombreJugador) {
+        System.out.println("solicitando al server crear una sala");
+
+        MensajeDTO msjCrear = new MensajeDTO();
+        msjCrear.setTipo("CREAR_PARTIDA");
+        msjCrear.setRemitente("CLIENTE");
+        msjCrear.getDatos().put("nombre", nombreJugador);
+        clienteProxy.enviarMensaje(msjCrear);
+    }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
         if (mensaje == null) {
             return;
         }
         String tipoMensaje = mensaje.getTipo();
+        //CU EMILIANO MARQUEZ
         if ("REGISTRO_EXITOSO".equals(tipoMensaje)) {
             System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
             SwingUtilities.invokeLater(() -> {
                 if (vista != null) {
                     this.vista.cerrarVista();
                 }
-                SeleccionPartida seleccionVista = new SeleccionPartida();
+                SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal);
                 seleccionVista.setVisible(true);
                 this.setVista(seleccionVista);
             });
         }
-        if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
+        //CU SANTIAGO LEON
+
+        if ("SALA_CREADA".equals(tipoMensaje)) {
+            System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
+            String codigoGenerado = (String)mensaje.getDatos().get("codigoSala");
+            String host = (String)mensaje.getDatos().get("host");
+
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("sala creada con el codigo: " + codigoGenerado + " y el host es: " + host);
+                if (vista != null) {
+                    this.vista.cerrarVista();
+                }
+                LobbyView lobbyView = new LobbyView(codigoGenerado,host);
+                this.setVista(lobbyView);
+            });
+        }
+        //CU ADOLFO ORTEGA
+        if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
             SwingUtilities.invokeLater(() -> {
@@ -90,7 +124,8 @@ public class LobbyController {
                 }
 
                 GameView vistaJuego = new GameView();
-                // Nota: Aquí deberás instanciar tu GameController pasándole el clienteProxy y la vistaJuego
+                //me falta que reciba el nombre de los jugadores y el estado
+                GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, null);
                 vistaJuego.setVisible(true);
             });
 
