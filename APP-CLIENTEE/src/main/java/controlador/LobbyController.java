@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 
-
-
 import vista.GameView;
 import vista.LobbyView;
 import vista.SeleccionPartida;
 
 public class LobbyController {
+
     private IVista vista;
     private final ClienteProxy clienteProxy;
     private String nombreJugadorTemporal;
@@ -71,15 +70,8 @@ public class LobbyController {
         MensajeDTO msjInicio = new MensajeDTO("PETICION_INICIAR_PARTIDA", null);
         clienteProxy.enviarMensaje(msjInicio);
     }
-    public void crearPartida(String nombreJugador) {
-        System.out.println("solicitando al server crear una sala");
 
-        MensajeDTO msjCrear = new MensajeDTO();
-        msjCrear.setTipo("CREAR_PARTIDA");
-        msjCrear.setRemitente("CLIENTE");
-        msjCrear.getDatos().put("nombre", nombreJugador);
-        clienteProxy.enviarMensaje(msjCrear);
-    }
+    
 
     public void procesarEventoRed(MensajeDTO mensaje) {
         if (mensaje == null) {
@@ -98,8 +90,6 @@ public class LobbyController {
                 this.setVista(seleccionVista);
             });
         }
-        //CU SANTIAGO LEON
-
         if ("SALA_CREADA".equals(tipoMensaje)) {
             System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
             String codigoGenerado = (String)mensaje.getDatos().get("codigoSala");

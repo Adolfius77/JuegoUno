@@ -1,10 +1,7 @@
 package Entidades.Estados;
 
-import Entidades.Carta;
-import Entidades.Jugador;
+import Entidades.*;
 import Entidades.Logica.Partida;
-import Entidades.Mano;
-import Entidades.cartaComodin;
 import Entidades.fabricas.EstadoFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,30 +60,17 @@ public class EstadoEsperando implements IEstadoPartida {
         if (partida.getPilaCartas() == null) {
             throw new IllegalStateException("No existe pila de descarte para iniciar la partida");
         }
+        Mazo mazoActual = partida.getMazo();
+        PilaCartas pilaActual = partida.getPilaCartas();
 
-        for (Jugador jugador : partida.getJugadores()) {
-            if (jugador.getMano() == null) {
-                jugador.setMano(new Mano());
-            }
-            jugador.entregarCartas(partida.getMazo().entregarCartas());
+        for(Jugador jugador : partida.getJugadores()){
+            jugador.entregarCartas(mazoActual.entregarCartas());
         }
-
-
-        Carta cartaInicial = partida.getMazo().tomarCarta();
-        List<Carta> comodinesDevolver = new ArrayList();
-        while(cartaInicial instanceof cartaComodin){
-            System.out.println("salio un comodin sacando otra carta ");
-            comodinesDevolver.add(cartaInicial);
-            cartaInicial = partida.getMazo().tomarCarta();
-        }
-        partida.getPilaCartas().agregarCarta(cartaInicial);
-        
-        for(Carta comodin : comodinesDevolver){
-            partida.getMazo().agregarCarta(comodin);
-        }
-        
+        Carta primeraCarta = mazoActual.tomarCarta();
+        pilaActual.agregarCarta(primeraCarta);
+        System.out.println("EstadoEsperando: La primera carta en la mesa es de color: " + pilaActual.getColorActivo());
         partida.setEstado(EstadoFactory.crearEstadoJugando());
-        partida.notificarObservador("PARTIDA_INICIADA");
+        System.out.println("Transicion exitosa: La partida ahora esta en EstadoJugando.");
     }
 
     @Override

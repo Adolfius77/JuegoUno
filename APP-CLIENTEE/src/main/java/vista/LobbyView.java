@@ -6,6 +6,7 @@ package vista;
 
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
 
 import controlador.LobbyController;
 
@@ -18,10 +19,19 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
 
    
     private LobbyController controlador;
-    public LobbyView(String codigoGenerado, String host) {
+
+    public LobbyView() {
         initComponents();
+    }
+
+    
+    public LobbyView(ClienteProxy proxy) {
+        initComponents();
+        this.controlador = new LobbyController(proxy);
         setLocationRelativeTo(null);
     }
+    
+    
    
     public void setControlador(LobbyController controlador){
         this.controlador = controlador;
@@ -394,7 +404,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LobbyView(codigoGenerado, host).setVisible(true);
+                new LobbyView().setVisible(true);
             }
         });
     }
