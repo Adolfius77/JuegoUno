@@ -113,13 +113,18 @@ public class LobbyController {
 
         } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
             if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
-                List<String> listaJugadores = (List<String>) mensaje.getDatos().get("jugadores");
+
+                List<Map<String, String>> listaJugadores = (List<Map<String, String>>) mensaje.getDatos().get("jugadores");
+
+                SwingUtilities.invokeLater(() -> {
+                    System.out.println("Actualizando pantalla con los nuevos jugadores...");
+
+                    if (this.lobby != null) {
+                        this.lobby.mostrarJugadores(listaJugadores);
+                    }
+                });
             }
-
-            SwingUtilities.invokeLater(() -> {
-                System.out.println("Actualizando pantalla con los nuevos jugadores...");
-
-            });
         }
+
     }
 }

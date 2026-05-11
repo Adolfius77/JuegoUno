@@ -4,6 +4,9 @@
  */
 package vista;
 
+import java.net.URL;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author USER
@@ -13,10 +16,38 @@ public class avatarForm extends javax.swing.JPanel {
     /**
      * Creates new form avatarForm
      */
+    
+    private String nombreUsuario;
+    private String avatarUsuario;
+    
     public avatarForm() {
         initComponents();
     }
 
+    public avatarForm(String nombreUsuario, String avatarUsuario) {
+        initComponents();
+        this.nombreUsuario = nombreUsuario;
+        this.avatarUsuario = avatarUsuario;
+        mostrarDatosJugador();
+    }
+    
+    private ImageIcon cargarImagen(String avatarId){
+       String ruta = "/img/" + avatarId + ".png"; 
+        
+        URL recurso = getClass().getResource(ruta);
+        if (recurso != null) {
+            return new ImageIcon(recurso);
+        } else {
+            System.out.println("No se encontró la imagen en la ruta: " + ruta);
+            return new ImageIcon(); 
+        }
+    }
+    private void mostrarDatosJugador(){
+        if(nombreUsuario != null && !nombreUsuario.isBlank()){
+            avatar.setIcon(cargarImagen(avatarUsuario));
+            avatar.setText("");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -89,7 +120,7 @@ public class avatarForm extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel avatar;

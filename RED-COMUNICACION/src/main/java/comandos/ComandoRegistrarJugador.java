@@ -5,6 +5,7 @@ import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
+import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.Map;
  *
  * @author emiim
  */
-public class ComandoRegistrarJugador implements IComandoServidor{
+public class ComandoRegistrarJugador implements IComandoServidor {
+
     private final ManejadorNodos ManejadorNodos;
 
     public ComandoRegistrarJugador(ManejadorNodos ManejadorNodos) {
@@ -45,7 +47,7 @@ public class ComandoRegistrarJugador implements IComandoServidor{
                 break;
             }
         }
-        
+
         if (nodoTemporal == null) {
             return;
         }
@@ -56,7 +58,7 @@ public class ComandoRegistrarJugador implements IComandoServidor{
         if (nombreAvatar != null && !nombreAvatar.trim().isEmpty()) {
             nodoTemporal.setAvatar(nombreAvatar);
         }
-        
+
         System.out.println("ComandoRegistrarJugador: Jugador " + nombreJugador + " registrado exitosamente");
 
         MensajeDTO respuestaRegistro = new MensajeDTO();
@@ -67,14 +69,27 @@ public class ComandoRegistrarJugador implements IComandoServidor{
         respuestaRegistro.setDatos(datosRespuesta);
         proxy.enviarMensaje(respuestaRegistro);
 
-        List<String> nombresJugadores = ManejadorNodos.obtenerNombresDeNodosConectados();
+        List<Map<String, String>> listaJugadores = new ArrayList<>();
+
+        for (NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()) {
+            Map<String, String> datosJugador = new HashMap<>();
+            datosJugador.put("nombre", nodo.getNombre());
+
+            if (nodo.getAvatar() != null) {
+                datosJugador.put("avatar", nodo.getAvatar());
+
+            } else {
+                datosJugador.put("avatar", "pfp");
+            }
+            listaJugadores.add(datosJugador);
+        }
         MensajeDTO notificacionLista = new MensajeDTO();
         notificacionLista.setTipo("LISTA_ACTUALIZADA");
         notificacionLista.setRemitente("SERVIDOR");
         Map<String, Object> datosLista = new HashMap<>();
-        datosLista.put("jugadores", nombresJugadores);
+        datosLista.put("jugadores", listaJugadores);
         notificacionLista.setDatos(datosLista);
-        
+
         for (NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()) {
             nodo.enviarMensaje(notificacionLista);
         }

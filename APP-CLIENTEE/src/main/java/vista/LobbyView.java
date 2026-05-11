@@ -4,38 +4,58 @@
  */
 package vista;
 
-
 import Interfaces.IVista;
 import cliente.ClienteProxy;
 
 import controlador.LobbyController;
+import java.awt.BorderLayout;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JPanel;
 
 /**
  *
  * @author emiim
  */
 //cc
-public class LobbyView extends javax.swing.JFrame implements IVista{
+public class LobbyView extends javax.swing.JFrame implements IVista {
 
-   
     private LobbyController controlador;
 
     public LobbyView() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
-    
     public LobbyView(ClienteProxy proxy) {
         initComponents();
         setLocationRelativeTo(null);
     }
-    
-    
-   
-    public void setControlador(LobbyController controlador){
+
+    public void setControlador(LobbyController controlador) {
         this.controlador = controlador;
     }
-        
+
+    public void mostrarJugadores(List<Map<String, String>> jugadores) {
+
+        JPanel[] paneles = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
+        for (JPanel p : paneles) {
+            p.removeAll();
+        }
+        for (int i = 0; i < jugadores.size() && i < paneles.length; i++) {
+            Map<String, String> datos = jugadores.get(i);
+            String nombre = datos.get("nombre");
+            String idAvatar = datos.get("avatar");
+
+            avatarForm form = new avatarForm(nombre, idAvatar);
+            paneles[i].setLayout(new BorderLayout());
+            paneles[i].add(form, BorderLayout.CENTER);
+
+            paneles[i].revalidate();
+            paneles[i].repaint();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -68,7 +88,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        lblNombreUsuario = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         panelFotoAvatar = new javax.swing.JPanel();
@@ -177,10 +197,10 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
             .addGap(0, 13, Short.MAX_VALUE)
         );
 
-        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Nombre usuario");
+        lblNombreUsuario.setBackground(new java.awt.Color(255, 255, 255));
+        lblNombreUsuario.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblNombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        lblNombreUsuario.setText("Nombre usuario");
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ajustes.png"))); // NOI18N
 
@@ -301,7 +321,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(panelFotoAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(59, 59, 59)
-                                .addComponent(jLabel3)
+                                .addComponent(lblNombreUsuario)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel4))
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -332,7 +352,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(panelFotoAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                            .addComponent(lblNombreUsuario))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -425,7 +445,6 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -437,6 +456,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JLabel lblNombreUsuario;
     private javax.swing.JPanel panelFotoAvatar;
     private javax.swing.JPanel panelJugador1;
     private javax.swing.JPanel panelJugador2;
@@ -447,21 +467,21 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
 
     @Override
     public void actualizar(String evento) {
-        
+
     }
 
     @Override
     public void mostrarVista() {
-        
+        this.setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        
+        this.dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        
+        javax.swing.JOptionPane.showMessageDialog(this, mensaje);
     }
 }

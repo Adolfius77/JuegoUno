@@ -23,7 +23,7 @@ public class comandoCrearPartida implements IComandoServidor {
         MensajeDTO respuesto = new MensajeDTO();
         respuesto.setTipo("SALA_CREADA");
         respuesto.setRemitente("SERVIDOR");
-        respuesto.getDatos().put("codigoSala", nombreHost);
+        respuesto.getDatos().put("codigoSala", codigoSala);
         respuesto.getDatos().put("nombre", nombreHost);
 
         //notifica a todos
