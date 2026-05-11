@@ -26,6 +26,7 @@ vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
 vista\SeleccionPartida.class
 controlador\ManoController.class
+vista\CrearPartida$6.class
 vista\SeleccionPartida$1.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
@@ -38,5 +39,8 @@ vista\GameView$1.class
 vista\LobbyView.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class
+controlador\GameController.class
 vista\CrearPartida$2.class
+controlador\CrearPartidaController.class
+controlador\UnirsePartidaController.class
 vista\unirsePartidaView$2.class

@@ -35,7 +35,7 @@ public class CrearPartidaController {
         if(mensaje == null){
             return;
         }
-        if(mensaje.getTipo().equals("PARTIDA_CREADA_EXITO")){
+        if(mensaje.getTipo().equals("SALA_CREADA")){
             String codigoSala = (String) mensaje.getDatos().get("codigoSala");
             String nombreHost = (String) mensaje.getDatos().get("nombre");
             

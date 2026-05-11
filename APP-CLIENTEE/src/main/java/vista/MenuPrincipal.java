@@ -17,7 +17,8 @@ import java.net.URL;
  *
  * @author emiim
  */
-public class MenuPrincipal extends javax.swing.JFrame implements IVista{
+public class MenuPrincipal extends javax.swing.JFrame implements IVista {
+
     private static final String[] AVATARES = {"avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"};
 
     private int avatarSeleccionado = 0;
@@ -26,7 +27,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
     private String codigoSala;
     private String nombreHost;
     private LobbyView lobby;
-   
+
     public MenuPrincipal(LobbyController controlador) {
         this.controlador = controlador;
         this.nombreHost = nombreHost;
@@ -36,18 +37,19 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
 
-        this.addWindowListener(new java.awt.event.WindowAdapter() {;
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            ;
                 @Override
-                public void windowOpened(java.awt.event.WindowEvent evt) {
-                    ventanaActual();
-                }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                ventanaActual();
+            }
         });
 
         GestorAudio.getInstancia().reproducirMusica("/img/lobby.wav");
         btnRetroseder.addActionListener(this::btnRetrosederActionPerformed);
         txtNombreUsuario.addActionListener(this::btnEntrarActionPerformed);
 
-        if (this.controlador != null){
+        if (this.controlador != null) {
             this.controlador.setVista(this);
         }
     }
@@ -285,13 +287,13 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
         }
         final String avatar = obtenerAvatarSeleccionado();
 
-        if(controlador != null){
-            controlador.registrarJugador(nombreJugador,avatar);
-        }else{
+        if (controlador != null) {
+            controlador.registrarJugador(nombreJugador, avatar);
+        } else {
             mostrarMensaje("error el controlador no esta conectado ala vista");
             setFormularioHabilitado(true);
         }
-        
+
     }
 
     private void txtNombreUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreUsuarioActionPerformed
@@ -347,8 +349,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista{
             proxy.setSerializador(sere);
             proxy.conectar();
 
-            LobbyController controlador = new LobbyController(proxy, codigoSala, nombreHost, false, lobby);
-
+            LobbyController controlador = new LobbyController(proxy, "", "", false, null);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {

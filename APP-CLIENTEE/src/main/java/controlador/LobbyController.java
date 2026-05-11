@@ -25,7 +25,7 @@ public class LobbyController {
     private Boolean esHost;
     private LobbyView lobby;
 
-    public LobbyController(ClienteProxy clienteProxy, String codigoSala,String  nombreHost, Boolean esHost, LobbyView lobby) {
+    public LobbyController(ClienteProxy clienteProxy, String codigoSala, String nombreHost, Boolean esHost, LobbyView lobby) {
         if (clienteProxy == null) {
             throw new IllegalArgumentException("El ClienteProxy es obligatorio para la red.");
         }
@@ -91,7 +91,7 @@ public class LobbyController {
                 if (vista != null) {
                     this.vista.cerrarVista();
                 }
-                SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal);
+                SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal, this.clienteProxy);
                 seleccionVista.setVisible(true);
                 this.setVista(seleccionVista);
             });

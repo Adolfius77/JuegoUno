@@ -27,7 +27,6 @@ public class LobbyView extends javax.swing.JFrame implements IVista{
     
     public LobbyView(ClienteProxy proxy) {
         initComponents();
-        this.controlador = new LobbyController(proxy);
         setLocationRelativeTo(null);
     }
     

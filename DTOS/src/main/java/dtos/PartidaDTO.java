@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PartidaDTO extends MensajeDTO implements Serializable {
-    private static final long getSerialVersionUID =  1L;
+
+    private static final long getSerialVersionUID = 1L;
     private String id;
     private List<JugadorDTO> jugadores;
     private CartaDTO cartaCentro;
@@ -15,12 +16,13 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
     private int mazoTamano;
     private String mensajeEstado;
     private int cartasRestantesMazo;
+
     public PartidaDTO() {
     }
 
     public PartidaDTO(String id, List<JugadorDTO> jugadores, CartaDTO cartaCentro,
-                      String turnoJugadorId, boolean enCurso, String colorActual,
-                      boolean sentidoHorario, int mazoTamano, String mensajeEstadom , int cartasRestantesMazo) {
+            String turnoJugadorId, boolean enCurso, String colorActual,
+            boolean sentidoHorario, int mazoTamano, String mensajeEstadom, int cartasRestantesMazo) {
         this.id = id;
         this.jugadores = jugadores;
         this.cartaCentro = cartaCentro;
@@ -112,5 +114,5 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
     public void setCartasRestantesMazo(int cartasRestantesMazo) {
         this.cartasRestantesMazo = cartasRestantesMazo;
     }
-    
+
 }
