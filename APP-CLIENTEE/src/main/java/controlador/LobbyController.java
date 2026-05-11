@@ -20,12 +20,20 @@ public class LobbyController {
     private final ClienteProxy clienteProxy;
     private String nombreJugadorTemporal;
     private String nombreAvatarTemporal;
+    private String codigoSala;
+    private String nombreHost;
+    private Boolean esHost;
+    private LobbyView lobby;
 
-    public LobbyController(ClienteProxy clienteProxy) {
+    public LobbyController(ClienteProxy clienteProxy, String codigoSala,String  nombreHost, Boolean esHost, LobbyView lobby) {
         if (clienteProxy == null) {
             throw new IllegalArgumentException("El ClienteProxy es obligatorio para la red.");
         }
         this.clienteProxy = clienteProxy;
+        this.codigoSala = codigoSala;
+        this.nombreHost = nombreHost;
+        this.esHost = esHost;
+        this.lobby = lobby;
         configurarReceptorRed();
     }
 
@@ -71,8 +79,6 @@ public class LobbyController {
         clienteProxy.enviarMensaje(msjInicio);
     }
 
-    
-
     public void procesarEventoRed(MensajeDTO mensaje) {
         if (mensaje == null) {
             return;
@@ -88,20 +94,6 @@ public class LobbyController {
                 SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal);
                 seleccionVista.setVisible(true);
                 this.setVista(seleccionVista);
-            });
-        }
-        if ("SALA_CREADA".equals(tipoMensaje)) {
-            System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
-            String codigoGenerado = (String)mensaje.getDatos().get("codigoSala");
-            String host = (String)mensaje.getDatos().get("host");
-
-            SwingUtilities.invokeLater(() -> {
-                System.out.println("sala creada con el codigo: " + codigoGenerado + " y el host es: " + host);
-                if (vista != null) {
-                    this.vista.cerrarVista();
-                }
-                LobbyView lobbyView = new LobbyView(codigoGenerado,host);
-                this.setVista(lobbyView);
             });
         }
         //CU ADOLFO ORTEGA
