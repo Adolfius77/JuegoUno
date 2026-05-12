@@ -25,6 +25,7 @@ public class LobbyController {
     private String codigoSala;
     private String nombreJugadorLocal;
     private List<Map<String, String>> listaJugadores;
+    private LobbyView lobby;
 
     public LobbyController(ClienteProxy clienteProxy, String codigoSala, String nombreHost, Boolean esHost, LobbyView lobby) {
         if (clienteProxy == null) {
@@ -34,15 +35,18 @@ public class LobbyController {
         this.codigoSala = codigoSala;
         this.nombreJugadorLocal = nombreHost;
         this.esHost = esHost;
-        this.vista = lobby;
+        this.lobby = lobby;
 
+        if (this.lobby != null) {
+            this.lobby.setControlador(this);
+
+            SwingUtilities.invokeLater(() -> {
+                if (this.vista != null) {
+                    this.vista.actualizar("ACTUALIZACION_INICIAL");
+                }
+            });
+        }
         configurarReceptorRed();
-
-        SwingUtilities.invokeLater(() -> {
-            if (this.vista != null) {
-                this.vista.actualizar("ACTUALIZACION_INICIAL");
-            }
-        });
     }
 
     public List<Map<String, String>> getListaJugadores() {
@@ -127,17 +131,16 @@ public class LobbyController {
                 GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
                 vistaJuego.setVisible(true);
             });
-        } 
-        else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
+        } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
             if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
 
                 this.listaJugadores = (List<Map<String, String>>) mensaje.getDatos().get("jugadores");
 
                 SwingUtilities.invokeLater(() -> {
-                    System.out.println("Controlador: Notificando a la vista que la lista cambió...");
+                    System.out.println("Controlador: Notificando a la vista que la lista cambio...");
 
-                    if (this.vista != null) {
-                        this.vista.actualizar("CAMBIO_LISTA_JUGADORES");
+                    if (this.lobby != null) {
+                        this.lobby.actualizar("CAMBIO_LISTA_JUGADORES");
                     }
                 });
             }

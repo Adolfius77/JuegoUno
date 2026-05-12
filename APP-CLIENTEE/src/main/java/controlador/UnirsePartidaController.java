@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import Interfaces.IVista;
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import javax.swing.JOptionPane;
@@ -17,15 +18,18 @@ import vista.unirsePartidaView;
  */
 public class UnirsePartidaController {
 
-    private unirsePartidaView vista;
+    private IVista vista;
     private ClienteProxy proxy;
+    private String nombreInvitadoTemporal;
 
     public UnirsePartidaController(unirsePartidaView vista, ClienteProxy proxy) {
         this.vista = vista;
         this.proxy = proxy;
+        this.proxy.setReceptor(mensaje -> escucharEventoRed(mensaje));
     }
 
-    private void solicitarUnirse(String nombreInvitado, String codigoSala) {
+    public void solicitarUnirse(String nombreInvitado, String codigoSala) {
+        this.nombreInvitadoTemporal = nombreInvitado;
         System.out.println("[UNISER PARTIDA CONTROLLER] Solicitando unirse ala partida");
         MensajeDTO peticion = new MensajeDTO();
         peticion.setTipo("PETICION_UNIRSE_PARTIDA");
@@ -40,7 +44,7 @@ public class UnirsePartidaController {
         if (mensaje == null) {
             return;
         }
-
+        
         if (mensaje.getTipo().equals("UNIDO_EXITO")) {
             String codigoSala = (String) mensaje.getDatos().get("codigoSala");
             String nombre = (String) mensaje.getDatos().get("nombre");
@@ -49,14 +53,17 @@ public class UnirsePartidaController {
             LobbyController control = new LobbyController(proxy, codigoSala, nombre, false, lobby);
 
             SwingUtilities.invokeLater(() -> {
-                vista.dispose();
+                vista.cerrarVista();
                 lobby.setVisible(true);
             });
 
         } else if (mensaje.getTipo().equals("ERROR_UNIRSE")) {
             SwingUtilities.invokeLater(() -> {
                 String motivo = (String) mensaje.getDatos().get("motivo");
-                JOptionPane.showMessageDialog(vista, "Error: " + motivo + " no se pudo unirse a la partida", "Error", JOptionPane.ERROR_MESSAGE);
+                if (vista != null) {
+                    vista.mostrarMensaje("Error: " + motivo + " - No se pudo unirse a la partida.");
+
+                }
             });
         }
     }

@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import Interfaces.IVista;
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import javax.swing.SwingUtilities;
@@ -16,8 +17,9 @@ import vista.LobbyView;
  */
 public class CrearPartidaController {
 
-    private CrearPartida vista;
+    private IVista vista;
     private ClienteProxy proxy;
+    private String nombreHostTemporal;
 
     public CrearPartidaController(CrearPartida vista, ClienteProxy proxy) {
         this.vista = vista;
@@ -27,6 +29,7 @@ public class CrearPartidaController {
     }
 
     public void solicitarCreacion(String nombreHost) {
+        this.nombreHostTemporal = nombreHost;
         MensajeDTO peticion = new MensajeDTO();
         peticion.setTipo("PETICION_CREAR_PARTIDA");
         peticion.setRemitente("CLIENTE");
@@ -47,7 +50,7 @@ public class CrearPartidaController {
             LobbyController lobbyCtrl = new LobbyController(proxy, codigoSala, nombreHost, true, lobby);
             SwingUtilities.invokeLater(() -> {
 
-                vista.dispose();
+                vista.cerrarVista();
                 lobby.setVisible(true);
             });
         }

@@ -7,6 +7,7 @@ package vista;
 import Interfaces.IVista;
 import cliente.ClienteProxy;
 import controlador.CrearPartidaController;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -390,8 +391,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }//GEN-LAST:event_btn3jugadoreActionPerformed
 
     private void btnCrearPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearPartidaActionPerformed
-        String nombreSala = txtFldNombreSala.getText();
-        controlador.solicitarCreacion(this.nombreHost);
+        crearPartida();
     }//GEN-LAST:event_btnCrearPartidaActionPerformed
 
     /**
@@ -458,21 +458,21 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-
+        //aqui no se ocupa
     }
 
     @Override
     public void mostrarVista() {
-
+        this.setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-
+        this.dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-
+            JOptionPane.showMessageDialog(this, mensaje);
     }
 }
