@@ -16,23 +16,53 @@ public class GameController {
 
     private ClienteProxy proxy;
     private final IVista vista;
-    private final List<String> nombreJugadores;
     private final String miNombre;
+    private PartidaDTO estadoPartida;
 
-    public GameController(ClienteProxy proxy, IVista vista, List<String> nombreJugadores) {
+    public GameController(ClienteProxy proxy, IVista vista, String miNombre) {
         if (proxy == null || vista == null) {
             throw new IllegalArgumentException("proxy y vista son obligatorios");
         }
 
         this.proxy = proxy;
         this.vista = vista;
-        this.nombreJugadores = nombreJugadores == null ? new ArrayList<>() : new ArrayList<>(nombreJugadores);
+        this.miNombre = miNombre != null ? miNombre : "";
+        configurarReceptorRed();
+    }
 
-        this.miNombre = this.nombreJugadores.isEmpty() ? "" : this.nombreJugadores.get(0);
-
+    private void configurarReceptorRed() {
         this.proxy.setReceptor(mensaje -> {
             procesarEventoRed(mensaje);
         });
+    }
+    //getters 
+
+    public String getMiNombre() {
+        return miNombre;
+    }
+
+    public PartidaDTO getEstadoPartida() {
+        return estadoPartida;
+    }
+
+    public List<CartaDTO> getMiMano() {
+        if (estadoPartida == null || estadoPartida.getJugadores() == null) {
+            return null;
+        }
+        for (JugadorDTO j : estadoPartida.getJugadores()) {
+            if (j.getNombre().equals(miNombre)) {
+                return j.getMano().getCartas();
+            }
+        }
+        return null;
+    }
+
+    public CartaDTO getCartaCentro() {
+        return estadoPartida != null ? estadoPartida.getCartaCentro() : null;
+    }
+
+    public int getCartasRestantesMazo() {
+        return estadoPartida != null ? estadoPartida.getCartasRestantesMazo() : 0;
     }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
@@ -44,32 +74,16 @@ public class GameController {
 
         if ("PARTIDA_INICIADA".equals(tipoMensaje) || "ACTUALIZACION_MESA".equals(tipoMensaje)) {
 
-            PartidaDTO estadoPartida = (PartidaDTO) mensaje.getDatos().get("partida");
-
-            if (estadoPartida != null && vista instanceof GameView) {
-
-                SwingUtilities.invokeLater(() -> {
-                    GameView gameView = (GameView) vista;
-                    List<CartaDTO> miMano = null;
-
-                    for (JugadorDTO j : estadoPartida.getJugadores()) {
-                        if (j.getNombre().equals(miNombre)) {
-                            miMano = j.getMano().getCartas();
-                            break;
-                        }
-                    }
-
-                    if (miMano != null) {
-                        gameView.mostrarCartas(miMano);
-
-                        if (estadoPartida.getCartaCentro() != null) {
-                            gameView.actualizar(estadoPartida.getCartaCentro().getColor());
-                        }
-                        gameView.actualizarMazo(estadoPartida.getCartasRestantesMazo());
-                        gameView.mostrarVista();
+            PartidaDTO nuevaPartida = (PartidaDTO) mensaje.getDatos().get("partida");
+            if(nuevaPartida != null){
+                this.estadoPartida = nuevaPartida;
+                SwingUtilities.invokeLater(()->{
+                    if(vista != null){
+                        vista.actualizar("ACTUALIZAR_TABLERO");
                     }
                 });
             }
+            
         }
     }
 
@@ -104,9 +118,5 @@ public class GameController {
         peticion.setTipo("PETICION_PASAR_TURNO");
         peticion.setRemitente(miNombre);
         proxy.enviarMensaje(peticion);
-    }
-
-    public List<String> getNombreJugadores() {
-        return Collections.unmodifiableList(nombreJugadores);
     }
 }

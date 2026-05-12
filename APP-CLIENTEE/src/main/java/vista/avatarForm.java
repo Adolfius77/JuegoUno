@@ -16,10 +16,9 @@ public class avatarForm extends javax.swing.JPanel {
     /**
      * Creates new form avatarForm
      */
-    
     private String nombreUsuario;
     private String avatarUsuario;
-    
+
     public avatarForm() {
         initComponents();
     }
@@ -30,24 +29,38 @@ public class avatarForm extends javax.swing.JPanel {
         this.avatarUsuario = avatarUsuario;
         mostrarDatosJugador();
     }
-    
-    private ImageIcon cargarImagen(String avatarId){
-       String ruta = "/img/" + avatarId + ".png"; 
-        
-        URL recurso = getClass().getResource(ruta);
+
+    private ImageIcon cargarImagen(String avatarId) {
+
+        if (avatarId == null || avatarId.equals("no hay") || avatarId.isBlank()) {
+            avatarId = "pfp";
+        }
+
+        String ruta = "/img/" + avatarId + ".png";
+        java.net.URL recurso = getClass().getResource(ruta);
+
         if (recurso != null) {
             return new ImageIcon(recurso);
         } else {
-            System.out.println("No se encontró la imagen en la ruta: " + ruta);
-            return new ImageIcon(); 
+            System.out.println("No se encontró la imagen: " + ruta + " - Usando imagen por defecto.");
+
+            java.net.URL recursoPorDefecto = getClass().getResource("/img/pfp.png");
+            if (recursoPorDefecto != null) {
+                return new ImageIcon(recursoPorDefecto);
+            }
+
+            return new ImageIcon();
         }
     }
-    private void mostrarDatosJugador(){
-        if(nombreUsuario != null && !nombreUsuario.isBlank()){
+
+    private void mostrarDatosJugador() {
+        if (nombreUsuario != null && !nombreUsuario.isBlank()) {
+            lblNombre.setText(nombreUsuario);
             avatar.setIcon(cargarImagen(avatarUsuario));
             avatar.setText("");
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -67,7 +80,7 @@ public class avatarForm extends javax.swing.JPanel {
         jPanel2.setBackground(new java.awt.Color(51, 51, 255));
         jPanel2.setForeground(new java.awt.Color(51, 51, 255));
 
-        lblNombre.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(255, 255, 255));
         lblNombre.setText("Nombre");
 
@@ -105,7 +118,7 @@ public class avatarForm extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(avatar, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(avatar, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addGap(12, 12, 12))
         );
 
@@ -120,7 +133,7 @@ public class avatarForm extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel avatar;

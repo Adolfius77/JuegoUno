@@ -43,12 +43,11 @@ public class CrearPartidaController {
             String codigoSala = (String) mensaje.getDatos().get("codigoSala");
             String nombreHost = (String) mensaje.getDatos().get("nombre");
 
+            LobbyView lobby = new LobbyView();
+            LobbyController lobbyCtrl = new LobbyController(proxy, codigoSala, nombreHost, true, lobby);
             SwingUtilities.invokeLater(() -> {
 
                 vista.dispose();
-
-                LobbyView lobby = new LobbyView();
-                LobbyController lobbyCtrl = new LobbyController(proxy, codigoSala, nombreHost, true, lobby);
                 lobby.setVisible(true);
             });
         }

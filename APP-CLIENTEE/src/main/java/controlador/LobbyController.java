@@ -1,7 +1,6 @@
 package controlador;
 
 import Interfaces.IVista;
-
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
@@ -18,12 +17,14 @@ public class LobbyController {
 
     private IVista vista;
     private final ClienteProxy clienteProxy;
+
     private String nombreJugadorTemporal;
     private String nombreAvatarTemporal;
-    private String codigoSala;
-    private String nombreHost;
     private Boolean esHost;
-    private LobbyView lobby;
+
+    private String codigoSala;
+    private String nombreJugadorLocal;
+    private List<Map<String, String>> listaJugadores;
 
     public LobbyController(ClienteProxy clienteProxy, String codigoSala, String nombreHost, Boolean esHost, LobbyView lobby) {
         if (clienteProxy == null) {
@@ -31,10 +32,29 @@ public class LobbyController {
         }
         this.clienteProxy = clienteProxy;
         this.codigoSala = codigoSala;
-        this.nombreHost = nombreHost;
+        this.nombreJugadorLocal = nombreHost;
         this.esHost = esHost;
-        this.lobby = lobby;
+        this.vista = lobby;
+
         configurarReceptorRed();
+
+        SwingUtilities.invokeLater(() -> {
+            if (this.vista != null) {
+                this.vista.actualizar("ACTUALIZACION_INICIAL");
+            }
+        });
+    }
+
+    public List<Map<String, String>> getListaJugadores() {
+        return listaJugadores;
+    }
+
+    public String getCodigoSala() {
+        return codigoSala;
+    }
+
+    public String getNombreJugadorLocal() {
+        return nombreJugadorLocal;
     }
 
     public void setVista(IVista vista) {
@@ -54,16 +74,14 @@ public class LobbyController {
             this.nombreJugadorTemporal = nombreJugador;
             this.nombreAvatarTemporal = avatar;
 
-            //aqui aplico el patron sobre
-            //en esta parte defino el sobre
             MensajeRegistroDTO msjRegistro = new MensajeRegistroDTO();
             msjRegistro.setTipo("REGISTRO_JUGADOR");
             msjRegistro.setRemitente("CLIENTE");
-            //metemos los datos al mapa esto es basicamente el contenido del sobre
+
             Map<String, Object> datos = new HashMap<>();
             datos.put("nombre", nombreJugador);
             datos.put("avatar", avatar);
-            //sellamos el sobre y lo enviamos
+
             msjRegistro.setDatos(datos);
             clienteProxy.enviarMensaje(msjRegistro);
         } else {
@@ -84,7 +102,8 @@ public class LobbyController {
             return;
         }
         String tipoMensaje = mensaje.getTipo();
-        //CU EMILIANO MARQUEZ
+
+        // CU EMILIANO MARQUEZ
         if ("REGISTRO_EXITOSO".equals(tipoMensaje)) {
             System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
             SwingUtilities.invokeLater(() -> {
@@ -95,9 +114,8 @@ public class LobbyController {
                 seleccionVista.setVisible(true);
                 this.setVista(seleccionVista);
             });
-        }
-        //CU ADOLFO ORTEGA
-        if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
+        } // CU ADOLFO ORTEGA
+        else if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
             SwingUtilities.invokeLater(() -> {
@@ -106,25 +124,23 @@ public class LobbyController {
                 }
 
                 GameView vistaJuego = new GameView();
-                //me falta que reciba el nombre de los jugadores y el estado
-                GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, null);
+                GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
                 vistaJuego.setVisible(true);
             });
-
-        } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
+        } 
+        else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
             if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
 
-                List<Map<String, String>> listaJugadores = (List<Map<String, String>>) mensaje.getDatos().get("jugadores");
+                this.listaJugadores = (List<Map<String, String>>) mensaje.getDatos().get("jugadores");
 
                 SwingUtilities.invokeLater(() -> {
-                    System.out.println("Actualizando pantalla con los nuevos jugadores...");
+                    System.out.println("Controlador: Notificando a la vista que la lista cambió...");
 
-                    if (this.lobby != null) {
-                        this.lobby.mostrarJugadores(listaJugadores);
+                    if (this.vista != null) {
+                        this.vista.actualizar("CAMBIO_LISTA_JUGADORES");
                     }
                 });
             }
         }
-
     }
 }

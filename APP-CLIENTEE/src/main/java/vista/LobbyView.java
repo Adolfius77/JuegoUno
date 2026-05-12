@@ -36,23 +36,53 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         this.controlador = controlador;
     }
 
-    public void mostrarJugadores(List<Map<String, String>> jugadores) {
+    public void dibujarPanelesJugadores(List<Map<String, String>> jugadores) {
+        JPanel paneles[] = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
+        for (int i = 0; i < paneles.length; i++) {
+            paneles[i].removeAll();
+            if (i < jugadores.size()) {
+                Map<String, String> d = jugadores.get(i);
+                paneles[i].setLayout(new BorderLayout());
+                paneles[i].add(new avatarForm(d.get("nombre"), d.get("avatar")), BorderLayout.CENTER);
 
-        JPanel[] paneles = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
-        for (JPanel p : paneles) {
-            p.removeAll();
-        }
-        for (int i = 0; i < jugadores.size() && i < paneles.length; i++) {
-            Map<String, String> datos = jugadores.get(i);
-            String nombre = datos.get("nombre");
-            String idAvatar = datos.get("avatar");
-
-            avatarForm form = new avatarForm(nombre, idAvatar);
-            paneles[i].setLayout(new BorderLayout());
-            paneles[i].add(form, BorderLayout.CENTER);
-
+            }
             paneles[i].revalidate();
             paneles[i].repaint();
+        }
+    }
+
+    public void configurarLobby(String codigoSala, String nombreUsuario, String idAvatar) {
+        if (txtCodigoSala != null) {
+            txtCodigoSala.setText(codigoSala);
+            txtCodigoSala.setEditable(false);
+        }
+        if (lblNombreUsuario != null) {
+            lblNombreUsuario.setText(nombreUsuario);
+        }
+        if (panelFotoAvatar != null) {
+            panelFotoAvatar.removeAll();
+            panelFotoAvatar.setLayout(new java.awt.BorderLayout());
+
+            if (idAvatar == null || idAvatar.isBlank() || idAvatar.equals("no hay")) {
+                idAvatar = "pfp";
+            }
+
+            String ruta = "/img/" + idAvatar + ".png";
+            java.net.URL recurso = getClass().getResource(ruta);
+            javax.swing.ImageIcon icono;
+
+            if (recurso != null) {
+                icono = new javax.swing.ImageIcon(recurso);
+            } else {
+                icono = new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"));
+            }
+
+            javax.swing.JLabel lblFoto = new javax.swing.JLabel(icono);
+            lblFoto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+            panelFotoAvatar.add(lblFoto, java.awt.BorderLayout.CENTER);
+            panelFotoAvatar.revalidate();
+            panelFotoAvatar.repaint();
         }
     }
 
@@ -239,60 +269,20 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
         panelJugador1.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador1.setPreferredSize(new java.awt.Dimension(170, 170));
-
-        javax.swing.GroupLayout panelJugador1Layout = new javax.swing.GroupLayout(panelJugador1);
-        panelJugador1.setLayout(panelJugador1Layout);
-        panelJugador1Layout.setHorizontalGroup(
-            panelJugador1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        panelJugador1Layout.setVerticalGroup(
-            panelJugador1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
+        panelJugador1.setLayout(new java.awt.BorderLayout());
 
         panelJugador2.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador2.setPreferredSize(new java.awt.Dimension(170, 170));
-
-        javax.swing.GroupLayout panelJugador2Layout = new javax.swing.GroupLayout(panelJugador2);
-        panelJugador2.setLayout(panelJugador2Layout);
-        panelJugador2Layout.setHorizontalGroup(
-            panelJugador2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        panelJugador2Layout.setVerticalGroup(
-            panelJugador2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
+        panelJugador2.setLayout(new java.awt.BorderLayout());
 
         panelJugador3.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador3.setForeground(new java.awt.Color(255, 255, 255));
         panelJugador3.setPreferredSize(new java.awt.Dimension(170, 170));
-
-        javax.swing.GroupLayout panelJugador3Layout = new javax.swing.GroupLayout(panelJugador3);
-        panelJugador3.setLayout(panelJugador3Layout);
-        panelJugador3Layout.setHorizontalGroup(
-            panelJugador3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        panelJugador3Layout.setVerticalGroup(
-            panelJugador3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
+        panelJugador3.setLayout(new java.awt.BorderLayout());
 
         panelJugador4.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador4.setPreferredSize(new java.awt.Dimension(170, 170));
-
-        javax.swing.GroupLayout panelJugador4Layout = new javax.swing.GroupLayout(panelJugador4);
-        panelJugador4.setLayout(panelJugador4Layout);
-        panelJugador4Layout.setHorizontalGroup(
-            panelJugador4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-        panelJugador4Layout.setVerticalGroup(
-            panelJugador4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
+        panelJugador4.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -467,7 +457,26 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
+        if (controlador == null) {
+            return;
+        }
+        if (evento.equals("CAMBIO_LISTA_JUGADORES") || evento.equals("ACTUALIZACION_INICIAL")) {
+            List<Map<String, String>> jugadores = controlador.getListaJugadores();
+            String miNombre = controlador.getNombreJugadorLocal();
+            String codigo = controlador.getCodigoSala();
 
+            String miAvatar = "pfp";
+            if (jugadores != null) {
+                for (Map<String, String> j : jugadores) {
+                    if (j.get("nombre").equals(miNombre)) {
+                        miAvatar = j.get("avatar");
+                        break;
+                    }
+                }
+                dibujarPanelesJugadores(jugadores);
+            }
+            configurarLobby(codigo, miNombre, miAvatar);
+        }
     }
 
     @Override
