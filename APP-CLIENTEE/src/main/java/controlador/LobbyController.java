@@ -139,8 +139,8 @@ public class LobbyController {
                 SwingUtilities.invokeLater(() -> {
                     System.out.println("Controlador: Notificando a la vista que la lista cambio...");
 
-                    if (this.lobby != null) {
-                        this.lobby.actualizar("CAMBIO_LISTA_JUGADORES");
+                    if (this.vista != null) {
+                        this.vista.actualizar("CAMBIO_LISTA_JUGADORES");
                     }
                 });
             }

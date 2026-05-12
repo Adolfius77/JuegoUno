@@ -151,7 +151,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
         jLabel18.setText("Codigo de la sala:");
 
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCancelar.setText("Cancelar");
+        btnCancelar.setText("Volver");
         btnCancelar.setBorderColor(new java.awt.Color(255, 255, 255));
         btnCancelar.setColor(new java.awt.Color(204, 0, 0));
         btnCancelar.setColorClick(new java.awt.Color(204, 0, 0));
@@ -258,7 +258,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_btnUnirseActionPerformed
 
     /**
