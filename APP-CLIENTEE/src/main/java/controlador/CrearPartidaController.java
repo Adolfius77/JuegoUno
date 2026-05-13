@@ -30,11 +30,17 @@ public class CrearPartidaController {
     }
 
     public void solicitarCreacion(String nombreHost) {
+        solicitarCreacion(nombreHost, "Sala de " + nombreHost, 4);
+    }
+
+    public void solicitarCreacion(String nombreHost, String nombreSala, int limiteJugadores) {
         this.nombreHostTemporal = nombreHost;
         MensajeDTO peticion = new MensajeDTO();
         peticion.setTipo("PETICION_CREAR_PARTIDA");
         peticion.setRemitente("CLIENTE");
         peticion.getDatos().put("nombre", nombreHost);
+        peticion.getDatos().put("nombreSala", nombreSala);
+        peticion.getDatos().put("limiteJugadores", limiteJugadores);
         System.out.println("[PARTIDA CONTROLLER] enviando peticion para crear partida");
         proxy.enviarMensaje(peticion);
     }

@@ -4,17 +4,67 @@
  */
 package vista;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
  *
  * @author USER
  */
 public class partidaForm extends javax.swing.JPanel {
 
+    private Runnable onSeleccion;
+    private boolean clickConfigurado;
+
     /**
      * Creates new form partidaForm
      */
     public partidaForm() {
         initComponents();
+    }
+
+    public partidaForm(String nombreLobby, String codigoSala, int jugadoresActuales, int limiteJugadores) {
+        this();
+        setDatos(nombreLobby, codigoSala, jugadoresActuales, limiteJugadores);
+    }
+
+    public void setDatos(String nombreLobby, String codigoSala, int jugadoresActuales, int limiteJugadores) {
+        String nombreSeguro = (nombreLobby != null && !nombreLobby.isBlank()) ? nombreLobby.trim() : "Sala sin nombre";
+        String codigoSeguro = (codigoSala != null && !codigoSala.isBlank()) ? codigoSala.trim().toUpperCase() : "----";
+        int jugadores = Math.max(jugadoresActuales, 0);
+        int limite = Math.max(limiteJugadores, 1);
+
+        lblNombreLobby.setText(nombreSeguro);
+        lblCodigoSala.setText(codigoSeguro + " (" + jugadores + "/" + limite + ")");
+    }
+
+    public void setOnSeleccion(Runnable onSeleccion) {
+        this.onSeleccion = onSeleccion;
+        if (!clickConfigurado) {
+            registrarClickRecursivo(this);
+            clickConfigurado = true;
+        }
+    }
+
+    private void registrarClickRecursivo(Component componente) {
+        componente.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        componente.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (partidaForm.this.onSeleccion != null) {
+                    partidaForm.this.onSeleccion.run();
+                }
+            }
+        });
+
+        if (componente instanceof Container container) {
+            for (Component hijo : container.getComponents()) {
+                registrarClickRecursivo(hijo);
+            }
+        }
     }
 
     /**

@@ -64,8 +64,14 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }
 
     private void crearPartida() {
+        String nombreSala = txtNombreSala.getText() != null ? txtNombreSala.getText().trim() : "";
+        String hostSeguro = (this.nombreHost != null && !this.nombreHost.isBlank()) ? this.nombreHost : "Host";
+        if (nombreSala.isEmpty()) {
+            nombreSala = "Sala de " + hostSeguro;
+        }
+
         if (this.controlador != null) {
-            this.controlador.solicitarCreacion(this.nombreHost);
+            this.controlador.solicitarCreacion(hostSeguro, nombreSala, this.limiteJugadores);
         } else {
             System.out.println("error controlador nulo");
         }
