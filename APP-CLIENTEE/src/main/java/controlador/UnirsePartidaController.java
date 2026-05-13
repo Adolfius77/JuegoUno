@@ -25,6 +25,8 @@ public class UnirsePartidaController {
     private final unirsePartidaView vistaUnirse;
     private final ClienteProxy proxy;
     private String nombreInvitadoTemporal;
+    private String codigoSalaTemporal;
+    private boolean esperandoRespuestaUnirse;
 
     public UnirsePartidaController(unirsePartidaView vista, ClienteProxy proxy) {
         this.vista = vista;
@@ -49,13 +51,19 @@ public class UnirsePartidaController {
         if (proxy == null) {
             return;
         }
+        String codigoNormalizado = codigoSala != null ? codigoSala.trim().toUpperCase() : "";
+        if (codigoNormalizado.isBlank()) {
+            return;
+        }
         this.nombreInvitadoTemporal = nombreInvitado;
+        this.codigoSalaTemporal = codigoNormalizado;
+        this.esperandoRespuestaUnirse = true;
         System.out.println("[UNISER PARTIDA CONTROLLER] Solicitando unirse ala partida");
         MensajeDTO peticion = new MensajeDTO();
         peticion.setTipo("PETICION_UNIRSE_PARTIDA");
         peticion.setRemitente("CLIENTE");
         peticion.getDatos().put("nombre", nombreInvitado);
-        peticion.getDatos().put("codigoSala", codigoSala != null ? codigoSala.trim().toUpperCase() : "");
+        peticion.getDatos().put("codigoSala", codigoNormalizado);
         proxy.enviarMensaje(peticion);
     }
 
@@ -66,7 +74,15 @@ public class UnirsePartidaController {
 
         switch (mensaje.getTipo()) {
             case "UNIDO_EXITO" -> {
+                if (!esperandoRespuestaUnirse || mensaje.getDatos() == null) {
+                    return;
+                }
                 String codigoSala = (String) mensaje.getDatos().get("codigoSala");
+                if (codigoSalaTemporal != null && codigoSala != null
+                        && !codigoSalaTemporal.equalsIgnoreCase(codigoSala.trim())) {
+                    return;
+                }
+                esperandoRespuestaUnirse = false;
                 String nombre = (String) mensaje.getDatos().getOrDefault("nombre", nombreInvitadoTemporal);
                 List<?> jugadores = null;
                 Object jugadoresRaw = mensaje.getDatos().get("jugadores");
@@ -83,14 +99,20 @@ public class UnirsePartidaController {
                     lobby.setVisible(true);
                 });
             }
-            case "ERROR_UNIRSE" -> SwingUtilities.invokeLater(() -> {
+            case "ERROR_UNIRSE" -> {
+                if (!esperandoRespuestaUnirse) {
+                    return;
+                }
+                esperandoRespuestaUnirse = false;
+                SwingUtilities.invokeLater(() -> {
                 String motivo = mensaje.getDatos() != null
                         ? String.valueOf(mensaje.getDatos().getOrDefault("motivo", "Error desconocido"))
                         : "Error desconocido";
                 if (vista != null) {
                     vista.mostrarMensaje("Error: " + motivo + " - No se pudo unirse a la partida.");
                 }
-            });
+                });
+            }
             case "LISTA_PARTIDAS_DISPONIBLES" -> {
                 Object partidasRaw = mensaje.getDatos() != null ? mensaje.getDatos().get("partidas") : null;
                 List<Map<String, Object>> partidas = normalizarPartidas(partidasRaw);
