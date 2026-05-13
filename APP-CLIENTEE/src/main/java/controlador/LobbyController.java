@@ -5,6 +5,7 @@ import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
@@ -36,6 +37,7 @@ public class LobbyController {
         this.nombreJugadorLocal = nombreHost;
         this.esHost = esHost;
         this.lobby = lobby;
+        this.vista = lobby;
 
         if (this.lobby != null) {
             this.lobby.setControlador(this);
@@ -47,6 +49,13 @@ public class LobbyController {
             });
         }
         configurarReceptorRed();
+    }
+
+    public void cargarDatosIniciales(List<?> jugadoresIniciales) {
+        this.listaJugadores = normalizarJugadores(jugadoresIniciales);
+        if (this.vista != null) {
+            SwingUtilities.invokeLater(() -> this.vista.actualizar("ACTUALIZACION_INICIAL"));
+        }
     }
 
     public List<Map<String, String>> getListaJugadores() {
@@ -133,8 +142,10 @@ public class LobbyController {
             });
         } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
             if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
-
-                this.listaJugadores = (List<Map<String, String>>) mensaje.getDatos().get("jugadores");
+                Object jugadores = mensaje.getDatos().get("jugadores");
+                if (jugadores instanceof List<?>) {
+                    this.listaJugadores = normalizarJugadores((List<?>) jugadores);
+                }
 
                 SwingUtilities.invokeLater(() -> {
                     System.out.println("Controlador: Notificando a la vista que la lista cambio...");
@@ -145,5 +156,24 @@ public class LobbyController {
                 });
             }
         }
+    }
+
+    private List<Map<String, String>> normalizarJugadores(List<?> jugadoresRaw) {
+        List<Map<String, String>> normalizados = new ArrayList<>();
+        if (jugadoresRaw == null) {
+            return normalizados;
+        }
+        for (Object item : jugadoresRaw) {
+            if (item instanceof Map<?, ?>) {
+                Map<?, ?> mapaRaw = (Map<?, ?>) item;
+                Map<String, String> jugador = new HashMap<>();
+                Object nombre = mapaRaw.get("nombre");
+                Object avatar = mapaRaw.get("avatar");
+                jugador.put("nombre", nombre != null ? String.valueOf(nombre) : "");
+                jugador.put("avatar", avatar != null ? String.valueOf(avatar) : "pfp");
+                normalizados.add(jugador);
+            }
+        }
+        return normalizados;
     }
 }

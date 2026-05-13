@@ -7,7 +7,7 @@ package controlador;
 import Interfaces.IVista;
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
-import javax.swing.JOptionPane;
+import java.util.List;
 import javax.swing.SwingUtilities;
 import vista.LobbyView;
 import vista.unirsePartidaView;
@@ -47,10 +47,16 @@ public class UnirsePartidaController {
         
         if (mensaje.getTipo().equals("UNIDO_EXITO")) {
             String codigoSala = (String) mensaje.getDatos().get("codigoSala");
-            String nombre = (String) mensaje.getDatos().get("nombre");
+            String nombre = (String) mensaje.getDatos().getOrDefault("nombre", nombreInvitadoTemporal);
+            List<?> jugadores = null;
+            Object jugadoresRaw = mensaje.getDatos().get("jugadores");
+            if (jugadoresRaw instanceof List<?>) {
+                jugadores = (List<?>) jugadoresRaw;
+            }
 
             LobbyView lobby = new LobbyView();
             LobbyController control = new LobbyController(proxy, codigoSala, nombre, false, lobby);
+            control.cargarDatosIniciales(jugadores);
 
             SwingUtilities.invokeLater(() -> {
                 vista.cerrarVista();

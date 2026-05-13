@@ -40,6 +40,7 @@ vista\LobbyView.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class
 controlador\GameController.class
+vista\partidaForm.class
 vista\CrearPartida$2.class
 controlador\CrearPartidaController.class
 controlador\UnirsePartidaController.class

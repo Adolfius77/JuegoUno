@@ -5,6 +5,9 @@
 package vista;
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
+import controlador.UnirsePartidaController;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -12,11 +15,27 @@ import Interfaces.IVista;
  */
 public class unirsePartidaView extends javax.swing.JFrame implements IVista{
 
+    private String nombreInvitado;
+    private ClienteProxy proxy;
+    private UnirsePartidaController controlador;
+
     /**
      * Creates new form unirsePartidaView
      */
     public unirsePartidaView() {
+        this("", null);
+    }
+
+    public unirsePartidaView(String nombreInvitado, ClienteProxy proxy) {
         initComponents();
+        this.nombreInvitado = nombreInvitado;
+        this.proxy = proxy;
+        if (this.proxy != null) {
+            this.controlador = new UnirsePartidaController(this, this.proxy);
+        }
+        if (this.nombreInvitado != null && !this.nombreInvitado.isBlank()) {
+            jLabel7.setText(this.nombreInvitado);
+        }
     }
 
     /**
@@ -258,7 +277,16 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
-        
+        String codigoSala = txtCodigoSala.getText() != null ? txtCodigoSala.getText().trim() : "";
+        if (codigoSala.isEmpty()) {
+            mostrarMensaje("Ingresa un código de sala.");
+            return;
+        }
+        if (controlador == null) {
+            mostrarMensaje("No hay conexión con el servidor.");
+            return;
+        }
+        controlador.solicitarUnirse(nombreInvitado, codigoSala);
     }//GEN-LAST:event_btnUnirseActionPerformed
 
     /**
@@ -321,21 +349,22 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
 
     @Override
     public void mostrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        JOptionPane.showMessageDialog(this, mensaje, "UNO", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void actualizar(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.revalidate();
+        this.repaint();
     }
 }
