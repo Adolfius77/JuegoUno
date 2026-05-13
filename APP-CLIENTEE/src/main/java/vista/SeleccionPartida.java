@@ -6,6 +6,7 @@ package vista;
 
 import Interfaces.IVista;
 import cliente.ClienteProxy;
+import controlador.LobbyController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -289,6 +290,11 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        if (this.proxy != null) {
+            LobbyController controlador = new LobbyController(this.proxy, "", "", false, null);
+            abrirVentana(new MenuPrincipal(controlador));
+            return;
+        }
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 

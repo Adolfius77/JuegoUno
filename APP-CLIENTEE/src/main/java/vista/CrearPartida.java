@@ -45,9 +45,6 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         btn3jugadore.addActionListener(e -> seleccionarLimite(3));
         btn4jugadores.addActionListener(e -> seleccionarLimite(4));
 
-        // crear partida: abrir vista de lobby y marcar host
-        btnCrearPartida.addActionListener(e -> crearPartida());
-
         // volver a la pantalla anterior
         btnVolver.addActionListener(e -> {
             SeleccionPartida sel = new SeleccionPartida(this.nombreHost, "", this.proxy);

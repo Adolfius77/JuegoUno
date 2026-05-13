@@ -55,7 +55,14 @@ public class ServerProxy implements observadorRed {
         }
 
         IProxy proxy = servidor.obtenerProxyPorIp(ip);
-        if (proxy != null && !nodosPorIp.containsKey(ip)) {
+        NodoCliente nodoExistente = nodosPorIp.get(ip);
+        boolean esNuevoPorIp = nodoExistente == null;
+        boolean esNuevaConexionMismaIp = nodoExistente != null && nodoExistente.getProxy() != proxy;
+
+        if (proxy != null && (esNuevoPorIp || esNuevaConexionMismaIp)) {
+            if (esNuevaConexionMismaIp && nodoExistente.getProxy() != null) {
+                lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
+            }
             String nombreTemporal = "Jugador_" + contadorJugadores++;
             NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, proxy, "no hay");
             nodosPorIp.put(ip, nuevoNodo);

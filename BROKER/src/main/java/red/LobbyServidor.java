@@ -9,6 +9,7 @@ import Entidades.fabricas.CartaFactory;
 import Entidades.fabricas.EstadoFactory;
 import Entidades.fabricas.MazoClasicoFactory;
 import Interfacez.IBroker;
+import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import comandos.ComandoListarPartidas;
@@ -53,5 +54,9 @@ public class LobbyServidor {
 
     public void registrarNuevoJugadorTemporal(NodoCliente nuevoNodo) {
         manejadorNodos.registrarNuevoJugador(nuevoNodo);
+    }
+
+    public void eliminarJugadorPorProxy(IProxy proxy) {
+        manejadorNodos.eliminarPorProxy(proxy);
     }
 }
