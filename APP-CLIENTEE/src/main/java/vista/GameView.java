@@ -27,13 +27,22 @@ public class GameView extends javax.swing.JFrame implements IVista {
      */
     private GameController controlador;
     private TableroView tablero;
+
     public GameView() {
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Juego UNO - ITSON");
+        setLayout(new java.awt.BorderLayout());
+
         tablero = new TableroView();
-        add(tablero, BorderLayout.CENTER);
-        
+        add(tablero, java.awt.BorderLayout.CENTER);
+
+        setSize(1360, 820);
+        setPreferredSize(new java.awt.Dimension(1360, 820));
+
+        setResizable(false);
+        setLocationRelativeTo(null);
+
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -366,30 +375,30 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
     @Override
     public void actualizar(String evento) {
-       if(controlador == null){
-           return;
-       }
-       if(evento.equals("ACTUALIZAR_TABLERO")){
-           PartidaDTO partidaActual = controlador.getEstadoPartida();
-           String miNombre = controlador.getMiNombre();
-           
-           if(partidaActual != null){
-               CartaDTO cartaCentro = partidaActual.getCartaCentro();
-               int cartasEnMazo = partidaActual.getCartasRestantesMazo();
-               
-               List<CartaDTO> miMano = null;
-               for(JugadorDTO j : partidaActual.getJugadores()){
-                   if(j.getNombre().equals(miNombre)){
-                       miMano = j.getMano().getCartas();
-                       break;
-                   }
-               }
-               if(miMano != null){
-                   tablero.mostrarCartas(miMano);
-                   tablero.actualizar(cartaCentro);
-                   tablero.actualizarMazo(cartasEnMazo);
-               }
-           }
-       }
+        if (controlador == null) {
+            return;
+        }
+        if (evento.equals("ACTUALIZAR_TABLERO")) {
+            PartidaDTO partidaActual = controlador.getEstadoPartida();
+            String miNombre = controlador.getMiNombre();
+
+            if (partidaActual != null) {
+                CartaDTO cartaCentro = partidaActual.getCartaCentro();
+                int cartasEnMazo = partidaActual.getCartasRestantesMazo();
+
+                List<CartaDTO> miMano = null;
+                for (JugadorDTO j : partidaActual.getJugadores()) {
+                    if (j.getNombre().equals(miNombre)) {
+                        miMano = j.getMano().getCartas();
+                        break;
+                    }
+                }
+                if (miMano != null) {
+                    tablero.mostrarCartas(miMano);
+                    tablero.actualizar(cartaCentro);
+                    tablero.actualizarMazo(cartasEnMazo);
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ public class TableroView extends javax.swing.JPanel {
      * Creates new form TableroView
      */
     public TableroView() {
-       initComponents();
+        initComponents();
         panelFondo.setImagen("/img/juegoUno (2).jpg");
         panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
        
