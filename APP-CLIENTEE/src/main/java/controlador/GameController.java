@@ -2,6 +2,7 @@ package controlador;
 
 import Interfaces.IVista;
 import cliente.ClienteProxy;
+import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.JugadorDTO;
 import dtos.MensajeDTO;
@@ -74,16 +75,20 @@ public class GameController {
 
         if ("PARTIDA_INICIADA".equals(tipoMensaje) || "ACTUALIZACION_MESA".equals(tipoMensaje)) {
 
-            PartidaDTO nuevaPartida = (PartidaDTO) mensaje.getDatos().get("partida");
-            if(nuevaPartida != null){
+            Object objetoCrudo = mensaje.getDatos().get("partida");
+
+            Gson gson = new com.google.gson.Gson();
+            String jsonTemporal = gson.toJson(objetoCrudo);
+            PartidaDTO nuevaPartida = gson.fromJson(jsonTemporal, PartidaDTO.class);
+
+            if (nuevaPartida != null) {
                 this.estadoPartida = nuevaPartida;
-                SwingUtilities.invokeLater(()->{
-                    if(vista != null){
+                SwingUtilities.invokeLater(() -> {
+                    if (vista != null) {
                         vista.actualizar("ACTUALIZAR_TABLERO");
                     }
                 });
             }
-            
         }
     }
 
