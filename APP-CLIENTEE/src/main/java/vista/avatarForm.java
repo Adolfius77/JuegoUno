@@ -72,11 +72,11 @@ public class avatarForm extends javax.swing.JPanel {
     }
 
     private void configurarIndicadorListo() {
-        
+
         jPanel2.removeAll();
         jPanel2.setLayout(new BorderLayout());
         jPanel2.add(lblNombre, BorderLayout.WEST);
-        
+        jPanel2.add(lblListo,BorderLayout.EAST);
 
         actualizarEstadoListo(estaListoUsuario);
         jPanel2.revalidate();
@@ -94,7 +94,12 @@ public class avatarForm extends javax.swing.JPanel {
     private void mostrarDatosJugador() {
         if (nombreUsuario != null && !nombreUsuario.isBlank()) {
             lblNombre.setText(nombreUsuario);
-            avatar.setIcon(cargarImagen(avatarUsuario));
+
+            ImageIcon iconoOriginal = cargarImagen(avatarUsuario);
+
+            java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
+
+            avatar.setIcon(new ImageIcon(imgEscalada));
             avatar.setText("");
         }
         actualizarEstadoListo(estaListoUsuario);
