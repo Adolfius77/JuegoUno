@@ -25,60 +25,15 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     public LobbyView() {
         initComponents();
         setLocationRelativeTo(null);
-        configurarEventos();
     }
 
     public LobbyView(ClienteProxy proxy) {
         initComponents();
         setLocationRelativeTo(null);
-        configurarEventos();
     }
 
     public void setControlador(LobbyController controlador) {
         this.controlador = controlador;
-        actualizarEstadoBotones();
-    }
-
-    private void configurarEventos() {
-        btnEstoyListo.addActionListener(e -> manejarAccionPrincipal());
-        btnCancelar.addActionListener(e -> manejarCancelarListo());
-    }
-
-    private void manejarAccionPrincipal() {
-        if (controlador == null) {
-            return;
-        }
-        boolean hostPuedeIniciar = controlador.esHost()
-                && controlador.estaJugadorLocalListo()
-                && controlador.estanTodosListos();
-
-        if (hostPuedeIniciar) {
-            controlador.iniciarPartida();
-            return;
-        }
-        controlador.marcarJugadorLocalListo();
-    }
-
-    private void manejarCancelarListo() {
-        if (controlador == null) {
-            return;
-        }
-        controlador.cancelarJugadorLocalListo();
-    }
-
-    private void actualizarEstadoBotones() {
-        if (controlador == null) {
-            btnEstoyListo.setText("Estoy Listo");
-            btnCancelar.setEnabled(false);
-            return;
-        }
-
-        boolean estoyListo = controlador.estaJugadorLocalListo();
-        boolean todosListos = controlador.estanTodosListos();
-        boolean mostrarIniciar = controlador.esHost() && estoyListo && todosListos;
-
-        btnEstoyListo.setText(mostrarIniciar ? "Iniciar partida" : "Estoy Listo");
-        btnCancelar.setEnabled(estoyListo);
     }
 
     public void dibujarPanelesJugadores(List<Map<String, String>> jugadores) {
@@ -161,6 +116,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         jPanel7 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -175,6 +131,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         panelJugador2 = new javax.swing.JPanel();
         panelJugador3 = new javax.swing.JPanel();
         panelJugador4 = new javax.swing.JPanel();
+        btnIniciarJuego = new vista.DiseñosExtras.botonCircular();
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
 
@@ -254,6 +211,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        jToggleButton1.setText("jToggleButton1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 109, 109));
@@ -304,6 +263,11 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         btnEstoyListo.setColorClick(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setColorOver(new java.awt.Color(102, 204, 0));
         btnEstoyListo.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        btnEstoyListo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEstoyListoActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setText("Cancelar");
@@ -312,6 +276,11 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         btnCancelar.setColorClick(new java.awt.Color(204, 0, 0));
         btnCancelar.setColorOver(new java.awt.Color(204, 0, 0));
         btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         panelJugador1.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador1.setPreferredSize(new java.awt.Dimension(170, 170));
@@ -329,6 +298,13 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         panelJugador4.setBackground(new java.awt.Color(255, 255, 255));
         panelJugador4.setPreferredSize(new java.awt.Dimension(170, 170));
         panelJugador4.setLayout(new java.awt.BorderLayout());
+
+        btnIniciarJuego.setText("INICIAR JUEGO");
+        btnIniciarJuego.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarJuegoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -373,7 +349,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnEstoyListo, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCodigoSala, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnIniciarJuego, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(58, 58, 58))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -399,6 +376,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
                 .addComponent(btnEstoyListo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnIniciarJuego, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
@@ -427,6 +406,32 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnEstoyListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstoyListoActionPerformed
+        if (controlador != null) {
+            controlador.marcarJugadorLocalListo();
+        }
+    }//GEN-LAST:event_btnEstoyListoActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        if (controlador != null) {
+            controlador.cancelarJugadorLocalListo();
+        }
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnIniciarJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarJuegoActionPerformed
+        if (controlador == null) {
+            return;
+        }
+        boolean hostPuedeIniciar = controlador.esHost()
+                && controlador.estaJugadorLocalListo()
+                && controlador.estanTodosListos();
+
+        if (hostPuedeIniciar) {
+            controlador.iniciarPartida();
+            return;
+        }
+    }//GEN-LAST:event_btnIniciarJuegoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -467,6 +472,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private vista.DiseñosExtras.botonCircular btnCancelar;
     private vista.DiseñosExtras.botonCircular btnEstoyListo;
+    private vista.DiseñosExtras.botonCircular btnIniciarJuego;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
@@ -492,6 +498,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel lblNombreUsuario;
     private javax.swing.JPanel panelFotoAvatar;
     private javax.swing.JPanel panelJugador1;
@@ -522,7 +529,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
                 dibujarPanelesJugadores(jugadores);
             }
             configurarLobby(codigo, miNombre, miAvatar);
-            actualizarEstadoBotones();
+ 
         }
     }
 

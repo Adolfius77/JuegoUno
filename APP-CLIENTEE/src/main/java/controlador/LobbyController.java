@@ -145,6 +145,7 @@ public class LobbyController {
         Map<String, Object> datos = new HashMap<>();
         datos.put("estaListo", estaListo);
         datos.put("codigoSala", codigoSala);
+        datos.put("nombre", nombreJugadorLocal);
         mensajeListo.setDatos(datos);
         clienteProxy.enviarMensaje(mensajeListo);
     }

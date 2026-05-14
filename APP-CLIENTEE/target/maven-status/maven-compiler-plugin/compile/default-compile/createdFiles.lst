@@ -3,6 +3,7 @@ vista\CrearPartida$5.class
 vista\SeleccionPartida$3.class
 vista\DiseñosExtras\botonCircular$1.class
 vista\partidaForm$1.class
+vista\LobbyView$4.class
 controlador\MazoController.class
 vista\CrearPartida$1.class
 vista\MenuPrincipal$2.class
@@ -25,6 +26,7 @@ vista\podioView.class
 vista\CrearPartida$3.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
+vista\LobbyView$2.class
 vista\SeleccionPartida.class
 controlador\ManoController.class
 vista\CrearPartida$6.class
@@ -37,6 +39,7 @@ Interfaces\IVista.class
 vista\DiseñosExtras\GameView.class
 controlador\PodioController.class
 vista\GameView$1.class
+vista\LobbyView$3.class
 vista\LobbyView.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class

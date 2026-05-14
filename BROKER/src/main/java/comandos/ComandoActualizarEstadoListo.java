@@ -33,10 +33,15 @@ public class ComandoActualizarEstadoListo implements IComandoServidor {
         if (nodo == null) {
             return;
         }
-
-        boolean estaListo = obtenerEstadoListo(mensaje.getDatos().get("estaListo"));
+        Object valorRecibido = mensaje.getDatos().get("estaListo");
+        boolean estaListo = false;
+        
+        if(valorRecibido != null){
+            estaListo = Boolean.parseBoolean(valorRecibido.toString().trim());
+        }
         nodo.setEstaListo(estaListo);
-
+        System.out.println("jugador: " + nodo.getNombre() + " Listo: " + estaListo);
+        
         MensajeDTO notificacionLista = new MensajeDTO();
         notificacionLista.setTipo("LISTA_ACTUALIZADA");
         notificacionLista.setRemitente("SERVIDOR");
