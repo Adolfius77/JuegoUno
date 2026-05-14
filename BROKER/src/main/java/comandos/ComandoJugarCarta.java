@@ -3,6 +3,7 @@ package comandos;
 import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
+import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 public class ComandoJugarCarta implements IComandoServidor {
 
+    private final Gson gson = new Gson();
     private final ManejadorNodos manejadorNodos;
     private final JuegoServidor juegoServidor;
 
@@ -28,7 +30,7 @@ public class ComandoJugarCarta implements IComandoServidor {
         }
 
         String nombreJugador = mensaje.getRemitente();
-        CartaDTO carta = (CartaDTO) mensaje.getDatos().get("carta");
+        CartaDTO carta = convertirCartaDTO(mensaje.getDatos().get("carta"));
         String colorElegido = mensaje.getDatos().get("colorElegido") != null ? String.valueOf(mensaje.getDatos().get("colorElegido")) : null;
         IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
         NodoCliente nodo = resolverNodo(nombreJugador, proxy);
@@ -38,6 +40,17 @@ public class ComandoJugarCarta implements IComandoServidor {
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_JUGAR_CARTA", e.getMessage());
         }
+    }
+
+    private CartaDTO convertirCartaDTO(Object cartaCruda) {
+        if (cartaCruda == null) {
+            return null;
+        }
+        if (cartaCruda instanceof CartaDTO) {
+            return (CartaDTO) cartaCruda;
+        }
+        String json = gson.toJson(cartaCruda);
+        return gson.fromJson(json, CartaDTO.class);
     }
 
     private NodoCliente resolverNodo(String nombreJugador, IProxy proxy) {
