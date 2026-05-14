@@ -16,7 +16,7 @@ public class Jugador {
     private String nombre;
     private byte[] avatar;
     private Mano mano;
-    private Boolean dijoUno;
+    private boolean dijoUno;
     private int puntaje;
     private boolean esHost;
     private boolean estaListo;
