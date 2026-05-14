@@ -70,6 +70,34 @@ public class LobbyController {
         return nombreJugadorLocal;
     }
 
+    public boolean esHost() {
+        return Boolean.TRUE.equals(esHost);
+    }
+
+    public boolean estaJugadorLocalListo() {
+        if (listaJugadores == null || nombreJugadorLocal == null) {
+            return false;
+        }
+        for (Map<String, String> jugador : listaJugadores) {
+            if (nombreJugadorLocal.equals(jugador.get("nombre"))) {
+                return Boolean.parseBoolean(jugador.getOrDefault("estaListo", "false"));
+            }
+        }
+        return false;
+    }
+
+    public boolean estanTodosListos() {
+        if (listaJugadores == null || listaJugadores.isEmpty()) {
+            return false;
+        }
+        for (Map<String, String> jugador : listaJugadores) {
+            if (!Boolean.parseBoolean(jugador.getOrDefault("estaListo", "false"))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void setVista(IVista vista) {
         this.vista = vista;
     }
@@ -104,9 +132,41 @@ public class LobbyController {
         }
     }
 
+    public void marcarJugadorLocalListo() {
+        actualizarEstadoListo(true);
+    }
+
+    public void cancelarJugadorLocalListo() {
+        actualizarEstadoListo(false);
+    }
+
+    private void actualizarEstadoListo(boolean estaListo) {
+        MensajeDTO mensajeListo = new MensajeDTO("ACTUALIZAR_ESTADO_LISTO", "CLIENTE");
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("estaListo", estaListo);
+        datos.put("codigoSala", codigoSala);
+        mensajeListo.setDatos(datos);
+        clienteProxy.enviarMensaje(mensajeListo);
+    }
+
     public void iniciarPartida() {
+        if (!esHost()) {
+            if (vista != null) {
+                vista.mostrarMensaje("Solo el host puede iniciar la partida.");
+            }
+            return;
+        }
+        if (!estanTodosListos()) {
+            if (vista != null) {
+                vista.mostrarMensaje("Todos los jugadores deben estar listos para iniciar.");
+            }
+            return;
+        }
         System.out.println("Controlador: Solicitando al servidor iniciar la partida...");
-        MensajeDTO msjInicio = new MensajeDTO("PETICION_INICIAR_PARTIDA", null);
+        MensajeDTO msjInicio = new MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("codigoSala", codigoSala);
+        msjInicio.setDatos(datos);
         clienteProxy.enviarMensaje(msjInicio);
     }
 
@@ -128,7 +188,7 @@ public class LobbyController {
                 this.setVista(seleccionVista);
             });
         } // CU ADOLFO ORTEGA
-        else if ("INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
+        else if ("PARTIDA_INICIADA".equals(tipoMensaje) || "INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
             System.out.println("La partida va a comenzar, cambiando de pantalla...");
 
             SwingUtilities.invokeLater(() -> {
@@ -138,6 +198,9 @@ public class LobbyController {
 
                 GameView vistaJuego = new GameView();
                 GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
+                if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
+                    controladorJuego.procesarEventoRed(mensaje);
+                }
                 vistaJuego.setVisible(true);
             });
         } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
@@ -155,6 +218,14 @@ public class LobbyController {
                     }
                 });
             }
+        } else if ("ERROR_INICIAR_PARTIDA".equals(tipoMensaje)) {
+            if (vista != null) {
+                String motivo = "No se pudo iniciar la partida.";
+                if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
+                    motivo = String.valueOf(mensaje.getDatos().get("motivo"));
+                }
+                vista.mostrarMensaje(motivo);
+            }
         }
     }
 
@@ -169,8 +240,10 @@ public class LobbyController {
                 Map<String, String> jugador = new HashMap<>();
                 Object nombre = mapaRaw.get("nombre");
                 Object avatar = mapaRaw.get("avatar");
+                Object estaListo = mapaRaw.get("estaListo");
                 jugador.put("nombre", nombre != null ? String.valueOf(nombre) : "");
                 jugador.put("avatar", avatar != null ? String.valueOf(avatar) : "pfp");
+                jugador.put("estaListo", estaListo != null ? String.valueOf(estaListo) : "false");
                 normalizados.add(jugador);
             }
         }

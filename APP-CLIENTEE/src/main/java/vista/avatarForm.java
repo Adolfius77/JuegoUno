@@ -4,8 +4,11 @@
  */
 package vista;
 
-import java.net.URL;
+import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -18,15 +21,24 @@ public class avatarForm extends javax.swing.JPanel {
      */
     private String nombreUsuario;
     private String avatarUsuario;
+    private boolean estaListoUsuario;
+    private JLabel lblEstoyListo;
 
     public avatarForm() {
         initComponents();
+        configurarIndicadorListo();
     }
 
     public avatarForm(String nombreUsuario, String avatarUsuario) {
+        this(nombreUsuario, avatarUsuario, false);
+    }
+
+    public avatarForm(String nombreUsuario, String avatarUsuario, boolean estaListoUsuario) {
         initComponents();
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
+        this.estaListoUsuario = estaListoUsuario;
+        configurarIndicadorListo();
         mostrarDatosJugador();
     }
 
@@ -53,12 +65,39 @@ public class avatarForm extends javax.swing.JPanel {
         }
     }
 
+    private ImageIcon cargarIconoEstado(boolean estaListo) {
+        String ruta = estaListo ? "/img/palomita.png" : "/img/equis.png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+    }
+
+    private void configurarIndicadorListo() {
+        
+        jPanel2.removeAll();
+        jPanel2.setLayout(new BorderLayout());
+        jPanel2.add(lblNombre, BorderLayout.WEST);
+        
+
+        actualizarEstadoListo(estaListoUsuario);
+        jPanel2.revalidate();
+        jPanel2.repaint();
+    }
+
+    public void actualizarEstadoListo(boolean estaListo) {
+        this.estaListoUsuario = estaListo;
+        if (lblListo != null) {
+            lblListo.setIcon(cargarIconoEstado(estaListo));
+            lblListo.setText("");
+        }
+    }
+
     private void mostrarDatosJugador() {
         if (nombreUsuario != null && !nombreUsuario.isBlank()) {
             lblNombre.setText(nombreUsuario);
             avatar.setIcon(cargarImagen(avatarUsuario));
             avatar.setText("");
         }
+        actualizarEstadoListo(estaListoUsuario);
     }
 
     /**
@@ -73,6 +112,7 @@ public class avatarForm extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         lblNombre = new javax.swing.JLabel();
+        lblListo = new javax.swing.JLabel();
         avatar = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -91,14 +131,20 @@ public class avatarForm extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(lblNombre)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblListo)
+                .addGap(16, 16, 16))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblNombre)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblNombre)
+                        .addGap(0, 8, Short.MAX_VALUE))
+                    .addComponent(lblListo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         avatar.setText("jLabel2");
@@ -139,6 +185,7 @@ public class avatarForm extends javax.swing.JPanel {
     private javax.swing.JLabel avatar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblListo;
     private javax.swing.JLabel lblNombre;
     // End of variables declaration//GEN-END:variables
 }

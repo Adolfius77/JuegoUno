@@ -13,6 +13,7 @@ import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import comandos.ComandoListarPartidas;
+import comandos.ComandoActualizarEstadoListo;
 import comandos.ComandoRegistrarJugador;
 import comandos.ComandoUnirsePartida;
 import comandos.comandoCrearPartida;
@@ -35,11 +36,12 @@ public class LobbyServidor {
         this.gestorSalas = new GestorSalas();
         this.juegoServidor = juegoServidor;
         //comandos de la lobby
-        this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", new comandoIniciarPartida(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("INTENCION_INICIAR_PARTIDA", new comandoIniciarPartida(manejadorNodos, juegoServidor, gestorSalas)::ejecutar);
         this.broker.subscribirse("REGISTRO_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
         this.broker.subscribirse("PETICION_CREAR_PARTIDA", new comandoCrearPartida(manejadorNodos, gestorSalas)::ejecutar);
         this.broker.subscribirse("PETICION_UNIRSE_PARTIDA", new ComandoUnirsePartida(manejadorNodos, gestorSalas)::ejecutar);
         this.broker.subscribirse("PETICION_LISTA_PARTIDAS", new ComandoListarPartidas(gestorSalas)::ejecutar);
+        this.broker.subscribirse("ACTUALIZAR_ESTADO_LISTO", new ComandoActualizarEstadoListo(manejadorNodos)::ejecutar);
     }
 
     public static LobbyServidor crearLobbyPorDefecto(IBroker broker) {

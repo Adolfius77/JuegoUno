@@ -10,18 +10,30 @@ import java.io.Serializable;
     private ManoDTO mano;
     private boolean dijoUno;
     private int puntuaje;
+    private boolean estaListo;
 
 
     public JugadorDTO() {
     }
-    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje) {
+
+    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje, boolean estaListo) {
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
         this.mano = mano;
         this.dijoUno = dijoUno;
         this.puntuaje = puntuaje;
+        this.estaListo = estaListo;
     }
+
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
+    }
+    
 
     public String getId() {
         return id;

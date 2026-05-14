@@ -25,15 +25,60 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     public LobbyView() {
         initComponents();
         setLocationRelativeTo(null);
+        configurarEventos();
     }
 
     public LobbyView(ClienteProxy proxy) {
         initComponents();
         setLocationRelativeTo(null);
+        configurarEventos();
     }
 
     public void setControlador(LobbyController controlador) {
         this.controlador = controlador;
+        actualizarEstadoBotones();
+    }
+
+    private void configurarEventos() {
+        btnEstoyListo.addActionListener(e -> manejarAccionPrincipal());
+        btnCancelar.addActionListener(e -> manejarCancelarListo());
+    }
+
+    private void manejarAccionPrincipal() {
+        if (controlador == null) {
+            return;
+        }
+        boolean hostPuedeIniciar = controlador.esHost()
+                && controlador.estaJugadorLocalListo()
+                && controlador.estanTodosListos();
+
+        if (hostPuedeIniciar) {
+            controlador.iniciarPartida();
+            return;
+        }
+        controlador.marcarJugadorLocalListo();
+    }
+
+    private void manejarCancelarListo() {
+        if (controlador == null) {
+            return;
+        }
+        controlador.cancelarJugadorLocalListo();
+    }
+
+    private void actualizarEstadoBotones() {
+        if (controlador == null) {
+            btnEstoyListo.setText("Estoy Listo");
+            btnCancelar.setEnabled(false);
+            return;
+        }
+
+        boolean estoyListo = controlador.estaJugadorLocalListo();
+        boolean todosListos = controlador.estanTodosListos();
+        boolean mostrarIniciar = controlador.esHost() && estoyListo && todosListos;
+
+        btnEstoyListo.setText(mostrarIniciar ? "Iniciar partida" : "Estoy Listo");
+        btnCancelar.setEnabled(estoyListo);
     }
 
     public void dibujarPanelesJugadores(List<Map<String, String>> jugadores) {
@@ -43,7 +88,8 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
             if (i < jugadores.size()) {
                 Map<String, String> d = jugadores.get(i);
                 paneles[i].setLayout(new BorderLayout());
-                paneles[i].add(new avatarForm(d.get("nombre"), d.get("avatar")), BorderLayout.CENTER);
+                boolean estaListo = Boolean.parseBoolean(d.getOrDefault("estaListo", "false"));
+                paneles[i].add(new avatarForm(d.get("nombre"), d.get("avatar"), estaListo), BorderLayout.CENTER);
 
             }
             paneles[i].revalidate();
@@ -476,6 +522,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
                 dibujarPanelesJugadores(jugadores);
             }
             configurarLobby(codigo, miNombre, miAvatar);
+            actualizarEstadoBotones();
         }
     }
 

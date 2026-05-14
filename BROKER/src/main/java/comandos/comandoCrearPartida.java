@@ -85,6 +85,7 @@ public class comandoCrearPartida implements IComandoServidor {
             } else {
                 datosJugador.put("avatar", "pfp");
             }
+            datosJugador.put("estaListo", String.valueOf(n.isEstaListo()));
             listaJugadoresConAvatar.add(datosJugador);
         }
         return listaJugadoresConAvatar;

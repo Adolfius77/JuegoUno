@@ -58,6 +58,7 @@ public class ComandoRegistrarJugador implements IComandoServidor {
         if (nombreAvatar != null && !nombreAvatar.trim().isEmpty()) {
             nodoTemporal.setAvatar(nombreAvatar);
         }
+        nodoTemporal.setEstaListo(false);
 
         System.out.println("ComandoRegistrarJugador: Jugador " + nombreJugador + " registrado exitosamente");
 
@@ -81,6 +82,7 @@ public class ComandoRegistrarJugador implements IComandoServidor {
             } else {
                 datosJugador.put("avatar", "pfp");
             }
+            datosJugador.put("estaListo", String.valueOf(nodo.isEstaListo()));
             listaJugadores.add(datosJugador);
         }
         MensajeDTO notificacionLista = new MensajeDTO();

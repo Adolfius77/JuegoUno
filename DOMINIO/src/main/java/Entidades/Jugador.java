@@ -19,7 +19,7 @@ public class Jugador {
     private Boolean dijoUno;
     private int puntaje;
     private boolean esHost;
-
+    private boolean estaListo;
 
     public Jugador() {
     }
@@ -27,7 +27,7 @@ public class Jugador {
     public Jugador(String nombre){
         this.nombre = nombre;
     }
-
+    
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
@@ -64,6 +64,14 @@ public class Jugador {
     }
     //getters y setters
 
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
+    }
+    
     public String getNombre() {
         return nombre;
     }

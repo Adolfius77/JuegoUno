@@ -10,6 +10,7 @@ public class NodoCliente {
     private Socket socket;
     private IProxy proxy;
     private String avatar;
+    private boolean estaListo;
 
     public NodoCliente(String nombre, IProxy proxy, String avatar) {
         this(null, proxy, nombre,avatar);
@@ -20,6 +21,7 @@ public class NodoCliente {
         this.proxy = proxy;
         this.nombre = nombre;
         this.avatar = avatar;
+        this.estaListo = false;
     }
 
     public void enviarMensaje(MensajeDTO mensaje) {
@@ -35,6 +37,14 @@ public class NodoCliente {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
     }
 
     
