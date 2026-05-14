@@ -34,6 +34,11 @@
             <artifactId>BROKER</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>RED-COMUNICACION</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

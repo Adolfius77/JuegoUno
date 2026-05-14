@@ -29,6 +29,16 @@
             <artifactId>INTERFACES</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>DOMINIO</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>MAPPERS</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

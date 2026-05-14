@@ -1,9 +1,5 @@
-interfaces\IComandoServidor.class
 red\Servidor.class
-comandos\comandoIniciarPartida.class
-red\servidorMain.class
-red\LobbyServidor.class
-red\JuegoServidor.class
+factorys\ServerFactory.class
 Lector\LectorConfiguracion.class
-comandos\ComandoRegistrarJugador.class
-comandos\ComandoDesconectarJugador.class
+observador\observadorRed.class
+red\ProxyCliente.class

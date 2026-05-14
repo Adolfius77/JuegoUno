@@ -14,35 +14,13 @@
     <dependencies>
         <dependency>
             <groupId>org.itson</groupId>
-            <artifactId>DOMINIO</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.itson</groupId>
             <artifactId>DTOS</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>MAPPERS</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>INTERFACES</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>BROKER</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>SERVER-PROXY</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

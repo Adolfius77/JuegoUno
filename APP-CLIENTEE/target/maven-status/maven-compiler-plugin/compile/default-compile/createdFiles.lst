@@ -2,6 +2,8 @@ vista\unirsePartidaView$1.class
 vista\CrearPartida$5.class
 vista\SeleccionPartida$3.class
 vista\DiseñosExtras\botonCircular$1.class
+vista\partidaForm$1.class
+vista\LobbyView$4.class
 controlador\MazoController.class
 vista\CrearPartida$1.class
 vista\MenuPrincipal$2.class
@@ -12,6 +14,7 @@ vista\CrearPartida.class
 vista\MenuPrincipal$5.class
 vista\CrearPartida$4.class
 vista\SeleccionPartida$2.class
+vista\TableroView.class
 controlador\TableroController.class
 utileria\GestorAudio.class
 vista\GameView.class
@@ -24,8 +27,11 @@ vista\podioView.class
 vista\CrearPartida$3.class
 vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
+vista\LobbyView$2.class
 vista\SeleccionPartida.class
+vista\DiseñosExtras\CartaReversoUNO.class
 controlador\ManoController.class
+vista\CrearPartida$6.class
 vista\SeleccionPartida$1.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
@@ -35,8 +41,13 @@ Interfaces\IVista.class
 vista\DiseñosExtras\GameView.class
 controlador\PodioController.class
 vista\GameView$1.class
+vista\LobbyView$3.class
 vista\LobbyView.class
 vista\DiseñosExtras\PanelFondo.class
 vista\MenuPrincipal$3.class
+controlador\GameController.class
+vista\partidaForm.class
 vista\CrearPartida$2.class
+controlador\CrearPartidaController.class
+controlador\UnirsePartidaController.class
 vista\unirsePartidaView$2.class

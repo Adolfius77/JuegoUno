@@ -5,6 +5,8 @@
 package vista;
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
+import controlador.LobbyController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,14 +19,16 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();
+    private ClienteProxy proxy;
 
     public SeleccionPartida() {
-        this(null, null);
+        this(null, null,null);
     }
 
-    public SeleccionPartida(String nombreUsuario, String avatarUsuario) {
+    public SeleccionPartida(String nombreUsuario, String avatarUsuario, ClienteProxy proxy) {
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
+        this.proxy = proxy;
         initComponents();
         this.setLocationRelativeTo(null);
         this.addWindowListener(new java.awt.event.WindowAdapter() {;
@@ -278,14 +282,19 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        abrirVentana(new CrearPartida(this.nombreUsuario));
+        abrirVentana(new CrearPartida(this.nombreUsuario, this.proxy));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
-        abrirVentana(new unirsePartidaView());
+        abrirVentana(new unirsePartidaView(this.nombreUsuario, this.proxy));
     }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        if (this.proxy != null) {
+            LobbyController controlador = new LobbyController(this.proxy, "", "", false, null);
+            abrirVentana(new MenuPrincipal(controlador));
+            return;
+        }
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 

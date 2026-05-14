@@ -93,11 +93,11 @@ public class PanelCarta extends JPanel {
 
         // Ya no necesitamos instanceof, evaluamos directamente el String
         switch (valor) {
-            case "SALTAR": return "Ø"; 
-            case "REVERSA": return "⇄";
+            case "SALTAR": return "x"; 
+            case "REVERSA": return "<-";
             case "MAS_2": return "+2";
             case "MAS_4": return "+4";
-            case "CAMBIO_COLOR": return "W";
+            case "CAMBIO_COLOR": return "CC";
             default: return valor; // Si es un número del "0" al "9", lo devuelve tal cual
         }
     }

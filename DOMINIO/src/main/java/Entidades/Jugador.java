@@ -14,12 +14,12 @@ public class Jugador {
 
     private String Id;
     private String nombre;
-    private byte[] avatar;
+    private String avatar;
     private Mano mano;
-    private Boolean dijoUno;
+    private boolean dijoUno;
     private int puntaje;
     private boolean esHost;
-
+    private boolean estaListo;
 
     public Jugador() {
     }
@@ -27,7 +27,7 @@ public class Jugador {
     public Jugador(String nombre){
         this.nombre = nombre;
     }
-
+    
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
@@ -64,6 +64,14 @@ public class Jugador {
     }
     //getters y setters
 
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -76,13 +84,15 @@ public class Jugador {
         this.mano = mano;
     }
 
-    public byte[] getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    
 
     public Boolean getDijoUno() {
         return dijoUno;
