@@ -395,6 +395,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     tablero.actualizar(cartaCentro);
                     tablero.actualizarMazo(cartasEnMazo);
                     tablero.actulizarRivales(partidaActual.getJugadores(), miNombre);
+                    tablero.actualizarPanelesNumeroCartas(partidaActual.getJugadores());
                     
                 }
             }

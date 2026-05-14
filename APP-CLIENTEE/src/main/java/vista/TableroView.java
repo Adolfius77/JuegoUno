@@ -92,6 +92,23 @@ public class TableroView extends javax.swing.JPanel {
             }
         }
     }
+    public void actualizarPanelesNumeroCartas(List<JugadorDTO> jugadores){
+        JPanel[] panelNumero = {panelNumeroCartas1,panelNumeroCartas2,panelNumeroCartas3,panelNumeroCartas4};
+        for(JPanel panel: panelNumero){
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+        }
+        int indexPanel = 0;
+        for(JugadorDTO j: jugadores){
+            if(indexPanel < panelNumero.length){
+                NumeroDeCartasForm numero = new NumeroDeCartasForm();
+                panelNumero[indexPanel].add(numero,BorderLayout.CENTER);
+                panelNumero[indexPanel].revalidate();
+                panelNumero[indexPanel].repaint();
+            }
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
