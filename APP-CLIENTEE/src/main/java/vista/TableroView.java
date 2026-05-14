@@ -5,10 +5,12 @@
 package vista;
 
 import dtos.CartaDTO;
+import dtos.JugadorDTO;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
+import javax.swing.JPanel;
 import vista.DiseñosExtras.PanelCarta;
 
 /**
@@ -68,7 +70,28 @@ public class TableroView extends javax.swing.JPanel {
         panelPilaCartas.revalidate();
         panelPilaCartas.repaint();
     }
-
+    
+    public void actulizarRivales(List<JugadorDTO> jugadores, String miNombre){
+        JPanel[] panelesAvatares = {panelAvatar1,panelAvatar2,panelAvatar3,panelAvatar4};
+        
+        for(JPanel panel: panelesAvatares){
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+        }
+        int indexPanel = 0;
+        for(JugadorDTO j: jugadores){
+            if(indexPanel < panelesAvatares.length){
+                String nombreAvatar = j.getAvatar() != null ? j.getAvatar() : "pfp";
+                avatarForm avatarRival = new avatarForm(j.getNombre(),nombreAvatar, false);
+                
+                panelesAvatares[indexPanel].add(avatarRival,BorderLayout.CENTER);
+                panelesAvatares[indexPanel].revalidate();
+                panelesAvatares[indexPanel].repaint();
+                
+                indexPanel++;
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

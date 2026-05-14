@@ -1,22 +1,22 @@
-    package dtos;
+package dtos;
 
 import java.io.Serializable;
 
-    public class JugadorDTO implements Serializable {
-    private static final long serialVersionUID =  1L;
+public class JugadorDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private String id;
     private String nombre;
-    private byte[] avatar;
+    private String avatar;
     private ManoDTO mano;
     private boolean dijoUno;
     private int puntuaje;
     private boolean estaListo;
 
-
     public JugadorDTO() {
     }
 
-    public JugadorDTO(String id, String nombre, byte[] avatar, ManoDTO mano, boolean dijoUno, int puntuaje, boolean estaListo) {
+    public JugadorDTO(String id, String nombre, String avatar, ManoDTO mano, boolean dijoUno, int puntuaje, boolean estaListo) {
         this.id = id;
         this.nombre = nombre;
         this.avatar = avatar;
@@ -25,15 +25,6 @@ import java.io.Serializable;
         this.puntuaje = puntuaje;
         this.estaListo = estaListo;
     }
-
-    public boolean isEstaListo() {
-        return estaListo;
-    }
-
-    public void setEstaListo(boolean estaListo) {
-        this.estaListo = estaListo;
-    }
-    
 
     public String getId() {
         return id;
@@ -51,11 +42,11 @@ import java.io.Serializable;
         this.nombre = nombre;
     }
 
-    public byte[] getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 
@@ -82,4 +73,13 @@ import java.io.Serializable;
     public void setPuntuaje(int puntuaje) {
         this.puntuaje = puntuaje;
     }
+
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
+    }
+
 }
