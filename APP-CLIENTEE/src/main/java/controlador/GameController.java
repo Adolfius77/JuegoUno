@@ -39,11 +39,11 @@ public class GameController {
     //getters 
 
     public String getMiNombre() {
-        return miNombre;
+        return this.miNombre;
     }
 
     public PartidaDTO getEstadoPartida() {
-        return estadoPartida;
+        return this.estadoPartida;
     }
 
     public List<CartaDTO> getMiMano() {
