@@ -378,19 +378,19 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(2);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(3);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(4);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void btn3jugadoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3jugadoreActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(3);
     }//GEN-LAST:event_btn3jugadoreActionPerformed
 
     private void btnCrearPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearPartidaActionPerformed

@@ -31,7 +31,7 @@ public class PartidaDTO extends MensajeDTO implements Serializable {
         this.colorActual = colorActual;
         this.sentidoHorario = sentidoHorario;
         this.mazoTamano = mazoTamano;
-        this.mensajeEstado = mensajeEstado;
+        this.mensajeEstado = mensajeEstadom;
         this.cartasRestantesMazo = cartasRestantesMazo;
     }
 

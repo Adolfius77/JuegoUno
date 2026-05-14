@@ -521,7 +521,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
             String miAvatar = "pfp";
             if (jugadores != null) {
                 for (Map<String, String> j : jugadores) {
-                    if (j.get("nombre").equals(miNombre)) {
+                    if (j != null && miNombre != null && miNombre.equals(j.get("nombre"))) {
                         miAvatar = j.get("avatar");
                         break;
                     }

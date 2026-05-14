@@ -15,7 +15,10 @@ public class ComandoDesconectarJugador implements IComandoServidor {
 
     @Override
     public void ejecutar(MensajeDTO mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (mensaje == null) {
+            return;
+        }
+        System.out.println("[COMANDO-DESCONECTAR] Solicitud recibida, sin accion adicional configurada.");
     }
     
 }

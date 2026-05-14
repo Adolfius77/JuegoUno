@@ -34,7 +34,7 @@ public class PartidaMapper {
 
         CartaDTO cartaCentro = null;
         String colorActual = "SIN_COLOR";
-        if (partida.getPilaCartas() != null) {
+        if (partida.getPilaCartas() != null && !partida.getPilaCartas().getListaCartas().isEmpty()) {
             cartaCentro = cMapper.toDTO(partida.getPilaCartas().obtenerUltimaCarta());
             if (partida.getPilaCartas().getColorActivo() != null) {
                 colorActual = partida.getPilaCartas().getColorActivo().name();
@@ -42,8 +42,8 @@ public class PartidaMapper {
         }
 
         int mazoTamano = 0;
-        if (partida.getMazo() != null && !partida.getMazo().estaVacio()) {
-            mazoTamano = 1;
+        if (partida.getMazo() != null) {
+            mazoTamano = partida.getMazo().getCantidadCartas();
         }
 
         return new PartidaDTO(

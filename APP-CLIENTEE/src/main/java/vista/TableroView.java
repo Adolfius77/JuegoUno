@@ -4,13 +4,24 @@
  */
 package vista;
 
+import controlador.GameController;
 import dtos.CartaDTO;
 import dtos.JugadorDTO;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.border.Border;
 import vista.DiseñosExtras.CartaReversoUNO;
 import vista.DiseñosExtras.PanelCarta;
 
@@ -20,6 +31,17 @@ import vista.DiseñosExtras.PanelCarta;
  */
 public class TableroView extends javax.swing.JPanel {
 
+    private GameController controlador;
+    private List<CartaDTO> cartasMiMano = new ArrayList<>();
+    private int indiceSeleccionado = -1;
+    private boolean esMiTurnoActual = false;
+    private int segundosRestantes = 30;
+    private final Timer temporizadorTurno;
+    private final JLabel lblTemporizador = new JLabel("Tiempo: 30s");
+    private final Border bordeNormal = BorderFactory.createEmptyBorder();
+    private final Border bordeSeleccionado = BorderFactory.createLineBorder(new Color(255, 215, 0), 3);
+    private final JLabel lblIndicadorUno = new JLabel();
+
     /**
      * Creates new form TableroView
      */
@@ -27,25 +49,164 @@ public class TableroView extends javax.swing.JPanel {
         initComponents();
         panelFondo.setImagen("/img/juegoUno (2).jpg");
         panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
+        btnJugarCarta.setEnabled(false);
+        btnJugarCarta.addActionListener(evt -> jugarCartaSeleccionada());
+        lblTemporizador.setForeground(Color.WHITE);
+        lblTemporizador.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 20));
+        lblTemporizador.setHorizontalAlignment(SwingConstants.CENTER);
+        panelFondo.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 250, 220, 30));
+
+        lblIndicadorUno.setText("GRITAR UNO!");
+        lblIndicadorUno.setForeground(new Color(255, 0, 0));
+        lblIndicadorUno.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 16));
+        lblIndicadorUno.setHorizontalAlignment(SwingConstants.CENTER);
+        lblIndicadorUno.setVisible(false);
+        panelFondo.add(lblIndicadorUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 220, 30));
+
+        temporizadorTurno = new Timer(1000, e -> actualizarCuentaRegresiva());
 
     }
 
-    public void mostrarCartas(List<CartaDTO> manoDelServidor) {
-        panelJugadorPrincipal.removeAll();
-        if (manoDelServidor == null || manoDelServidor.isEmpty()) {
+    public void setController(GameController controlador) {
+        this.controlador = controlador;
+    }
+
+    public void actualizarTurno(String turnoJugadorId, String miNombre) {
+        boolean turnoLocal = turnoJugadorId != null && miNombre != null && turnoJugadorId.equals(miNombre);
+        this.esMiTurnoActual = turnoLocal;
+
+        if (!turnoLocal) {
+            temporizadorTurno.stop();
+            segundosRestantes = 30;
+            lblTemporizador.setText("Turno de: " + (turnoJugadorId != null && !turnoJugadorId.isBlank() ? turnoJugadorId : "?"));
+            btnJugarCarta.setEnabled(false);
             return;
         }
 
-        for (CartaDTO carta : manoDelServidor) {
-            PanelCarta cartaVisual = new PanelCarta(carta);
+        reiniciarTemporizador();
+        actualizarEstadoBotonJugar();
+    }
 
-            cartaVisual.setPreferredSize(new java.awt.Dimension(75, 110));
+    public void mostrarCartas(List<CartaDTO> manoDelServidor) {
+        this.cartasMiMano = manoDelServidor != null ? new ArrayList<>(manoDelServidor) : new ArrayList<>();
+        this.indiceSeleccionado = -1;
+        
+        if (cartasMiMano.size() == 1 && esMiTurnoActual) {
+            lblIndicadorUno.setVisible(true);
+        } else {
+            lblIndicadorUno.setVisible(false);
+        }
+
+        actualizarEstadoBotonJugar();
+        panelJugadorPrincipal.removeAll();
+        renderizarMano();
+
+    }
+
+    public CartaDTO getCartaSeleccionada() {
+        if (indiceSeleccionado < 0 || indiceSeleccionado >= cartasMiMano.size()) {
+            return null;
+        }
+        return cartasMiMano.get(indiceSeleccionado);
+    }
+
+    private void seleccionarCarta(int indice) {
+        this.indiceSeleccionado = indice;
+        actualizarEstadoBotonJugar();
+        renderizarMano();
+    }
+
+    private void renderizarMano() {
+        panelJugadorPrincipal.removeAll();
+        if (cartasMiMano.isEmpty()) {
+            panelJugadorPrincipal.revalidate();
+            panelJugadorPrincipal.repaint();
+            return;
+        }
+
+        for (int i = 0; i < cartasMiMano.size(); i++) {
+            CartaDTO carta = cartasMiMano.get(i);
+            boolean seleccionada = i == indiceSeleccionado;
+            JPanel cartaVisual = crearCartaSeleccionable(carta, seleccionada, i);
             panelJugadorPrincipal.add(cartaVisual);
         }
 
         panelJugadorPrincipal.revalidate();
         panelJugadorPrincipal.repaint();
+    }
 
+    private JPanel crearCartaSeleccionable(CartaDTO carta, boolean seleccionada, int indice) {
+        PanelCarta cartaVisual = new PanelCarta(carta);
+        cartaVisual.setPreferredSize(new java.awt.Dimension(75, 110));
+        cartaVisual.setBorder(seleccionada ? bordeSeleccionado : bordeNormal);
+        cartaVisual.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                seleccionarCarta(indice);
+            }
+        });
+        return cartaVisual;
+    }
+
+    private void actualizarEstadoBotonJugar() {
+        btnJugarCarta.setEnabled(esMiTurnoActual && indiceSeleccionado >= 0 && indiceSeleccionado < cartasMiMano.size());
+    }
+
+    private void reiniciarTemporizador() {
+        segundosRestantes = 30;
+        lblTemporizador.setText("Tiempo: 30s");
+        actualizarColorTemporizador();
+        if (!temporizadorTurno.isRunning()) {
+            temporizadorTurno.start();
+        }
+    }
+
+    private void actualizarCuentaRegresiva() {
+        if (!esMiTurnoActual) {
+            temporizadorTurno.stop();
+            lblTemporizador.setForeground(Color.WHITE);
+            return;
+        }
+
+        segundosRestantes--;
+        if (segundosRestantes <= 0) {
+            temporizadorTurno.stop();
+            segundosRestantes = 30;
+            lblTemporizador.setText("Tiempo: 0s");
+            lblTemporizador.setForeground(Color.RED);
+            if (controlador != null) {
+                controlador.tomarCarta();
+                controlador.pasarTurno();
+            }
+            return;
+        }
+
+        lblTemporizador.setText("Tiempo: " + segundosRestantes + "s");
+        actualizarColorTemporizador();
+    }
+
+    private void actualizarColorTemporizador() {
+        if (segundosRestantes <= 3) {
+            lblTemporizador.setForeground(new Color(220, 20, 60));
+        } else if (segundosRestantes <= 10) {
+            lblTemporizador.setForeground(new Color(255, 140, 0));
+        } else if (segundosRestantes <= 20) {
+            lblTemporizador.setForeground(new Color(255, 215, 0));
+        } else {
+            lblTemporizador.setForeground(new Color(144, 238, 144));
+        }
+    }
+
+    private void jugarCartaSeleccionada() {
+        if (controlador == null) {
+            return;
+        }
+        CartaDTO seleccionada = getCartaSeleccionada();
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una carta primero.", "UNO", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        controlador.jugarCartaSeleccionada(seleccionada);
     }
 
     public void actualizar(CartaDTO cartaActual) {
@@ -74,70 +235,114 @@ public class TableroView extends javax.swing.JPanel {
     
     public void actulizarRivales(List<JugadorDTO> jugadores, String miNombre){
         JPanel[] panelesAvatares = {panelAvatar1,panelAvatar2,panelAvatar3,panelAvatar4};
-        
+
         for(JPanel panel: panelesAvatares){
             panel.removeAll();
             panel.setLayout(new BorderLayout());
         }
-        int indexPanel = 0;
-        for(JugadorDTO j: jugadores){
+
+        JugadorDTO jugadorLocal = buscarJugador(jugadores, miNombre);
+        if (jugadorLocal != null) {
+            panelAvatar1.add(new avatarForm(jugadorLocal.getNombre(), obtenerAvatarSeguro(jugadorLocal), jugadorLocal.isEstaListo()), BorderLayout.CENTER);
+        }
+
+        int indexPanel = 1;
+        for(JugadorDTO j: obtenerRivales(jugadores, miNombre)){
             if(indexPanel < panelesAvatares.length){
-                String nombreAvatar = j.getAvatar() != null ? j.getAvatar() : "pfp";
-                avatarForm avatarRival = new avatarForm(j.getNombre(),nombreAvatar, false);
-                
-                panelesAvatares[indexPanel].add(avatarRival,BorderLayout.CENTER);
-                panelesAvatares[indexPanel].revalidate();
-                panelesAvatares[indexPanel].repaint();
-                
+                panelesAvatares[indexPanel].add(new avatarForm(j.getNombre(), obtenerAvatarSeguro(j), j.isEstaListo()),BorderLayout.CENTER);
                 indexPanel++;
             }
         }
+
+        for(JPanel panel: panelesAvatares){
+            panel.revalidate();
+            panel.repaint();
+        }
     }
-    public void actualizarPanelesNumeroCartas(List<JugadorDTO> jugadores){
+    public void actualizarPanelesNumeroCartas(List<JugadorDTO> jugadores, String miNombre){
         JPanel[] panelNumero = {panelNumeroCartas1,panelNumeroCartas2,panelNumeroCartas3,panelNumeroCartas4};
         for(JPanel panel: panelNumero){
             panel.removeAll();
             panel.setLayout(new BorderLayout());
         }
-        int indexPanel = 0;
-        for(JugadorDTO j: jugadores){
+        JugadorDTO jugadorLocal = buscarJugador(jugadores, miNombre);
+        if (jugadorLocal != null) {
+            int cantidadLocal = (jugadorLocal.getMano() != null) ? jugadorLocal.getMano().getCartas().size() : 0;
+            NumeroDeCartasForm numeroLocal = new NumeroDeCartasForm();
+            numeroLocal.MostrarNumeroCartas(cantidadLocal);
+            panelNumero[0].add(numeroLocal, BorderLayout.CENTER);
+        }
+
+        int indexPanel = 1;
+        for(JugadorDTO j: obtenerRivales(jugadores, miNombre)){
             if(indexPanel < panelNumero.length){
                 int cantidad = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
                 NumeroDeCartasForm numero = new NumeroDeCartasForm();
                 numero.MostrarNumeroCartas(cantidad);
                 panelNumero[indexPanel].add(numero,BorderLayout.CENTER);
-                panelNumero[indexPanel].revalidate();
-                panelNumero[indexPanel].repaint();
-                
                 indexPanel++;
             }
         }
+        for(JPanel panel: panelNumero){
+            panel.revalidate();
+            panel.repaint();
+        }
     }
     public void cargarCartasVolteadas(List<JugadorDTO> jugadores , String nombre){
-        JPanel[] mazosVolteados = {panelJugador2,panelAvatar3,panelAvatar4};
-        
+        JPanel[] mazosVolteados = {panelJugador2,panelJugador3,panelJugador4};
+
         for(JPanel panel: mazosVolteados){
             panel.removeAll();
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, -20,10));
         }
+
         int indexPanel = 0;
-        for(JugadorDTO j : jugadores){
-            if(!j.getNombre().equals(nombre)){
-                if(indexPanel < mazosVolteados.length){
-                    int cantidadCartas = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
-                    for(int i = 0; i< cantidadCartas; i++){
-                        CartaReversoUNO reverso = new CartaReversoUNO();
-                        reverso.setPreferredSize(new Dimension(50,75));
-                        mazosVolteados[indexPanel].add(reverso);
-                    }
-                    mazosVolteados[indexPanel].revalidate();
-                    mazosVolteados[indexPanel].repaint();
-                    
-                    indexPanel++;
+        for(JugadorDTO j : obtenerRivales(jugadores, nombre)){
+            if(indexPanel < mazosVolteados.length){
+                int cantidadCartas = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
+                for(int i = 0; i< cantidadCartas; i++){
+                    CartaReversoUNO reverso = new CartaReversoUNO();
+                    reverso.setPreferredSize(new Dimension(50,75));
+                    mazosVolteados[indexPanel].add(reverso);
                 }
+                mazosVolteados[indexPanel].revalidate();
+                mazosVolteados[indexPanel].repaint();
+
+                indexPanel++;
             }
         }
-        
+    }
+
+    private JugadorDTO buscarJugador(List<JugadorDTO> jugadores, String nombre) {
+        if (jugadores == null || nombre == null) {
+            return null;
+        }
+        for (JugadorDTO jugador : jugadores) {
+            if (jugador != null && nombre.equals(jugador.getNombre())) {
+                return jugador;
+            }
+        }
+        return null;
+    }
+
+    private List<JugadorDTO> obtenerRivales(List<JugadorDTO> jugadores, String nombre) {
+        List<JugadorDTO> rivales = new ArrayList<>();
+        if (jugadores == null) {
+            return rivales;
+        }
+        for (JugadorDTO jugador : jugadores) {
+            if (jugador != null && (nombre == null || !nombre.equals(jugador.getNombre()))) {
+                rivales.add(jugador);
+            }
+        }
+        return rivales;
+    }
+
+    private String obtenerAvatarSeguro(JugadorDTO jugador) {
+        if (jugador == null || jugador.getAvatar() == null || jugador.getAvatar().isBlank()) {
+            return "pfp";
+        }
+        return jugador.getAvatar();
     }
     /**
      * This method is called from within the constructor to initialize the form.

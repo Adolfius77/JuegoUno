@@ -32,10 +32,18 @@ public class PilaCartas {
     }
     
     public List<Carta> vaciar(){
-        List<Carta> cartasUsadas = listaCartas;
+        List<Carta> cartasUsadas = new ArrayList<>();
+        if (listaCartas.isEmpty()) {
+            return cartasUsadas;
+        }
+
         Carta ultimaCarta = listaCartas.getLast();
+        for (int i = 0; i < listaCartas.size() - 1; i++) {
+            cartasUsadas.add(listaCartas.get(i));
+        }
         listaCartas.clear();
         listaCartas.add(ultimaCarta);
+        colorActivo = ultimaCarta.getColor();
         return cartasUsadas;
     }
     

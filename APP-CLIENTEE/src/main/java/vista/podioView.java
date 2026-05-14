@@ -5,6 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,6 +19,7 @@ public class podioView extends javax.swing.JFrame implements IVista
      */
     public podioView() {
         initComponents();
+        btnContinuar.addActionListener(e -> cerrarVista());
     }
 
     /**
@@ -216,21 +218,22 @@ public class podioView extends javax.swing.JFrame implements IVista
 
     @Override
     public void mostrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        JOptionPane.showMessageDialog(this, mensaje, "UNO", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void actualizar(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        revalidate();
+        repaint();
     }
 }

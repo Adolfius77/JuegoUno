@@ -15,6 +15,10 @@ import Nodos.NodoCliente;
 import comandos.ComandoListarPartidas;
 import comandos.ComandoActualizarEstadoListo;
 import comandos.ComandoRegistrarJugador;
+import comandos.ComandoGritarUno;
+import comandos.ComandoPasarTurno;
+import comandos.ComandoJugarCarta;
+import comandos.ComandoTomarCarta;
 import comandos.ComandoUnirsePartida;
 import comandos.comandoCrearPartida;
 import comandos.comandoIniciarPartida;
@@ -42,6 +46,10 @@ public class LobbyServidor {
         this.broker.subscribirse("PETICION_UNIRSE_PARTIDA", new ComandoUnirsePartida(manejadorNodos, gestorSalas)::ejecutar);
         this.broker.subscribirse("PETICION_LISTA_PARTIDAS", new ComandoListarPartidas(gestorSalas)::ejecutar);
         this.broker.subscribirse("ACTUALIZAR_ESTADO_LISTO", new ComandoActualizarEstadoListo(manejadorNodos)::ejecutar);
+        this.broker.subscribirse("PETICION_JUGAR_CARTA", new ComandoJugarCarta(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("PETICION_TOMAR_CARTA", new ComandoTomarCarta(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("PETICION_PASAR_TURNO", new ComandoPasarTurno(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("PETICION_GRITAR_UNO", new ComandoGritarUno(manejadorNodos, juegoServidor)::ejecutar);
     }
 
     public static LobbyServidor crearLobbyPorDefecto(IBroker broker) {

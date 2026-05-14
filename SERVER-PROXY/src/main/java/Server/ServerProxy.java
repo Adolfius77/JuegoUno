@@ -75,7 +75,11 @@ public class ServerProxy implements observadorRed {
                 || "PETICION_UNIRSE_PARTIDA".equals(mensaje.getTipo())
                 || "PETICION_LISTA_PARTIDAS".equals(mensaje.getTipo())
                 || "ACTUALIZAR_ESTADO_LISTO".equals(mensaje.getTipo())
-                || "INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())) {
+                || "INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())
+                || "PETICION_JUGAR_CARTA".equals(mensaje.getTipo())
+                || "PETICION_TOMAR_CARTA".equals(mensaje.getTipo())
+                || "PETICION_GRITAR_UNO".equals(mensaje.getTipo())
+                || "PETICION_PASAR_TURNO".equals(mensaje.getTipo())) {
             if (mensaje.getDatos() == null) {
                 mensaje.setDatos(new HashMap<>());
             }

@@ -30,8 +30,8 @@ public class EstadoEsperando implements IEstadoPartida {
             throw new IllegalArgumentException("la partida ya tiene el maximo de jugadores");
         }
         boolean repetido = partida.getJugadores().stream().anyMatch(j ->
-                j.getId() != null && j.getId().equals(jugador.getId())) ||
-                jugador.getNombre().equalsIgnoreCase(jugador.getNombre());
+                (j.getId() != null && j.getId().equals(jugador.getId()))
+                || (j.getNombre() != null && j.getNombre().equalsIgnoreCase(jugador.getNombre())));
         if(repetido){
             throw new IllegalArgumentException("el jugador ya existe en la partida");
         }
@@ -67,6 +67,17 @@ public class EstadoEsperando implements IEstadoPartida {
             jugador.entregarCartas(mazoActual.entregarCartas());
         }
         Carta primeraCarta = mazoActual.tomarCarta();
+        int intentos = 0;
+        int maxIntentos = Math.max(1, mazoActual.getCantidadCartas() + 1);
+        while (primeraCarta instanceof cartaComodin && intentos < maxIntentos) {
+            mazoActual.devolverCartaAlFondo(primeraCarta);
+            primeraCarta = mazoActual.tomarCarta();
+            intentos++;
+        }
+
+        if (primeraCarta instanceof cartaComodin) {
+            throw new IllegalStateException("No se pudo iniciar la partida con una carta normal en la mesa.");
+        }
         pilaActual.agregarCarta(primeraCarta);
         System.out.println("EstadoEsperando: La primera carta en la mesa es de color: " + pilaActual.getColorActivo());
         partida.setEstado(EstadoFactory.crearEstadoJugando());

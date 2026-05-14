@@ -45,6 +45,9 @@ public class GameView extends javax.swing.JFrame implements IVista {
     }
     public void setController(GameController controlador){
         this.controlador = controlador;
+        if (tablero != null) {
+            tablero.setController(controlador);
+        }
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -385,8 +388,8 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
                 List<CartaDTO> miMano = null;
                 for (JugadorDTO j : partidaActual.getJugadores()) {
-                    if (j.getNombre().equals(miNombre)) {
-                        miMano = j.getMano().getCartas();
+                    if (j != null && miNombre.equals(j.getNombre())) {
+                        miMano = j.getMano() != null ? j.getMano().getCartas() : null;
                         break;
                     }
                 }
@@ -395,9 +398,10 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     tablero.actualizar(cartaCentro);
                     tablero.actualizarMazo(cartasEnMazo);
                     tablero.actulizarRivales(partidaActual.getJugadores(), miNombre);
-                    tablero.actualizarPanelesNumeroCartas(partidaActual.getJugadores());
+                    tablero.actualizarPanelesNumeroCartas(partidaActual.getJugadores(), miNombre);
                     tablero.cargarCartasVolteadas(partidaActual.getJugadores(), miNombre);
-                    
+                    tablero.actualizarTurno(partidaActual.getTurnoJugadorId(), miNombre);
+
                 }
             }
         }

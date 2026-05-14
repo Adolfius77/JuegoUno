@@ -53,6 +53,13 @@ public class ManejadorNodos {
         return null;
     }
 
+    public NodoCliente obtenerNodoPorNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            return null;
+        }
+        return nodosClientes.get(nombre);
+    }
+
     public void actualizarIdentidadNodo(String idTemporal, String nombreReal) {
         NodoCliente nodo = nodosClientes.remove(idTemporal);
 

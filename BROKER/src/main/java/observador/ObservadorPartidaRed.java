@@ -23,7 +23,13 @@ public class ObservadorPartidaRed implements IObserver {
         PartidaDTO estadoActual = PartidaMapper.toDTO(this.partidaObservada);
 
         MensajeDTO mensaje = new MensajeDTO();
-        mensaje.setTipo("ACTUALIZACION_TABLERO");
+        if (evento != null && evento.startsWith("PARTIDA_FINALIZADA")) {
+            mensaje.setTipo("PARTIDA_FINALIZADA");
+            String ganador = evento.contains(":") ? evento.substring(evento.indexOf(":") + 1) : "";
+            mensaje.getDatos().put("ganador", ganador);
+        } else {
+            mensaje.setTipo("ACTUALIZACION_MESA");
+        }
         mensaje.setRemitente("SERVIDOR");
         mensaje.getDatos().put("partida", estadoActual);
 

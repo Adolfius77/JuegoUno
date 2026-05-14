@@ -51,9 +51,9 @@ public class Partida implements IObservable {
 
     public void verificarGanador() {
         for (Jugador jugador : jugadores) {
-            if (jugador.getMano().getCartas().isEmpty()){
+            if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()){
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
-                notificarObservador("PARTIDA_FINALIZADA" + jugador.getNombre());
+                notificarObservador("PARTIDA_FINALIZADA:" + jugador.getNombre());
                 return;
             }
         }
@@ -61,6 +61,7 @@ public class Partida implements IObservable {
 
     public void jugarCarta(Carta carta, Jugador jugador) {
        estado.jugarCarta(this, jugador, carta);
+       jugador.setDijoUno(false);
        verificarGanador();
     }
 
@@ -74,6 +75,9 @@ public class Partida implements IObservable {
     }
 
     public Jugador getJugadorActual() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            return null;
+        }
         return jugadores.get(turnoActual);
     }
 
