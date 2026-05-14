@@ -97,7 +97,7 @@ public class avatarForm extends javax.swing.JPanel {
 
             ImageIcon iconoOriginal = cargarImagen(avatarUsuario);
 
-            java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
+            java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(65, 65, java.awt.Image.SCALE_SMOOTH);
 
             avatar.setIcon(new ImageIcon(imgEscalada));
             avatar.setText("");

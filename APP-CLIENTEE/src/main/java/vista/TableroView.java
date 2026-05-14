@@ -147,14 +147,14 @@ public class TableroView extends javax.swing.JPanel {
         panelAvatar1.setLayout(panelAvatar1Layout);
         panelAvatar1Layout.setHorizontalGroup(
             panelAvatar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 108, Short.MAX_VALUE)
+            .addGap(0, 138, Short.MAX_VALUE)
         );
         panelAvatar1Layout.setVerticalGroup(
             panelAvatar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 118, Short.MAX_VALUE)
+            .addGap(0, 138, Short.MAX_VALUE)
         );
 
-        panelFondo.add(panelAvatar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 570, 110, 120));
+        panelFondo.add(panelAvatar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 550, 140, 140));
 
         panelNumeroCartas1.setBackground(new java.awt.Color(255, 255, 255));
         panelNumeroCartas1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -197,14 +197,14 @@ public class TableroView extends javax.swing.JPanel {
         panelAvatar2.setLayout(panelAvatar2Layout);
         panelAvatar2Layout.setHorizontalGroup(
             panelAvatar2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 138, Short.MAX_VALUE)
         );
         panelAvatar2Layout.setVerticalGroup(
             panelAvatar2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 128, Short.MAX_VALUE)
         );
 
-        panelFondo.add(panelAvatar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 190, -1, -1));
+        panelFondo.add(panelAvatar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 162, 140, 130));
 
         panelNumeroCartas2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -216,10 +216,10 @@ public class TableroView extends javax.swing.JPanel {
         );
         panelNumeroCartas2Layout.setVerticalGroup(
             panelNumeroCartas2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 68, Short.MAX_VALUE)
+            .addGap(0, 78, Short.MAX_VALUE)
         );
 
-        panelFondo.add(panelNumeroCartas2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, 50, 70));
+        panelFondo.add(panelNumeroCartas2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, 50, 80));
 
         panelJugador4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -242,14 +242,14 @@ public class TableroView extends javax.swing.JPanel {
         panelAvatar4.setLayout(panelAvatar4Layout);
         panelAvatar4Layout.setHorizontalGroup(
             panelAvatar4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 108, Short.MAX_VALUE)
+            .addGap(0, 128, Short.MAX_VALUE)
         );
         panelAvatar4Layout.setVerticalGroup(
             panelAvatar4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 118, Short.MAX_VALUE)
+            .addGap(0, 138, Short.MAX_VALUE)
         );
 
-        panelFondo.add(panelAvatar4, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 40, 110, 120));
+        panelFondo.add(panelAvatar4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, 130, 140));
 
         panelNumeroCartas4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -306,10 +306,10 @@ public class TableroView extends javax.swing.JPanel {
         );
         panelAvatar3Layout.setVerticalGroup(
             panelAvatar3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 128, Short.MAX_VALUE)
+            .addGap(0, 138, Short.MAX_VALUE)
         );
 
-        panelFondo.add(panelAvatar3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 150, 140, 130));
+        panelFondo.add(panelAvatar3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1190, 140, 140, 140));
 
         panelCartaMedio.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panelCartaMedio.setLayout(new java.awt.BorderLayout());
