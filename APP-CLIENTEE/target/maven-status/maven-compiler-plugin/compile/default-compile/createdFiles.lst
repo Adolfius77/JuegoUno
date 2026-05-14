@@ -32,6 +32,7 @@ vista\SeleccionPartida.class
 vista\DiseñosExtras\CartaReversoUNO.class
 controlador\ManoController.class
 vista\CrearPartida$6.class
+vista\TableroView$1.class
 vista\SeleccionPartida$1.class
 vista\podioView$1.class
 vista\DiseñosExtras\TextFieldRedondo.class
