@@ -26,8 +26,8 @@ public class PartidaMapper {
         String turnoId = "";
         String mensajeTurno = "Sin turno asignado";
         if (partida.getJugadorActual() != null) {
-            turnoId = partida.getJugadorActual().getId() != null
-                    ? partida.getJugadorActual().getId()
+            turnoId = partida.getJugadorActual().getNombre() != null
+                    ? partida.getJugadorActual().getNombre()
                     : "";
             mensajeTurno = "Es el turno de " + partida.getJugadorActual().getNombre();
         }
@@ -56,7 +56,7 @@ public class PartidaMapper {
                 partida.getSentido() == Entidades.enums.Sentido.HORARIO,
                 mazoTamano,
                 mensajeTurno,
-                0
+                mazoTamano
         );
     }
 
