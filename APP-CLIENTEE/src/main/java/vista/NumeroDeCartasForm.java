@@ -17,7 +17,7 @@ public class NumeroDeCartasForm extends javax.swing.JPanel {
         
         
     }
-    private void MostrarNumeroCartas(int cantidad){
+    public void MostrarNumeroCartas(int cantidad){
         lblNumero.setText(String.valueOf(cantidad));
     }
     /**

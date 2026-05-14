@@ -101,10 +101,14 @@ public class TableroView extends javax.swing.JPanel {
         int indexPanel = 0;
         for(JugadorDTO j: jugadores){
             if(indexPanel < panelNumero.length){
+                int cantidad = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
                 NumeroDeCartasForm numero = new NumeroDeCartasForm();
+                numero.MostrarNumeroCartas(cantidad);
                 panelNumero[indexPanel].add(numero,BorderLayout.CENTER);
                 panelNumero[indexPanel].revalidate();
                 panelNumero[indexPanel].repaint();
+                
+                indexPanel++;
             }
         }
     }
