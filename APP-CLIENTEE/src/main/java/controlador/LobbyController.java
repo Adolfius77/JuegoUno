@@ -199,9 +199,11 @@ public class LobbyController {
 
                 GameView vistaJuego = new GameView();
                 GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
+                vistaJuego.setController(controladorJuego);
                 if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
                     controladorJuego.procesarEventoRed(mensaje);
                 }
+                
                 vistaJuego.setVisible(true);
             });
         } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {

@@ -24,45 +24,42 @@ public class TableroView extends javax.swing.JPanel {
         initComponents();
         panelFondo.setImagen("/img/juegoUno (2).jpg");
         panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
-       
+
     }
+
     public void mostrarCartas(List<CartaDTO> manoDelServidor) {
         panelJugadorPrincipal.removeAll();
-        int cantidadCartas = manoDelServidor.size();
-        if(cantidadCartas == 0)return;
-        
-        int anchoCarta = 75;
-        int separacion = 40;
-        int altoCarta = 110;
-        
-        int anchoTotalMano = anchoCarta + ((cantidadCartas -1 ) * separacion);
-        panelJugadorPrincipal.setPreferredSize(new Dimension(anchoTotalMano + 20, altoCarta + 20));
-        
-        for(int i = 0; i < cantidadCartas; i++){
-            PanelCarta cartaVisual = new PanelCarta(manoDelServidor.get(i));
-            int posicionX = i * separacion;
-            
-            cartaVisual.setBounds(posicionX, 5, anchoCarta,altoCarta);
-            panelJugadorPrincipal.add(cartaVisual, 0);
+        if (manoDelServidor == null || manoDelServidor.isEmpty()) {
+            return;
         }
+
+        for (CartaDTO carta : manoDelServidor) {
+            PanelCarta cartaVisual = new PanelCarta(carta);
+
+            cartaVisual.setPreferredSize(new java.awt.Dimension(75, 110));
+            panelJugadorPrincipal.add(cartaVisual);
+        }
+
         panelJugadorPrincipal.revalidate();
         panelJugadorPrincipal.repaint();
-        
+
     }
-    public void actualizar(CartaDTO cartaActual){
-       panelCartaMedio.removeAll();
-        
-       if(cartaActual != null){
-           PanelCarta cartaVisual = new PanelCarta(cartaActual);
-           panelCartaMedio.add(cartaVisual,BorderLayout.CENTER);
-       }
-       panelCartaMedio.revalidate();
-       panelCartaMedio.repaint();
-       
+
+    public void actualizar(CartaDTO cartaActual) {
+        panelCartaMedio.removeAll();
+
+        if (cartaActual != null) {
+            PanelCarta cartaVisual = new PanelCarta(cartaActual);
+            panelCartaMedio.add(cartaVisual, BorderLayout.CENTER);
+        }
+        panelCartaMedio.revalidate();
+        panelCartaMedio.repaint();
+
     }
-    public void actualizarMazo(int cantidadCartas){
+
+    public void actualizarMazo(int cantidadCartas) {
         panelPilaCartas.removeAll();
-        if(cantidadCartas > 0){
+        if (cantidadCartas > 0) {
             CartaDTO reversoMazo = new CartaDTO("ROJO", "UNO");
             PanelCarta cartaVisual = new PanelCarta(reversoMazo);
             cartaVisual.setToolTipText("cartas restantes:" + cantidadCartas);
