@@ -97,7 +97,7 @@ public class PanelCarta extends JPanel {
             case "REVERSA": return "<-";
             case "MAS_2": return "+2";
             case "MAS_4": return "+4";
-            case "CAMBIO_COLOR": return "cambio";
+            case "CAMBIO_COLOR": return "CC";
             default: return valor; // Si es un número del "0" al "9", lo devuelve tal cual
         }
     }

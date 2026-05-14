@@ -29,6 +29,7 @@ vista\MenuPrincipal$1.class
 vista\MenuPrincipal$4.class
 vista\LobbyView$2.class
 vista\SeleccionPartida.class
+vista\DiseñosExtras\CartaReversoUNO.class
 controlador\ManoController.class
 vista\CrearPartida$6.class
 vista\SeleccionPartida$1.class

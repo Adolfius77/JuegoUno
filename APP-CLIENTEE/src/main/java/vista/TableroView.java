@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
 import javax.swing.JPanel;
+import vista.DiseñosExtras.CartaReversoUNO;
 import vista.DiseñosExtras.PanelCarta;
 
 /**
@@ -112,7 +113,32 @@ public class TableroView extends javax.swing.JPanel {
             }
         }
     }
-    
+    public void cargarCartasVolteadas(List<JugadorDTO> jugadores , String nombre){
+        JPanel[] mazosVolteados = {panelJugador2,panelAvatar3,panelAvatar4};
+        
+        for(JPanel panel: mazosVolteados){
+            panel.removeAll();
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, -20,10));
+        }
+        int indexPanel = 0;
+        for(JugadorDTO j : jugadores){
+            if(!j.getNombre().equals(nombre)){
+                if(indexPanel < mazosVolteados.length){
+                    int cantidadCartas = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
+                    for(int i = 0; i< cantidadCartas; i++){
+                        CartaReversoUNO reverso = new CartaReversoUNO();
+                        reverso.setPreferredSize(new Dimension(50,75));
+                        mazosVolteados[indexPanel].add(reverso);
+                    }
+                    mazosVolteados[indexPanel].revalidate();
+                    mazosVolteados[indexPanel].repaint();
+                    
+                    indexPanel++;
+                }
+            }
+        }
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
