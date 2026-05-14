@@ -93,8 +93,8 @@ public class PanelCarta extends JPanel {
 
         // Ya no necesitamos instanceof, evaluamos directamente el String
         switch (valor) {
-            case "SALTAR": return "Ø"; 
-            case "REVERSA": return "⇄";
+            case "SALTAR": return "\\u00D8"; 
+            case "REVERSA": return "\\u21C4";
             case "MAS_2": return "+2";
             case "MAS_4": return "+4";
             case "CAMBIO_COLOR": return "W";
