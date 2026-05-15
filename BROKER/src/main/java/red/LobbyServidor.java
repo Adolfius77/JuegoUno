@@ -7,6 +7,9 @@ package red;
 
 import Entidades.fabricas.CartaFactory;
 import Entidades.fabricas.EstadoFactory;
+import Entidades.Logica.Partida;
+import Entidades.Jugador;
+import Entidades.Mano;
 import Entidades.fabricas.MazoClasicoFactory;
 import Interfacez.IBroker;
 import Interfacez.IProxy;
@@ -67,6 +70,42 @@ public class LobbyServidor {
     }
 
     public void eliminarJugadorPorProxy(IProxy proxy) {
+        if (proxy == null) return;
+
+        Nodos.NodoCliente nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
+        String nombreJugador = nodo != null ? nodo.getNombre() : null;
+
         manejadorNodos.eliminarPorProxy(proxy);
+
+        try {
+            Partida partida = null;
+            if (this.juegoServidor != null) {
+                partida = this.juegoServidor.getPartidaActualEntidad();
+            }
+
+            if (partida != null && nombreJugador != null) {
+                Jugador desconectado = partida.getJugadores().stream()
+                        .filter(j -> nombreJugador.equalsIgnoreCase(j.getNombre()))
+                        .findFirst().orElse(null);
+
+                if (desconectado != null) {
+                    int jugadoresActivos = partida.getJugadores().size();
+                    if (jugadoresActivos <= 2) {
+                        Jugador ganador = partida.getJugadores().stream()
+                                .filter(j -> !j.getNombre().equalsIgnoreCase(nombreJugador))
+                                .findFirst().orElse(null);
+                        if (ganador != null) {
+                            partida.setEstado(EstadoFactory.crearEstadoFinalizada());
+                            partida.notificarObservador("PARTIDA_FINALIZADA:" + ganador.getNombre());
+                        }
+                    } else {
+                        desconectado.setMano(new Mano());
+                        partida.notificarObservador("JUGADOR_DESCONECTADO:" + nombreJugador);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("[LobbyServidor] Error al procesar desconexion de jugador: " + ex.getMessage());
+        }
     }
 }

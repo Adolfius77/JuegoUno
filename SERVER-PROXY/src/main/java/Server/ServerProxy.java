@@ -58,6 +58,21 @@ public class ServerProxy implements observadorRed {
         NodoCliente nodoExistente = nodosPorIp.get(ip);
         boolean esNuevoPorIp = nodoExistente == null;
         boolean esNuevaConexionMismaIp = nodoExistente != null && nodoExistente.getProxy() != proxy;
+        
+        if ("DESCONEXION".equalsIgnoreCase(mensaje.getTipo())) {
+            try {
+                if (nodoExistente != null && nodoExistente.getProxy() != null) {
+                    lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
+                    nodosPorIp.remove(ip);
+                    System.out.println("[SERVER-PROXY] Nodo desconectado y eliminado: " + nodoExistente.getNombre());
+                } else if (proxy != null) {
+                    lobbyServidor.eliminarJugadorPorProxy(proxy);
+                }
+            } catch (Exception ex) {
+                System.out.println("[SERVER-PROXY] Error procesando desconexion: " + ex.getMessage());
+            }
+            return;
+        }
 
         if (proxy != null && (esNuevoPorIp || esNuevaConexionMismaIp)) {
             if (esNuevaConexionMismaIp && nodoExistente.getProxy() != null) {
