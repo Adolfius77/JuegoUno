@@ -147,6 +147,24 @@ public class Partida implements IObservable {
         }
         return siguiente;
     }
+    public void tomarCartasHastaQueSeaJugable(Jugador jugador){
+        Carta cartaEnMesa = pilaCartas.obtenerUltimaCarta();
+        boolean cartaEncontrada = false;
+        
+        while(!cartaEncontrada){
+            if(mazo.estaVacio()){
+               mazo.recargar(pilaCartas);
+            }
+            Carta nuevaCarta = mazo.tomarCarta();
+            jugador.recibirCarta(nuevaCarta);
+            notificarObservador("CARTA_TOMADA" + jugador.getNombre());
+            
+            if(nuevaCarta.esJugable(cartaEnMesa)){
+                cartaEncontrada = true;
+            }
+            notificarObservador("LISTO_PARA_JUGAR" + jugador.getNombre());
+        }
+    }
 
     public void avanzarSiguienteIndice() {
         this.turnoActual = calcularSiguienteIndice();
