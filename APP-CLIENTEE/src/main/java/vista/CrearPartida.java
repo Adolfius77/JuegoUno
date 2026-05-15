@@ -8,6 +8,8 @@ import Interfaces.IVista;
 import cliente.ClienteProxy;
 import controlador.CrearPartidaController;
 import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -18,39 +20,86 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
 
     private CrearPartidaController controlador;
     private String nombreHost;
+    private String avatarHost;
     private ClienteProxy proxy;
+    private final JLabel etiquetaAvatar = new JLabel();
     private int limiteJugadores = 4;
 
     public CrearPartida() {
         initComponents();
     }
 
-    /**
-     * Constructor que recibe el nombre del host (el jugador que crea la sala)
-     */
     public CrearPartida(String nombreHost, ClienteProxy proxy) {
+        this(nombreHost, "", proxy);
+    }
+
+    public CrearPartida(String nombreHost, String avatarHost, ClienteProxy proxy) {
         this();
         this.nombreHost = nombreHost;
+        this.avatarHost = avatarHost;
         this.proxy = proxy;
         this.controlador = new controlador.CrearPartidaController(this, proxy);
         if (this.nombreHost != null && !this.nombreHost.isBlank()) {
             lblNombreUsuario.setText("Host: " + this.nombreHost);
         }
         configurarEventos();
+        mostrarDatosJugador();
     }
 
     private void configurarEventos() {
-        // botones para seleccionar limite
         btn2jugadores.addActionListener(e -> seleccionarLimite(2));
         btn3jugadore.addActionListener(e -> seleccionarLimite(3));
         btn4jugadores.addActionListener(e -> seleccionarLimite(4));
 
-        // volver a la pantalla anterior
         btnVolver.addActionListener(e -> {
-            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, "", this.proxy);
+            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, this.avatarHost != null ? this.avatarHost : "", this.proxy);
             sel.setVisible(true);
             dispose();
         });
+    }
+
+    private void mostrarDatosJugador() {
+        if (nombreHost != null && !nombreHost.isBlank()) {
+            lblNombreUsuario.setText("Host: " + nombreHost);
+        }
+
+        if (avatarHost != null && !avatarHost.isBlank()) {
+            panelAvatar.removeAll();
+            panelAvatar.setLayout(new BorderLayout());
+            etiquetaAvatar.setHorizontalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setHorizontalTextPosition(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalTextPosition(SwingConstants.BOTTOM);
+            etiquetaAvatar.setIcon(cargarAvatar(avatarHost));
+            etiquetaAvatar.setText(formatearNombreAvatar(avatarHost));
+            panelAvatar.add(etiquetaAvatar, BorderLayout.CENTER);
+            panelAvatar.revalidate();
+            panelAvatar.repaint();
+        }
+    }
+
+    private String formatearNombreAvatar(String avatarId) {
+        if (avatarId == null || avatarId.isBlank()) {
+            return "";
+        }
+
+        if (avatarId.startsWith("avatar")) {
+            String numero = avatarId.substring("avatar".length());
+            return numero.isBlank() ? avatarId : "Avatar " + numero;
+        }
+
+        return avatarId;
+    }
+
+    private ImageIcon cargarAvatar(String avatarId) {
+        String ruta = "/img/" + avatarId + ".png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        if (recurso != null) {
+            return new ImageIcon(recurso);
+        }
+        // fallback to default profile picture if specific avatar not found
+        java.net.URL defaultRecurso = getClass().getResource("/img/pfp.png");
+        return defaultRecurso != null ? new ImageIcon(defaultRecurso) : new ImageIcon();
     }
 
     private void seleccionarLimite(int limite) {

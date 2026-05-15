@@ -282,7 +282,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        abrirVentana(new CrearPartida(this.nombreUsuario, this.proxy));
+        abrirVentana(new CrearPartida(this.nombreUsuario, this.avatarUsuario != null ? this.avatarUsuario : "", this.proxy));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
