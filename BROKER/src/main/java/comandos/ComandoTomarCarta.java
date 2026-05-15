@@ -31,6 +31,7 @@ public class ComandoTomarCarta implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, proxy);
 
         try {
+          
             juegoServidor.tomarCarta(nombreJugador);
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_TOMAR_CARTA", e.getMessage());

@@ -98,7 +98,7 @@ public class JuegoServidor {
         Partida partida = validarPartidaActiva();
         Jugador jugador = obtenerJugador(nombreJugador);
         validarTurno(jugador);
-        partida.tomarCarta(jugador);
+        partida.tomarCartasHastaQueSeaJugable(jugador);
         return PartidaMapper.toDTO(partida);
     }
 
