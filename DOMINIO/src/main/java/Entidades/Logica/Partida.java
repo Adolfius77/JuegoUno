@@ -99,9 +99,11 @@ public class Partida implements IObservable {
         if (mazo.estaVacio()) {
             mazo.recargar(pilaCartas);
         }
-        Jugador actual =  getJugadorActual();
+        
+        int destinoIdx = calcularSiguienteIndice();
+        Jugador destino = jugadores.get(destinoIdx);
         for (int i = 0; i < cantidad; i++) {
-            actual.recibirCarta(mazo.tomarCarta());
+            destino.recibirCarta(mazo.tomarCarta());
         }
         notificarObservador("CARTAS_ACUMULADAS");
     }
