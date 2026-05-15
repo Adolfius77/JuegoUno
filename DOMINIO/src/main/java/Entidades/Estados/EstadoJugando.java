@@ -30,6 +30,8 @@ public class EstadoJugando implements IEstadoPartida {
             jugador.getMano().eliminarCarta(carta);
             partida.getPilaCartas().agregarCarta(carta);
 
+            Jugador jugadorAntes = partida.getJugadorActual();
+
             carta.aplicarEfecto(partida);
             partida.notificarObservador("CARTA_JUGADA");
 
@@ -38,7 +40,12 @@ public class EstadoJugando implements IEstadoPartida {
                 partida.setEstado(EstadoFactory.crearEstadoFinalizada());
                 return;
             }
-            partida.pasarTurno();
+
+            if (partida.getJugadorActual() != null && partida.getJugadorActual().equals(jugadorAntes)) {
+                partida.pasarTurno();
+            } else {
+                System.out.println("[DEBUG] El efecto de la carta ya avanzó el turno: jugadorAntes=" + (jugadorAntes!=null?jugadorAntes.getNombre():"<null>") + ", jugadorActualDespues=" + (partida.getJugadorActual()!=null?partida.getJugadorActual().getNombre():"<null>"));
+            }
 
         } else {
             System.out.println("Jugada invalida. La carta no coincide con el color o simbolo de la mesa.");
