@@ -28,6 +28,7 @@ import java.util.Objects;
  * @author USER
  */
 public class JuegoServidor {
+
     private final IBroker broker;
     private GestorJuegoFacade fachadaJuego;
     private final ICartaFactory cartaFactory;
@@ -44,7 +45,7 @@ public class JuegoServidor {
         this.estadoInicial = estadoInicial;
         //aqui pondremos los comandos para el caso de uso inicial que es ejercer turno
     }
-    
+
     public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
         this.fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
         this.fachadaJuego.prepararIniciarPartida(nombreJugadores);
@@ -123,7 +124,6 @@ public class JuegoServidor {
         return PartidaMapper.toDTO(partida);
     }
 
-
     public synchronized boolean debeGritarUno(String nombreJugador) {
         Partida partida = validarPartidaActiva();
         Jugador jugador = obtenerJugador(nombreJugador);
@@ -140,8 +140,8 @@ public class JuegoServidor {
         Partida partida = validarPartidaActiva();
         Jugador jugador = obtenerJugador(nombreJugador);
 
-        if (jugador.getMano() != null && !jugador.isDijoUno() &&
-            jugador.getMano().getCartas().size() > 1) {
+        if (jugador.getMano() != null && !jugador.isDijoUno()
+                && jugador.getMano().getCartas().size() > 1) {
             int cartasActuales = jugador.getMano().getCartas().size();
             if (cartasActuales == 2) {
                 for (int i = 0; i < 2; i++) {
