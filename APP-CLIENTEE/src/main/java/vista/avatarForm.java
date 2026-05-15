@@ -8,7 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
+import java.awt.Dimension;
 
 /**
  *
@@ -43,26 +43,48 @@ public class avatarForm extends javax.swing.JPanel {
     }
 
     private ImageIcon cargarImagen(String avatarId) {
-
         if (avatarId == null || avatarId.equals("no hay") || avatarId.isBlank()) {
             avatarId = "pfp";
         }
 
         String ruta = "/img/" + avatarId + ".png";
-        java.net.URL recurso = getClass().getResource(ruta);
-
-        if (recurso != null) {
-            return new ImageIcon(recurso);
-        } else {
-            System.out.println("No se encontró la imagen: " + ruta + " - Usando imagen por defecto.");
-
-            java.net.URL recursoPorDefecto = getClass().getResource("/img/pfp.png");
-            if (recursoPorDefecto != null) {
-                return new ImageIcon(recursoPorDefecto);
+        try {
+            System.out.println("[IMG] Intentando cargar imagen: " + ruta);
+            java.io.InputStream is = getClass().getResourceAsStream(ruta);
+            if (is != null) {
+                java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+                if (img != null) {
+                    System.out.println("[IMG] Cargada: " + ruta);
+                    return new ImageIcon(img);
+                }
+            } else {
+                System.out.println("[IMG] Recurso no encontrado: " + ruta);
             }
-
-            return new ImageIcon();
+            java.io.InputStream isDef = getClass().getResourceAsStream("/img/pfp.png");
+            if (isDef != null) {
+                java.awt.image.BufferedImage imgDef = javax.imageio.ImageIO.read(isDef);
+                if (imgDef != null) {
+                    System.out.println("[IMG] Cargada imagen por defecto: /img/pfp.png");
+                    return new ImageIcon(imgDef);
+                }
+            } else {
+                System.out.println("[IMG] Imagen por defecto no encontrada: /img/pfp.png");
+            }
+        } catch (Exception ex) {
+            System.out.println("Error cargando imagen '" + ruta + "': " + ex.getMessage());
         }
+
+        java.awt.image.BufferedImage placeholder = new java.awt.image.BufferedImage(65, 65, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2 = placeholder.createGraphics();
+        try {
+            g2.setColor(new java.awt.Color(200, 200, 200));
+            g2.fillRect(0, 0, 65, 65);
+            g2.setColor(new java.awt.Color(150, 150, 150));
+            g2.drawString("?", 28, 38);
+        } finally {
+            g2.dispose();
+        }
+        return new ImageIcon(placeholder);
     }
 
     private ImageIcon cargarIconoEstado(boolean estaListo) {
@@ -101,6 +123,9 @@ public class avatarForm extends javax.swing.JPanel {
 
             avatar.setIcon(new ImageIcon(imgEscalada));
             avatar.setText("");
+            avatar.setHorizontalAlignment(SwingConstants.CENTER);
+            avatar.setPreferredSize(new Dimension(65, 65));
+            avatar.setOpaque(false);
         }
         actualizarEstadoListo(estaListoUsuario);
     }

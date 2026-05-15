@@ -347,10 +347,24 @@ public class TableroView extends javax.swing.JPanel {
     }
 
     private String obtenerAvatarSeguro(JugadorDTO jugador) {
-        if (jugador == null || jugador.getAvatar() == null || jugador.getAvatar().isBlank()) {
+        if (jugador == null) {
             return "pfp";
         }
-        return jugador.getAvatar();
+        String a = jugador.getAvatar();
+        if (a == null || a.isBlank()) {
+            return "pfp";
+        }
+        try {
+            int lastSlash = Math.max(a.lastIndexOf('/'), a.lastIndexOf('\\'));
+            String base = lastSlash >= 0 ? a.substring(lastSlash + 1) : a;
+            if (base.toLowerCase().endsWith(".png")) {
+                base = base.substring(0, base.length() - 4);
+            }
+            if (base.isBlank()) return "pfp";
+            return base;
+        } catch (Exception ex) {
+            return "pfp";
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
