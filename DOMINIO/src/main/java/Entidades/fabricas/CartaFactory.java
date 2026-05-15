@@ -29,6 +29,6 @@ public class CartaFactory implements ICartaFactory{
     }
     @Override
     public Carta crearComodin(String id, Color color, boolean esMasCuatro){
-        return new cartaComodin(esMasCuatro, id, color);
+        return new cartaComodin(esMasCuatro, id);
     }
 }
