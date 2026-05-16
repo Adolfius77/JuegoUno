@@ -36,7 +36,7 @@ public class ComandoTomarCarta implements IComandoServidor {
             Partida partida = juegoServidor.getPartidaActualEntidad();
             Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
             juegoServidor.validarTurno(jugador);
-            partida.tomarCartasHastaQueSeaJugable(jugador);
+            partida.tomarCarta(jugador);
             
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_TOMAR_CARTA", e.getMessage());
