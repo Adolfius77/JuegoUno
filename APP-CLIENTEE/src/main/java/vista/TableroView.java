@@ -9,6 +9,7 @@ import dtos.CartaDTO;
 import dtos.JugadorDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
@@ -20,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import vista.DiseñosExtras.CartaReversoUNO;
@@ -90,7 +92,7 @@ public class TableroView extends javax.swing.JPanel {
     public void mostrarCartas(List<CartaDTO> manoDelServidor) {
         this.cartasMiMano = manoDelServidor != null ? new ArrayList<>(manoDelServidor) : new ArrayList<>();
         this.indiceSeleccionado = -1;
-        
+
         if (cartasMiMano.size() == 1 && esMiTurnoActual) {
             lblIndicadorUno.setVisible(true);
         } else {
@@ -227,16 +229,36 @@ public class TableroView extends javax.swing.JPanel {
             CartaDTO reversoMazo = new CartaDTO("ROJO", "UNO");
             PanelCarta cartaVisual = new PanelCarta(reversoMazo);
             cartaVisual.setToolTipText("cartas restantes:" + cantidadCartas);
+
+            cartaVisual.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            
+            cartaVisual.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (controlador != null) {
+                            if (esMiTurnoActual) {
+ 
+                                controlador.tomarCarta();
+                            } else {
+                                JOptionPane.showMessageDialog(TableroView.this, "¡Espera tu turno para robar!", "UNO", JOptionPane.WARNING_MESSAGE);
+                            }
+                        }
+                    }
+                }
+            });
+
             panelPilaCartas.add(cartaVisual, BorderLayout.CENTER);
         }
         panelPilaCartas.revalidate();
         panelPilaCartas.repaint();
     }
-    
-    public void actulizarRivales(List<JugadorDTO> jugadores, String miNombre){
-        JPanel[] panelesAvatares = {panelAvatar1,panelAvatar2,panelAvatar3,panelAvatar4};
 
-        for(JPanel panel: panelesAvatares){
+    public void actulizarRivales(List<JugadorDTO> jugadores, String miNombre) {
+        JPanel[] panelesAvatares = {panelAvatar1, panelAvatar2, panelAvatar3, panelAvatar4};
+
+        for (JPanel panel : panelesAvatares) {
             panel.removeAll();
             panel.setLayout(new BorderLayout());
             panel.setVisible(false);
@@ -249,22 +271,23 @@ public class TableroView extends javax.swing.JPanel {
         }
 
         int indexPanel = 1;
-        for(JugadorDTO j: obtenerRivales(jugadores, miNombre)){
-            if(indexPanel < panelesAvatares.length){
+        for (JugadorDTO j : obtenerRivales(jugadores, miNombre)) {
+            if (indexPanel < panelesAvatares.length) {
                 panelesAvatares[indexPanel].setVisible(true);
-                panelesAvatares[indexPanel].add(new avatarForm(j.getNombre(), obtenerAvatarSeguro(j), j.isEstaListo()),BorderLayout.CENTER);
+                panelesAvatares[indexPanel].add(new avatarForm(j.getNombre(), obtenerAvatarSeguro(j), j.isEstaListo()), BorderLayout.CENTER);
                 indexPanel++;
             }
         }
 
-        for(JPanel panel: panelesAvatares){
+        for (JPanel panel : panelesAvatares) {
             panel.revalidate();
             panel.repaint();
         }
     }
-    public void actualizarPanelesNumeroCartas(List<JugadorDTO> jugadores, String miNombre){
-        JPanel[] panelNumero = {panelNumeroCartas1,panelNumeroCartas2,panelNumeroCartas3,panelNumeroCartas4};
-        for(JPanel panel: panelNumero){
+
+    public void actualizarPanelesNumeroCartas(List<JugadorDTO> jugadores, String miNombre) {
+        JPanel[] panelNumero = {panelNumeroCartas1, panelNumeroCartas2, panelNumeroCartas3, panelNumeroCartas4};
+        for (JPanel panel : panelNumero) {
             panel.removeAll();
             panel.setLayout(new BorderLayout());
             panel.setVisible(false);
@@ -279,38 +302,39 @@ public class TableroView extends javax.swing.JPanel {
         }
 
         int indexPanel = 1;
-        for(JugadorDTO j: obtenerRivales(jugadores, miNombre)){
-            if(indexPanel < panelNumero.length){
+        for (JugadorDTO j : obtenerRivales(jugadores, miNombre)) {
+            if (indexPanel < panelNumero.length) {
                 int cantidad = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
                 NumeroDeCartasForm numero = new NumeroDeCartasForm();
                 numero.MostrarNumeroCartas(cantidad);
                 panelNumero[indexPanel].setVisible(true);
-                panelNumero[indexPanel].add(numero,BorderLayout.CENTER);
+                panelNumero[indexPanel].add(numero, BorderLayout.CENTER);
                 indexPanel++;
             }
         }
-        for(JPanel panel: panelNumero){
+        for (JPanel panel : panelNumero) {
             panel.revalidate();
             panel.repaint();
         }
     }
-    public void cargarCartasVolteadas(List<JugadorDTO> jugadores , String nombre){
-        JPanel[] mazosVolteados = {panelJugador2,panelJugador3,panelJugador4};
 
-        for(JPanel panel: mazosVolteados){
+    public void cargarCartasVolteadas(List<JugadorDTO> jugadores, String nombre) {
+        JPanel[] mazosVolteados = {panelJugador2, panelJugador3, panelJugador4};
+
+        for (JPanel panel : mazosVolteados) {
             panel.removeAll();
-            panel.setLayout(new FlowLayout(FlowLayout.CENTER, -20,10));
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
             panel.setVisible(false);
         }
 
         int indexPanel = 0;
-        for(JugadorDTO j : obtenerRivales(jugadores, nombre)){
-            if(indexPanel < mazosVolteados.length){
+        for (JugadorDTO j : obtenerRivales(jugadores, nombre)) {
+            if (indexPanel < mazosVolteados.length) {
                 int cantidadCartas = (j.getMano() != null) ? j.getMano().getCartas().size() : 0;
                 mazosVolteados[indexPanel].setVisible(true);
-                for(int i = 0; i< cantidadCartas; i++){
+                for (int i = 0; i < cantidadCartas; i++) {
                     CartaReversoUNO reverso = new CartaReversoUNO();
-                    reverso.setPreferredSize(new Dimension(50,75));
+                    reverso.setPreferredSize(new Dimension(50, 75));
                     mazosVolteados[indexPanel].add(reverso);
                 }
                 mazosVolteados[indexPanel].revalidate();
@@ -360,12 +384,15 @@ public class TableroView extends javax.swing.JPanel {
             if (base.toLowerCase().endsWith(".png")) {
                 base = base.substring(0, base.length() - 4);
             }
-            if (base.isBlank()) return "pfp";
+            if (base.isBlank()) {
+                return "pfp";
+            }
             return base;
         } catch (Exception ex) {
             return "pfp";
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

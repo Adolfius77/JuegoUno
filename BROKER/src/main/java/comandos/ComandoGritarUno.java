@@ -6,9 +6,6 @@ import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
-import enums.TipoMensaje;
-import static enums.TipoMensaje.ERROR_GRITAR_UNO;
-import static enums.TipoMensaje.UNO_GRITADO;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 
@@ -43,7 +40,7 @@ public class ComandoGritarUno implements IComandoServidor {
                 throw new IllegalStateException("El jugador no tiene 1 sola carta. UNO inválido.");
             }
             jugador.setDijoUno(true);
-            partida.notificarObservador(UNO_GRITADO.name() +":" + nombreJugador);
+            partida.notificarObservador("UNO_GRITADO" +":" + nombreJugador);
 
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_GRITAR_UNO", e.getMessage());

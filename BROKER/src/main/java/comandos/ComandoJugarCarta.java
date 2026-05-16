@@ -10,8 +10,6 @@ import Nodos.NodoCliente;
 import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.MensajeDTO;
-import enums.TipoMensaje;
-import static enums.TipoMensaje.*;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 

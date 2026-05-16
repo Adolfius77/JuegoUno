@@ -282,4 +282,21 @@ public class GameController {
         );
         return seleccion != null ? seleccion.toString() : null;
     }
+    public boolean tieneCartasJugables(){
+        for(CartaDTO carta: getMiMano()){
+            if(esJugable(carta)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public void intentarRobarDelMazo(){
+        if(tieneCartasJugables()){
+            if(vista != null){
+                vista.mostrarMensaje("no puedes robar ya tienes cartas jugables en tu mano");
+            }
+            return;
+        }
+        tomarCarta();
+    }
 }

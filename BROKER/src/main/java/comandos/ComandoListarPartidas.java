@@ -2,7 +2,6 @@ package comandos;
 
 import Interfacez.IProxy;
 import dtos.MensajeDTO;
-import static enums.TipoMensaje.*;
 import interfaces.IComandoServidor;
 import java.util.HashMap;
 import java.util.Map;

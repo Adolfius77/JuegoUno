@@ -6,8 +6,6 @@ import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
-import enums.TipoMensaje;
-import static enums.TipoMensaje.ERROR_TOMAR_CARTA;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 
