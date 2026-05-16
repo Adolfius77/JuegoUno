@@ -7,11 +7,17 @@ import dtos.CartaDTO;
 import dtos.JugadorDTO;
 import dtos.MensajeDTO;
 import dtos.PartidaDTO;
+
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 import vista.podioView;
 
 public class GameController {
@@ -21,6 +27,8 @@ public class GameController {
     private final String miNombre;
     private PartidaDTO estadoPartida;
 
+    private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
+
     public GameController(ClienteProxy proxy, IVista vista, String miNombre) {
         if (proxy == null || vista == null) {
             throw new IllegalArgumentException("proxy y vista son obligatorios");
@@ -29,6 +37,9 @@ public class GameController {
         this.proxy = proxy;
         this.vista = vista;
         this.miNombre = miNombre != null ? miNombre : "";
+        this.manejadoresEventos = new HashMap<>();
+
+        inicializarComandos();
         configurarReceptorRed();
     }
 
@@ -37,94 +48,80 @@ public class GameController {
             procesarEventoRed(mensaje);
         });
     }
-    //getters 
 
-    public String getMiNombre() {
-        return this.miNombre;
-    }
+    private void inicializarComandos() {
+        manejadoresEventos.put("PARTIDA_INICIADA", this::procesarActualizacionMesa);
+        manejadoresEventos.put("ACTUALIZACION_MESA", this::procesarActualizacionMesa);
+        manejadoresEventos.put("ACTUALIZACION_TABLERO", this::procesarActualizacionMesa);
+        manejadoresEventos.put("PARTIDA_FINALIZADA", this::procesarFinDePartida);
 
-    public PartidaDTO getEstadoPartida() {
-        return this.estadoPartida;
-    }
-
-    public List<CartaDTO> getMiMano() {
-        if (estadoPartida == null || estadoPartida.getJugadores() == null) {
-            return Collections.emptyList();
-        }
-        for (JugadorDTO j : estadoPartida.getJugadores()) {
-            if (j != null && miNombre.equals(j.getNombre())) {
-                return j.getMano() != null ? j.getMano().getCartas() : Collections.emptyList();
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    public CartaDTO getCartaCentro() {
-        return estadoPartida != null ? estadoPartida.getCartaCentro() : null;
-    }
-
-    public int getCartasRestantesMazo() {
-        return estadoPartida != null ? estadoPartida.getCartasRestantesMazo() : 0;
     }
 
     public void procesarEventoRed(MensajeDTO mensaje) {
-        if (mensaje == null) {
+        if (mensaje == null || mensaje.getTipo() == null) {
             return;
         }
 
         String tipoMensaje = mensaje.getTipo();
 
-        if (tipoMensaje != null && tipoMensaje.startsWith("ERROR_")) {
-            String motivo = "No se pudo completar la accion.";
+        if (tipoMensaje.startsWith("ERROR_")) {
+            String motivoTemp = "No se pudo completar la accion.";
             if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
-                motivo = String.valueOf(mensaje.getDatos().get("motivo"));
+                motivoTemp = String.valueOf(mensaje.getDatos().get("motivo"));
             }
+            final String motivoFinal = motivoTemp;
+
             if (vista != null) {
-                vista.mostrarMensaje(motivo);
+                SwingUtilities.invokeLater(() -> vista.mostrarMensaje(motivoFinal));
             }
             return;
         }
 
-        if ("PARTIDA_FINALIZADA".equals(tipoMensaje)) {
-            String ganador = "";
-            if (mensaje.getDatos() != null && mensaje.getDatos().get("ganador") != null) {
-                ganador = String.valueOf(mensaje.getDatos().get("ganador"));
-            }
+        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
+        if (manejador != null) {
+            manejador.accept(mensaje);
+        } else {
+            System.out.println("[GameController] Evento ignorado: " + tipoMensaje);
+        }
+    }
 
-            final String ganadorFinal = ganador;
+    private void procesarActualizacionMesa(MensajeDTO mensaje) {
+        if (mensaje.getDatos() == null || !mensaje.getDatos().containsKey("partida")) {
+            return;
+        }
+
+        Object objetoCrudo = mensaje.getDatos().get("partida");
+        Gson gson = new Gson();
+        String jsonTemporal = gson.toJson(objetoCrudo);
+        PartidaDTO nuevaPartida = gson.fromJson(jsonTemporal, PartidaDTO.class);
+
+        if (nuevaPartida != null) {
+            this.estadoPartida = nuevaPartida;
             SwingUtilities.invokeLater(() -> {
                 if (vista != null) {
-                    vista.cerrarVista();
+                    vista.actualizar("ACTUALIZAR_TABLERO");
                 }
-                podioView podio = new podioView();
-                if (!ganadorFinal.isBlank()) {
-                    podio.mostrarMensaje("Ganador: " + ganadorFinal);
-                }
-                podio.mostrarVista();
             });
-            return;
+        }
+    }
+
+    private void procesarFinDePartida(MensajeDTO mensaje) {
+        String ganadorTemp = "";
+        if (mensaje.getDatos() != null && mensaje.getDatos().get("ganador") != null) {
+            ganadorTemp = String.valueOf(mensaje.getDatos().get("ganador"));
         }
 
-        if ("PARTIDA_INICIADA".equals(tipoMensaje) || "ACTUALIZACION_MESA".equals(tipoMensaje) || "ACTUALIZACION_TABLERO".equals(tipoMensaje)) {
-            if (mensaje.getDatos() == null || !mensaje.getDatos().containsKey("partida")) {
-                return;
+        final String ganadorFinal = ganadorTemp;
+        SwingUtilities.invokeLater(() -> {
+            if (vista != null) {
+                vista.cerrarVista();
             }
-
-            Object objetoCrudo = mensaje.getDatos().get("partida");
-
-            Gson gson = new com.google.gson.Gson();
-            String jsonTemporal = gson.toJson(objetoCrudo);
-            PartidaDTO nuevaPartida = gson.fromJson(jsonTemporal, PartidaDTO.class);
-
-            if (nuevaPartida != null) {
-                this.estadoPartida = nuevaPartida;
-                SwingUtilities.invokeLater(() -> {
-                    if (vista != null) {
-                        vista.actualizar("ACTUALIZAR_TABLERO");
-                    }
-                });
+            podioView podio = new podioView();
+            if (!ganadorFinal.isBlank()) {
+                podio.mostrarMensaje("Ganador: " + ganadorFinal);
             }
-        }
+            podio.mostrarVista();
+        });
     }
 
     public void jugarCarta(CartaDTO carta) {
@@ -136,6 +133,7 @@ public class GameController {
         peticion.setTipo("PETICION_JUGAR_CARTA");
         peticion.setRemitente(miNombre);
         peticion.getDatos().put("carta", carta);
+
         if (colorElegido != null && !colorElegido.isBlank()) {
             peticion.getDatos().put("colorElegido", colorElegido);
         }
@@ -215,6 +213,34 @@ public class GameController {
         tomarCarta();
     }
 
+    public String getMiNombre() {
+        return this.miNombre;
+    }
+
+    public PartidaDTO getEstadoPartida() {
+        return this.estadoPartida;
+    }
+
+    public List<CartaDTO> getMiMano() {
+        if (estadoPartida == null || estadoPartida.getJugadores() == null) {
+            return Collections.emptyList();
+        }
+        for (JugadorDTO j : estadoPartida.getJugadores()) {
+            if (j != null && miNombre.equals(j.getNombre())) {
+                return j.getMano() != null ? j.getMano().getCartas() : Collections.emptyList();
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    public CartaDTO getCartaCentro() {
+        return estadoPartida != null ? estadoPartida.getCartaCentro() : null;
+    }
+
+    public int getCartasRestantesMazo() {
+        return estadoPartida != null ? estadoPartida.getCartasRestantesMazo() : 0;
+    }
+
     private boolean esJugable(CartaDTO carta) {
         if (carta == null) {
             return false;
@@ -232,6 +258,7 @@ public class GameController {
 
         String colorCentro = normalizar(cartaCentro.getColor());
         String valorCentro = normalizar(cartaCentro.getValor());
+
         if (Objects.equals(normalizar(carta.getColor()), colorCentro)) {
             return true;
         }
