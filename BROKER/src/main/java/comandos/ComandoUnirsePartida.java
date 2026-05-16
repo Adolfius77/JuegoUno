@@ -8,6 +8,7 @@ import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
+import static enums.TipoMensaje.*;
 import interfaces.IComandoServidor;
 import java.util.HashMap;
 import java.util.List;

@@ -38,7 +38,7 @@ public class Partida implements IObservable {
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
         this.estado = estado;
-        this.id = java.util.UUID.randomUUID().toString(); 
+        this.id = java.util.UUID.randomUUID().toString();
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
         this.saltarTurno = false;
@@ -51,7 +51,7 @@ public class Partida implements IObservable {
 
     public void verificarGanador() {
         for (Jugador jugador : jugadores) {
-            if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()){
+            if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()) {
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
                 notificarObservador("PARTIDA_FINALIZADA:" + jugador.getNombre());
                 return;
@@ -60,9 +60,9 @@ public class Partida implements IObservable {
     }
 
     public void jugarCarta(Carta carta, Jugador jugador) {
-       estado.jugarCarta(this, jugador, carta);
-       jugador.setDijoUno(false);
-       verificarGanador();
+        estado.jugarCarta(this, jugador, carta);
+        jugador.setDijoUno(false);
+        verificarGanador();
     }
 
     public void tomarCarta(Jugador jugador) {
@@ -100,15 +100,17 @@ public class Partida implements IObservable {
             mazo.recargar(pilaCartas);
         }
 
-        if (jugadores == null || jugadores.isEmpty()) return;
+        if (jugadores == null || jugadores.isEmpty()) {
+            return;
+        }
         int destinoIdx = calcularSiguienteIndice();
         destinoIdx = ((destinoIdx % jugadores.size()) + jugadores.size()) % jugadores.size();
         Jugador destino = jugadores.get(destinoIdx);
-        
+
         Jugador actual = getJugadorActual();
-        System.out.println("[DEBUG] acomularCartas -> cantidad=" + cantidad + ", turnoActualIdx=" + turnoActual +
-                ", jugadorActual=" + (actual != null ? actual.getNombre() : "<null>") +
-                ", destinoIdx=" + destinoIdx + ", destino=" + (destino != null ? destino.getNombre() : "<null>"));
+        System.out.println("[DEBUG] acomularCartas -> cantidad=" + cantidad + ", turnoActualIdx=" + turnoActual
+                + ", jugadorActual=" + (actual != null ? actual.getNombre() : "<null>")
+                + ", destinoIdx=" + destinoIdx + ", destino=" + (destino != null ? destino.getNombre() : "<null>"));
 
         for (int i = 0; i < cantidad; i++) {
             destino.recibirCarta(mazo.tomarCarta());
@@ -131,13 +133,15 @@ public class Partida implements IObservable {
         if (this.jugadores.isEmpty()) {
             jugador.setEsHost(true);
         }
-        estado.agregarJugador(this,jugador);
+        estado.agregarJugador(this, jugador);
         return jugador;
     }
 
     public int calcularSiguienteIndice() {
         int numeroJugadores = jugadores.size();
-        if (numeroJugadores == 0) return 0;
+        if (numeroJugadores == 0) {
+            return 0;
+        }
 
         int siguiente;
         if (this.sentido == Sentido.HORARIO) {
@@ -147,19 +151,20 @@ public class Partida implements IObservable {
         }
         return siguiente;
     }
-    public void tomarCartasHastaQueSeaJugable(Jugador jugador){
+
+    public void tomarCartasHastaQueSeaJugable(Jugador jugador) {
         Carta cartaEnMesa = pilaCartas.obtenerUltimaCarta();
         boolean cartaEncontrada = false;
-        
-        while(!cartaEncontrada){
-            if(mazo.estaVacio()){
-               mazo.recargar(pilaCartas);
+
+        while (!cartaEncontrada) {
+            if (mazo.estaVacio()) {
+                mazo.recargar(pilaCartas);
             }
             Carta nuevaCarta = mazo.tomarCarta();
             jugador.recibirCarta(nuevaCarta);
             notificarObservador("CARTA_TOMADA" + jugador.getNombre());
-            
-            if(nuevaCarta.esJugable(cartaEnMesa)){
+
+            if (nuevaCarta.esJugable(cartaEnMesa)) {
                 cartaEncontrada = true;
             }
             notificarObservador("LISTO_PARA_JUGAR" + jugador.getNombre());

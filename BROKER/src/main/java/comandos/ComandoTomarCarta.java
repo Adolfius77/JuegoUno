@@ -1,9 +1,13 @@
 package comandos;
 
+import Entidades.Jugador;
+import Entidades.Logica.Partida;
 import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
+import enums.TipoMensaje;
+import static enums.TipoMensaje.ERROR_TOMAR_CARTA;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 
@@ -31,8 +35,11 @@ public class ComandoTomarCarta implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, proxy);
 
         try {
-          
-            juegoServidor.tomarCarta(nombreJugador);
+            Partida partida = juegoServidor.getPartidaActualEntidad();
+            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
+            juegoServidor.validarTurno(jugador);
+            partida.tomarCartasHastaQueSeaJugable(jugador);
+            
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_TOMAR_CARTA", e.getMessage());
         }

@@ -1,9 +1,13 @@
 package comandos;
 
+import Entidades.Jugador;
+import Entidades.Logica.Partida;
 import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
+import enums.TipoMensaje;
+import static enums.TipoMensaje.ERROR_PASAR_TURNO;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 
@@ -31,7 +35,11 @@ public class ComandoPasarTurno implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, proxy);
 
         try {
-            juegoServidor.pasarTurno(nombreJugador);
+            Partida partida = juegoServidor.validarPartidaActiva();
+            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
+            juegoServidor.validarTurno(jugador);
+            partida.pasarTurno();
+            
         } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_PASAR_TURNO", e.getMessage());
         }

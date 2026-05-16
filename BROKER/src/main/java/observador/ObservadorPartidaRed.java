@@ -7,6 +7,8 @@ import Nodos.NodoCliente;
 import Observer.IObserver;
 import dtos.MensajeDTO;
 import dtos.PartidaDTO;
+import static enums.TipoMensaje.*;
+
 
 public class ObservadorPartidaRed implements IObserver {
     private final Partida partidaObservada;
@@ -23,7 +25,7 @@ public class ObservadorPartidaRed implements IObserver {
         PartidaDTO estadoActual = PartidaMapper.toDTO(this.partidaObservada);
 
         MensajeDTO mensaje = new MensajeDTO();
-        if (evento != null && evento.startsWith("PARTIDA_FINALIZADA")) {
+        if (evento != null && evento.startsWith(PARTIDA_FINALIZADA.name())) {
             mensaje.setTipo("PARTIDA_FINALIZADA");
             String ganador = evento.contains(":") ? evento.substring(evento.indexOf(":") + 1) : "";
             mensaje.getDatos().put("ganador", ganador);

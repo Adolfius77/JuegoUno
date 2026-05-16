@@ -65,65 +65,6 @@ public class JuegoServidor {
         return PartidaMapper.toDTO(this.partidaActual);
     }
 
-    public synchronized PartidaDTO jugarCarta(String nombreJugador, CartaDTO cartaDTO) {
-        return jugarCarta(nombreJugador, cartaDTO, null);
-    }
-
-    public synchronized PartidaDTO jugarCarta(String nombreJugador, CartaDTO cartaDTO, String colorElegido) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-        validarTurno(jugador);
-
-        Carta carta = buscarCartaEnMano(jugador, cartaDTO);
-        if (carta == null) {
-            throw new IllegalArgumentException("La carta seleccionada no esta en la mano del jugador.");
-        }
-
-        Carta cartaMesa = partida.getPilaCartas() != null && !partida.getPilaCartas().getListaCartas().isEmpty()
-                ? partida.getPilaCartas().obtenerUltimaCarta()
-                : null;
-        if (cartaMesa != null && !carta.esJugable(cartaMesa)) {
-            throw new IllegalStateException("La carta no es jugable sobre la mesa actual.");
-        }
-
-        Color colorAplicado = colorDesdeTexto(colorElegido);
-        if (colorAplicado != null && cartaDTO != null) {
-            carta.setColor(colorAplicado);
-        }
-
-        partida.jugarCarta(carta, jugador);
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public synchronized PartidaDTO tomarCarta(String nombreJugador) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-        validarTurno(jugador);
-        partida.tomarCartasHastaQueSeaJugable(jugador);
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public synchronized PartidaDTO pasarTurno(String nombreJugador) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-        validarTurno(jugador);
-        partida.pasarTurno();
-        return PartidaMapper.toDTO(partida);
-    }
-
-    public synchronized PartidaDTO gritarUno(String nombreJugador) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-
-        if (jugador.getMano() == null || jugador.getMano().getCartas().size() != 1) {
-            throw new IllegalStateException("El jugador no tiene 1 sola carta. UNO inválido.");
-        }
-
-        jugador.setDijoUno(true);
-        partida.notificarObservador("UNO_GRITADO:" + nombreJugador);
-        return PartidaMapper.toDTO(partida);
-    }
-
     public synchronized boolean debeGritarUno(String nombreJugador) {
         Partida partida = validarPartidaActiva();
         Jugador jugador = obtenerJugador(nombreJugador);
@@ -156,7 +97,7 @@ public class JuegoServidor {
         return PartidaMapper.toDTO(partida);
     }
 
-    private Partida validarPartidaActiva() {
+    public Partida validarPartidaActiva() {
         if (this.partidaActual == null) {
             throw new IllegalStateException("No hay una partida activa.");
         }
@@ -166,7 +107,7 @@ public class JuegoServidor {
         return this.partidaActual;
     }
 
-    private Jugador obtenerJugador(String nombreJugador) {
+    public Jugador obtenerJugador(String nombreJugador) {
         if (nombreJugador == null || nombreJugador.isBlank()) {
             throw new IllegalArgumentException("El nombre del jugador es obligatorio.");
         }
@@ -177,7 +118,7 @@ public class JuegoServidor {
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro el jugador en la partida."));
     }
 
-    private void validarTurno(Jugador jugador) {
+    public void validarTurno(Jugador jugador) {
         Partida partida = validarPartidaActiva();
         if (partida.getJugadorActual() == null) {
             throw new IllegalStateException("La partida aun no tiene turno activo.");
@@ -187,7 +128,7 @@ public class JuegoServidor {
         }
     }
 
-    private Carta buscarCartaEnMano(Jugador jugador, CartaDTO cartaDTO) {
+    public Carta buscarCartaEnMano(Jugador jugador, CartaDTO cartaDTO) {
         if (jugador == null || jugador.getMano() == null || cartaDTO == null) {
             return null;
         }
@@ -206,7 +147,7 @@ public class JuegoServidor {
         return texto == null ? "" : texto.trim().toUpperCase();
     }
 
-    private Color colorDesdeTexto(String color) {
+    public Color colorDesdeTexto(String color) {
         if (color == null || color.isBlank()) {
             return null;
         }

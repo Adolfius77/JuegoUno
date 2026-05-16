@@ -1,11 +1,17 @@
 package comandos;
 
+import Entidades.Carta;
+import Entidades.Jugador;
+import Entidades.Logica.Partida;
+import Entidades.enums.Color; 
 import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.MensajeDTO;
+import enums.TipoMensaje;
+import static enums.TipoMensaje.*;
 import interfaces.IComandoServidor;
 import red.JuegoServidor;
 
@@ -30,15 +36,49 @@ public class ComandoJugarCarta implements IComandoServidor {
         }
 
         String nombreJugador = mensaje.getRemitente();
-        CartaDTO carta = convertirCartaDTO(mensaje.getDatos().get("carta"));
-        String colorElegido = mensaje.getDatos().get("colorElegido") != null ? String.valueOf(mensaje.getDatos().get("colorElegido")) : null;
         IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
         NodoCliente nodo = resolverNodo(nombreJugador, proxy);
 
         try {
-            juegoServidor.jugarCarta(nombreJugador, carta, colorElegido);
+           
+            CartaDTO cartaDTO = convertirCartaDTO(mensaje.getDatos().get("carta"));
+            String colorElegido = mensaje.getDatos().get("colorElegido") != null
+                    ? String.valueOf(mensaje.getDatos().get("colorElegido"))
+                    : null;
+
+            
+            Partida partida = juegoServidor.getPartidaActualEntidad();
+            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
+
+          
+            juegoServidor.validarTurno(jugador);
+
+            Carta carta = juegoServidor.buscarCartaEnMano(jugador, cartaDTO);
+            if (carta == null) {
+                throw new IllegalArgumentException("La carta seleccionada no está en la mano del jugador.");
+            }
+
+          
+            Carta cartaMesa = partida.getPilaCartas() != null && !partida.getPilaCartas().getListaCartas().isEmpty()
+                    ? partida.getPilaCartas().obtenerUltimaCarta()
+                    : null;
+
+            if (cartaMesa != null && !carta.esJugable(cartaMesa)) {
+                throw new IllegalStateException("La carta no es jugable sobre la mesa actual.");
+            }
+
+            if (colorElegido != null && !colorElegido.isBlank()) {
+                Color colorAplicado = juegoServidor.colorDesdeTexto(colorElegido);
+                if (colorAplicado != null) {
+                    carta.setColor(colorAplicado);
+                }
+            }
+
+            partida.jugarCarta(carta, jugador);
+
         } catch (Exception e) {
-            enviarError(nodo, proxy, "ERROR_JUGAR_CARTA", e.getMessage());
+
+            enviarError(nodo, proxy, "ERROR_GENERAL", e.getMessage());
         }
     }
 
@@ -79,4 +119,3 @@ public class ComandoJugarCarta implements IComandoServidor {
         }
     }
 }
-

@@ -4,10 +4,12 @@ import Interfaces.IVista;
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 
 import vista.GameView;
@@ -27,6 +29,7 @@ public class LobbyController {
     private String nombreJugadorLocal;
     private List<Map<String, String>> listaJugadores;
     private LobbyView lobby;
+    private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
 
     public LobbyController(ClienteProxy clienteProxy, String codigoSala, String nombreHost, Boolean esHost, LobbyView lobby) {
         if (clienteProxy == null) {
@@ -38,6 +41,9 @@ public class LobbyController {
         this.esHost = esHost;
         this.lobby = lobby;
         this.vista = lobby;
+        this.manejadoresEventos = new HashMap<>();
+
+        inicializarComandos();
 
         if (this.lobby != null) {
             this.lobby.setControlador(this);
@@ -51,6 +57,149 @@ public class LobbyController {
         configurarReceptorRed();
     }
 
+    //Peticiones al Servidor
+    public void registrarJugador(String nombreJugador, String avatar) {
+        if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
+            System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
+
+            this.nombreJugadorTemporal = nombreJugador;
+            this.nombreAvatarTemporal = avatar;
+
+            MensajeRegistroDTO msjRegistro = new MensajeRegistroDTO();
+            msjRegistro.setTipo("REGISTRO_JUGADOR");
+            msjRegistro.setRemitente("CLIENTE");
+
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("nombre", nombreJugador);
+            datos.put("avatar", avatar);
+
+            msjRegistro.setDatos(datos);
+            clienteProxy.enviarMensaje(msjRegistro);
+        } else {
+            if (vista != null) {
+                vista.mostrarMensaje("El nombre del jugador es obligatorio");
+            }
+        }
+    }
+
+    public void marcarJugadorLocalListo() {
+        actualizarEstadoListo(true);
+    }
+
+    public void cancelarJugadorLocalListo() {
+        actualizarEstadoListo(false);
+    }
+
+    public void iniciarPartida() {
+        if (!esHost()) {
+            if (vista != null) {
+                vista.mostrarMensaje("Solo el host puede iniciar la partida.");
+            }
+            return;
+        }
+        if (!estanTodosListos()) {
+            if (vista != null) {
+                vista.mostrarMensaje("Todos los jugadores deben estar listos para iniciar.");
+            }
+            return;
+        }
+        System.out.println("Controlador: Solicitando al servidor iniciar la partida...");
+        MensajeDTO msjInicio = new MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("codigoSala", codigoSala);
+        msjInicio.setDatos(datos);
+        clienteProxy.enviarMensaje(msjInicio);
+    }
+
+    
+    // Respuestas del Servidor
+    private void configurarReceptorRed() {
+        clienteProxy.setReceptor(mensaje -> {
+            procesarEventoRed(mensaje);
+        });
+    }
+
+    public void inicializarComandos() {
+        manejadoresEventos.put("REGISTRO_EXITOSO", this::procesarRegistroExitoso);
+        manejadoresEventos.put("PARTIDA_INICIADA", this::procesarInicioPartida);
+        manejadoresEventos.put("INTENCION_INICIAR_PARTIDA", this::procesarInicioPartida);
+        manejadoresEventos.put("LISTA_ACTUALIZADA", this::procesarListaActualizada);
+        manejadoresEventos.put("ERROR_INICIAR_PARTIDA", this::procesarErrorIniciarPartida);
+    }
+
+    public void procesarEventoRed(MensajeDTO mensaje) {
+        if (mensaje == null || mensaje.getTipo() == null) {
+            return;
+        }
+        String tipoMensaje = mensaje.getTipo();
+        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
+
+        if (manejador != null) {
+            manejador.accept(mensaje);
+        } else {
+            System.out.println("[lobby-controller] evento ignorado: " + tipoMensaje);
+        }
+    }
+
+    private void procesarRegistroExitoso(MensajeDTO mensaje) {
+        System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
+        SwingUtilities.invokeLater(() -> {
+            if (vista != null) {
+                this.vista.cerrarVista();
+            }
+            SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal, this.clienteProxy);
+            seleccionVista.setVisible(true);
+            this.setVista(seleccionVista);
+        });
+    }
+
+    private void procesarInicioPartida(MensajeDTO mensaje) {
+        System.out.println("La partida va a comenzar, cambiando de pantalla...");
+        SwingUtilities.invokeLater(() -> {
+            if (vista != null) {
+                this.vista.cerrarVista();
+            }
+
+            GameView vistaJuego = new GameView();
+            GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
+            vistaJuego.setController(controladorJuego);
+
+            if ("PARTIDA_INICIADA".equals(mensaje.getTipo())) {
+                controladorJuego.procesarEventoRed(mensaje);
+            }
+
+            vistaJuego.setVisible(true);
+        });
+    }
+
+    private void procesarListaActualizada(MensajeDTO mensaje) {
+        if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
+            Object jugadores = mensaje.getDatos().get("jugadores");
+            if (jugadores instanceof List<?>) {
+                this.listaJugadores = normalizarJugadores((List<?>) jugadores);
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("Controlador: Notificando a la vista que la lista cambio...");
+                if (this.vista != null) {
+                    this.vista.actualizar("CAMBIO_LISTA_JUGADORES");
+                }
+            });
+        }
+    }
+
+    private void procesarErrorIniciarPartida(MensajeDTO mensaje) {
+        if (vista != null) {
+            String motivoTemp = "No se pudo iniciar la partida.";
+            if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
+                motivoTemp = String.valueOf(mensaje.getDatos().get("motivo"));
+            }
+            final String motivoFinal = motivoTemp;
+            SwingUtilities.invokeLater(() -> vista.mostrarMensaje(motivoFinal));
+        }
+    }
+
+    //getters y setters y otras cosas xd
     public void cargarDatosIniciales(List<?> jugadoresIniciales) {
         this.listaJugadores = normalizarJugadores(jugadoresIniciales);
         if (this.vista != null) {
@@ -102,44 +251,6 @@ public class LobbyController {
         this.vista = vista;
     }
 
-    private void configurarReceptorRed() {
-        clienteProxy.setReceptor(mensaje -> {
-            procesarEventoRed(mensaje);
-        });
-    }
-
-    public void registrarJugador(String nombreJugador, String avatar) {
-        if (nombreJugador != null && !nombreJugador.trim().isEmpty()) {
-            System.out.println("Controlador: Solicitando registro para " + nombreJugador + " con el avatar " + avatar);
-
-            this.nombreJugadorTemporal = nombreJugador;
-            this.nombreAvatarTemporal = avatar;
-
-            MensajeRegistroDTO msjRegistro = new MensajeRegistroDTO();
-            msjRegistro.setTipo("REGISTRO_JUGADOR");
-            msjRegistro.setRemitente("CLIENTE");
-
-            Map<String, Object> datos = new HashMap<>();
-            datos.put("nombre", nombreJugador);
-            datos.put("avatar", avatar);
-
-            msjRegistro.setDatos(datos);
-            clienteProxy.enviarMensaje(msjRegistro);
-        } else {
-            if (vista != null) {
-                vista.mostrarMensaje("El nombre del jugador es obligatorio");
-            }
-        }
-    }
-
-    public void marcarJugadorLocalListo() {
-        actualizarEstadoListo(true);
-    }
-
-    public void cancelarJugadorLocalListo() {
-        actualizarEstadoListo(false);
-    }
-
     private void actualizarEstadoListo(boolean estaListo) {
         MensajeDTO mensajeListo = new MensajeDTO("ACTUALIZAR_ESTADO_LISTO", "CLIENTE");
         Map<String, Object> datos = new HashMap<>();
@@ -148,88 +259,6 @@ public class LobbyController {
         datos.put("nombre", nombreJugadorLocal);
         mensajeListo.setDatos(datos);
         clienteProxy.enviarMensaje(mensajeListo);
-    }
-
-    public void iniciarPartida() {
-        if (!esHost()) {
-            if (vista != null) {
-                vista.mostrarMensaje("Solo el host puede iniciar la partida.");
-            }
-            return;
-        }
-        if (!estanTodosListos()) {
-            if (vista != null) {
-                vista.mostrarMensaje("Todos los jugadores deben estar listos para iniciar.");
-            }
-            return;
-        }
-        System.out.println("Controlador: Solicitando al servidor iniciar la partida...");
-        MensajeDTO msjInicio = new MensajeDTO("INTENCION_INICIAR_PARTIDA", "CLIENTE");
-        Map<String, Object> datos = new HashMap<>();
-        datos.put("codigoSala", codigoSala);
-        msjInicio.setDatos(datos);
-        clienteProxy.enviarMensaje(msjInicio);
-    }
-
-    public void procesarEventoRed(MensajeDTO mensaje) {
-        if (mensaje == null) {
-            return;
-        }
-        String tipoMensaje = mensaje.getTipo();
-
-        // CU EMILIANO MARQUEZ
-        if ("REGISTRO_EXITOSO".equals(tipoMensaje)) {
-            System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
-            SwingUtilities.invokeLater(() -> {
-                if (vista != null) {
-                    this.vista.cerrarVista();
-                }
-                SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal, this.clienteProxy);
-                seleccionVista.setVisible(true);
-                this.setVista(seleccionVista);
-            });
-        } // CU ADOLFO ORTEGA
-        else if ("PARTIDA_INICIADA".equals(tipoMensaje) || "INTENCION_INICIAR_PARTIDA".equals(tipoMensaje)) {
-            System.out.println("La partida va a comenzar, cambiando de pantalla...");
-
-            SwingUtilities.invokeLater(() -> {
-                if (vista != null) {
-                    this.vista.cerrarVista();
-                }
-
-                GameView vistaJuego = new GameView();
-                GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
-                vistaJuego.setController(controladorJuego);
-                if ("PARTIDA_INICIADA".equals(tipoMensaje)) {
-                    controladorJuego.procesarEventoRed(mensaje);
-                }
-                
-                vistaJuego.setVisible(true);
-            });
-        } else if ("LISTA_ACTUALIZADA".equals(tipoMensaje)) {
-            if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugadores")) {
-                Object jugadores = mensaje.getDatos().get("jugadores");
-                if (jugadores instanceof List<?>) {
-                    this.listaJugadores = normalizarJugadores((List<?>) jugadores);
-                }
-
-                SwingUtilities.invokeLater(() -> {
-                    System.out.println("Controlador: Notificando a la vista que la lista cambio...");
-
-                    if (this.vista != null) {
-                        this.vista.actualizar("CAMBIO_LISTA_JUGADORES");
-                    }
-                });
-            }
-        } else if ("ERROR_INICIAR_PARTIDA".equals(tipoMensaje)) {
-            if (vista != null) {
-                String motivo = "No se pudo iniciar la partida.";
-                if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
-                    motivo = String.valueOf(mensaje.getDatos().get("motivo"));
-                }
-                vista.mostrarMensaje(motivo);
-            }
-        }
     }
 
     private List<Map<String, String>> normalizarJugadores(List<?> jugadoresRaw) {

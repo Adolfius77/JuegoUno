@@ -1,5 +1,6 @@
 package dtos;
 
+import enums.TipoMensaje;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
