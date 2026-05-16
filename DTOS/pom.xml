@@ -10,11 +10,4 @@
     </parent>
 
     <artifactId>DTOS</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>CONSTANTES</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>
