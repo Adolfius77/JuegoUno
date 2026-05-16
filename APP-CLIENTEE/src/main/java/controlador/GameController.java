@@ -164,6 +164,13 @@ public class GameController {
     }
 
     public void tomarCarta() {
+        if(tieneCartasJugables()){
+            if(vista !=null){
+                vista.mostrarMensaje("no puedes robar ya tienes una carta jugable en tu mano");
+            }
+            return;
+        }
+        System.out.println("[Game-controller]: robando 1 carta del mazo...");
         MensajeDTO peticion = new MensajeDTO();
         peticion.setTipo("PETICION_TOMAR_CARTA");
         peticion.setRemitente(miNombre);
