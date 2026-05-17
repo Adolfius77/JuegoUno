@@ -122,7 +122,7 @@ public class GameController {
 
         final String jugadorSalvado = quienGrito;
 
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {  
             if (vista != null && !jugadorSalvado.isBlank()) {
 
                 vista.mostrarMensaje("¡" + jugadorSalvado + " ha gritado UNO!");
@@ -132,8 +132,8 @@ public class GameController {
 
     private boolean podioAbierto = false;
 
+ 
     private void procesarFinDePartida(MensajeDTO mensaje) {
-
         if (podioAbierto) {
             return;
         }
@@ -145,13 +145,19 @@ public class GameController {
         }
 
         final String ganadorFinal = ganadorTemp;
+        
         SwingUtilities.invokeLater(() -> {
             if (vista != null) {
                 vista.cerrarVista();
             }
+            
             podioView podio = new podioView();
             if (!ganadorFinal.isBlank()) {
                 podio.mostrarMensaje("Ganador: " + ganadorFinal);
+                
+                if (estadoPartida != null && estadoPartida.getJugadores() != null) {
+                    podio.cargarJugadores(estadoPartida.getJugadores(), ganadorFinal);
+                }
             }
             podio.mostrarVista();
         });
@@ -341,17 +347,17 @@ public class GameController {
         }
         tomarCarta();
     }
-
+    
     public void abandonarPartida() {
-        MensajeDesconexionDTO desconexion = new MensajeDesconexionDTO(this.miNombre);
+        MensajeDesconexionDTO desconexion = new MensajeDesconexionDTO(this.miNombre);   
         proxy.enviarMensaje(desconexion);
-
+        
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        
         System.exit(0);
     }
 }
