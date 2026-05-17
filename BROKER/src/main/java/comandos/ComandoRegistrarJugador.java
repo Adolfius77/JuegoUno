@@ -38,8 +38,26 @@ public class ComandoRegistrarJugador implements IComandoServidor {
             return;
         }
 
-        NodoCliente nodoTemporal = null;
         List<NodoCliente> nodos = ManejadorNodos.obtenerNodosConectados();
+
+        for (NodoCliente nodo : nodos) {
+            if (nodo.getNombre() != null && nodo.getNombre().equalsIgnoreCase(nombreJugador.trim())) {
+                System.out.println("[COMANDO-REGISTRAR] Error: El nombre " + nombreJugador + " ya está en uso.");
+                
+                MensajeDTO error = new MensajeDTO();
+                error.setTipo("ERROR_REGISTRO"); 
+                error.setRemitente("SERVIDOR");
+                
+                Map<String, Object> datosError = new HashMap<>();
+                datosError.put("motivo", "Ese nombre ya está en uso. ¡Elige otro!");
+                error.setDatos(datosError);
+                
+                proxy.enviarMensaje(error);
+                return;
+            }
+        }
+
+        NodoCliente nodoTemporal = null;
 
         for (NodoCliente nodo : nodos) {
             if (nodo.getProxy() == proxy) {
