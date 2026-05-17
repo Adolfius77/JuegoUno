@@ -64,7 +64,7 @@ public class TableroView extends javax.swing.JPanel {
         lblIndicadorUno.setHorizontalAlignment(SwingConstants.CENTER);
         lblIndicadorUno.setVisible(false);
         panelFondo.add(lblIndicadorUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 220, 30));
-        
+
         temporizadorTurno = new Timer(1000, e -> actualizarCuentaRegresiva());
         btnDecirUno.setVisible(false);
     }
@@ -93,12 +93,18 @@ public class TableroView extends javax.swing.JPanel {
         this.cartasMiMano = manoDelServidor != null ? new ArrayList<>(manoDelServidor) : new ArrayList<>();
         this.indiceSeleccionado = -1;
 
-        
-        if (cartasMiMano.size() == 1) {
+        if (cartasMiMano.size() == 2) {
             lblIndicadorUno.setVisible(true);
-            lblIndicadorUno.setText("¡GRITA UNO!");
+            lblIndicadorUno.setText("¡PREPARA TU UNO!");
             lblIndicadorUno.setForeground(Color.RED);
             btnDecirUno.setVisible(true);
+
+        } else if (cartasMiMano.size() == 1) {
+
+            lblIndicadorUno.setVisible(true);
+            lblIndicadorUno.setText("¡UNO GRITADO!");
+            lblIndicadorUno.setForeground(new Color(0, 200, 0));
+            btnDecirUno.setVisible(false);
         } else {
             lblIndicadorUno.setVisible(false);
             btnDecirUno.setVisible(false);
@@ -107,7 +113,6 @@ public class TableroView extends javax.swing.JPanel {
         actualizarEstadoBotonJugar();
         panelJugadorPrincipal.removeAll();
         renderizarMano();
-
     }
 
     public CartaDTO getCartaSeleccionada() {
@@ -237,14 +242,13 @@ public class TableroView extends javax.swing.JPanel {
 
             cartaVisual.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            
             cartaVisual.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (SwingUtilities.isLeftMouseButton(e)) {
                         if (controlador != null) {
                             if (esMiTurnoActual) {
- 
+
                                 controlador.tomarCarta();
                             } else {
                                 JOptionPane.showMessageDialog(TableroView.this, "¡Espera tu turno para robar!", "UNO", JOptionPane.WARNING_MESSAGE);
@@ -658,8 +662,8 @@ public class TableroView extends javax.swing.JPanel {
 
     private void btnDecirUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecirUnoActionPerformed
         if (controlador != null) {
-           
-            controlador.decirUno(); 
+
+            controlador.decirUno();
             btnDecirUno.setVisible(false);
             lblIndicadorUno.setText("¡UNO GRITADO!");
             lblIndicadorUno.setForeground(new Color(0, 200, 0));
