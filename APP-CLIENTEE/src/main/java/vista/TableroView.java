@@ -64,9 +64,9 @@ public class TableroView extends javax.swing.JPanel {
         lblIndicadorUno.setHorizontalAlignment(SwingConstants.CENTER);
         lblIndicadorUno.setVisible(false);
         panelFondo.add(lblIndicadorUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 220, 30));
-
+        
         temporizadorTurno = new Timer(1000, e -> actualizarCuentaRegresiva());
-
+        btnDecirUno.setVisible(false);
     }
 
     public void setController(GameController controlador) {
@@ -93,10 +93,15 @@ public class TableroView extends javax.swing.JPanel {
         this.cartasMiMano = manoDelServidor != null ? new ArrayList<>(manoDelServidor) : new ArrayList<>();
         this.indiceSeleccionado = -1;
 
-        if (cartasMiMano.size() == 1 && esMiTurnoActual) {
+        
+        if (cartasMiMano.size() == 1) {
             lblIndicadorUno.setVisible(true);
+            lblIndicadorUno.setText("¡GRITA UNO!");
+            lblIndicadorUno.setForeground(Color.RED);
+            btnDecirUno.setVisible(true);
         } else {
             lblIndicadorUno.setVisible(false);
+            btnDecirUno.setVisible(false);
         }
 
         actualizarEstadoBotonJugar();
@@ -419,6 +424,7 @@ public class TableroView extends javax.swing.JPanel {
         panelAvatar3 = new javax.swing.JPanel();
         panelCartaMedio = new javax.swing.JPanel();
         panelPilaCartas = new javax.swing.JPanel();
+        btnDecirUno = new javax.swing.JButton();
 
         panelFondo.setBackground(new java.awt.Color(255, 255, 255));
         panelFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -620,6 +626,14 @@ public class TableroView extends javax.swing.JPanel {
         panelPilaCartas.setLayout(new java.awt.BorderLayout());
         panelFondo.add(panelPilaCartas, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 300, 80, 110));
 
+        btnDecirUno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/unoBoton.png"))); // NOI18N
+        btnDecirUno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDecirUnoActionPerformed(evt);
+            }
+        });
+        panelFondo.add(btnDecirUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 600, 90, 90));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -642,8 +656,19 @@ public class TableroView extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnDecirUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecirUnoActionPerformed
+        if (controlador != null) {
+           
+            controlador.decirUno(); 
+            btnDecirUno.setVisible(false);
+            lblIndicadorUno.setText("¡UNO GRITADO!");
+            lblIndicadorUno.setForeground(new Color(0, 200, 0));
+        }
+    }//GEN-LAST:event_btnDecirUnoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDecirUno;
     private vista.DiseñosExtras.botonCircular btnJugarCarta;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelAvatar1;

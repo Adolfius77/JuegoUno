@@ -54,6 +54,7 @@ public class GameController {
         manejadoresEventos.put("ACTUALIZACION_MESA", this::procesarActualizacionMesa);
         manejadoresEventos.put("ACTUALIZACION_TABLERO", this::procesarActualizacionMesa);
         manejadoresEventos.put("PARTIDA_FINALIZADA", this::procesarFinDePartida);
+        manejadoresEventos.put("UNO_GRITADO", this::procesarUnoGritado);
 
     }
 
@@ -103,6 +104,29 @@ public class GameController {
                 }
             });
         }
+    }
+
+    private void procesarUnoGritado(MensajeDTO mensaje) {
+        String quienGrito = "";
+
+        if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("jugador")) {
+            quienGrito = String.valueOf(mensaje.getDatos().get("jugador"));
+        } else {
+
+            String[] partes = mensaje.getTipo().split(":");
+            if (partes.length > 1) {
+                quienGrito = partes[1];
+            }
+        }
+
+        final String jugadorSalvado = quienGrito;
+
+        SwingUtilities.invokeLater(() -> {
+            if (vista != null && !jugadorSalvado.isBlank()) {
+
+                vista.mostrarMensaje("¡" + jugadorSalvado + " ha gritado UNO!");
+            }
+        });
     }
 
     private void procesarFinDePartida(MensajeDTO mensaje) {
@@ -164,8 +188,8 @@ public class GameController {
     }
 
     public void tomarCarta() {
-        if(tieneCartasJugables()){
-            if(vista !=null){
+        if (tieneCartasJugables()) {
+            if (vista != null) {
                 vista.mostrarMensaje("no puedes robar ya tienes una carta jugable en tu mano");
             }
             return;
@@ -289,17 +313,19 @@ public class GameController {
         );
         return seleccion != null ? seleccion.toString() : null;
     }
-    public boolean tieneCartasJugables(){
-        for(CartaDTO carta: getMiMano()){
-            if(esJugable(carta)){
+
+    public boolean tieneCartasJugables() {
+        for (CartaDTO carta : getMiMano()) {
+            if (esJugable(carta)) {
                 return true;
             }
         }
         return false;
     }
-    public void intentarRobarDelMazo(){
-        if(tieneCartasJugables()){
-            if(vista != null){
+
+    public void intentarRobarDelMazo() {
+        if (tieneCartasJugables()) {
+            if (vista != null) {
                 vista.mostrarMensaje("no puedes robar ya tienes cartas jugables en tu mano");
             }
             return;

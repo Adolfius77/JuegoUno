@@ -33,11 +33,6 @@
             <artifactId>CLIENTE-PROXY</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>CONSTANTES</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
 
