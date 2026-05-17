@@ -43,7 +43,6 @@ public class JuegoServidor {
         this.cartaFactory = cartaFactory;
         this.mazoFactory = mazoFactory;
         this.estadoInicial = estadoInicial;
-        //aqui pondremos los comandos para el caso de uso inicial que es ejercer turno
     }
 
     public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
@@ -142,7 +141,7 @@ public class JuegoServidor {
         }
         return null;
     }
-
+    
     private String normalizar(String texto) {
         return texto == null ? "" : texto.trim().toUpperCase();
     }
@@ -157,4 +156,9 @@ public class JuegoServidor {
             return null;
         }
     }
+
+    public GestorJuegoFacade getFachadaJuego() {
+        return fachadaJuego;
+    }
+    
 }

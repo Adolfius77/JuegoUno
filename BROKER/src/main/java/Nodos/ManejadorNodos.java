@@ -106,6 +106,12 @@ public class ManejadorNodos {
         return nombres;
     }
 
+    public void notificarATodos(MensajeDTO mensaje) {
+        for (NodoCliente nodo : nodosClientes.values()) {
+            nodo.enviarMensaje(mensaje);
+        }
+    }
+    
     public boolean estanTodosListos() {
         if (nodosClientes.isEmpty()) {
             return false;

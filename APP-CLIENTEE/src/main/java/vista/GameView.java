@@ -29,7 +29,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
     private TableroView tablero;
 
     public GameView() {
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Juego UNO - ITSON");
         setLayout(new java.awt.BorderLayout());
 
@@ -39,16 +39,28 @@ public class GameView extends javax.swing.JFrame implements IVista {
         setSize(1360, 820);
         setPreferredSize(new java.awt.Dimension(1360, 820));
 
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent){
+                if (controlador != null) {
+                    controlador.abandonarPartida();
+                } else {
+                    System.exit(0); 
+                }
+            }
+        });
+        
         setResizable(false);
         setLocationRelativeTo(null);
-
     }
+    
     public void setController(GameController controlador){
         this.controlador = controlador;
         if (tablero != null) {
             tablero.setController(controlador);
         }
     }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

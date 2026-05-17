@@ -93,6 +93,17 @@ public class Servidor {
     }
 
     private void cerrarConexion(Socket socketCliente, String ipCliente) {
+        try {
+            if (serializador != null) {
+                dtos.MensajeDTO mensaje = new dtos.MensajeDTO();
+                mensaje.setTipo("DESCONEXION");
+                String json = serializador.serealizar(mensaje);
+                notificarObservadores(json, ipCliente);
+            }
+        } catch (Exception ex) {
+            System.out.println("[Servidor Red] Error notificando desconexion: " + ex.getMessage());
+        }
+
         proxiesPorIp.remove(ipCliente);
         try {
             if (socketCliente != null && !socketCliente.isClosed()) {
