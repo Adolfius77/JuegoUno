@@ -41,6 +41,25 @@ public class ManejadorNodos {
         }
     }
 
+    public NodoCliente obtenerNodoPorProxy(IProxy proxy) {
+        if (proxy == null) {
+            return null;
+        }
+        for (NodoCliente nodo : nodosClientes.values()) {
+            if (nodo.getProxy() == proxy) {
+                return nodo;
+            }
+        }
+        return null;
+    }
+
+    public NodoCliente obtenerNodoPorNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            return null;
+        }
+        return nodosClientes.get(nombre);
+    }
+
     public void actualizarIdentidadNodo(String idTemporal, String nombreReal) {
         NodoCliente nodo = nodosClientes.remove(idTemporal);
 
@@ -85,5 +104,23 @@ public class ManejadorNodos {
             nombres.add(nodo.getNombre());
         }
         return nombres;
+    }
+
+    public void notificarATodos(MensajeDTO mensaje) {
+        for (NodoCliente nodo : nodosClientes.values()) {
+            nodo.enviarMensaje(mensaje);
+        }
+    }
+    
+    public boolean estanTodosListos() {
+        if (nodosClientes.isEmpty()) {
+            return false;
+        }
+        for (NodoCliente nodo : nodosClientes.values()) {
+            if (!nodo.isEstaListo()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

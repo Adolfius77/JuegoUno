@@ -5,19 +5,31 @@
 package vista;
 
 import Interfaces.IVista;
+import controlador.GameController;
+import dtos.JugadorDTO;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author USER
  */
-public class podioView extends javax.swing.JFrame implements IVista
-{
+public class podioView extends javax.swing.JFrame implements IVista {
 
     /**
      * Creates new form podioView
      */
+    private GameController controlador;
+
+    public void setController(GameController controlador) {
+        this.controlador = controlador;
+    }
+
     public podioView() {
         initComponents();
+        btnContinuar.addActionListener(e -> cerrarVista());
     }
 
     /**
@@ -112,6 +124,11 @@ public class podioView extends javax.swing.JFrame implements IVista
         btnContinuar.setColorOver(new java.awt.Color(255, 255, 51));
         btnContinuar.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         btnContinuar.setRadius(40);
+        btnContinuar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContinuarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -169,6 +186,14 @@ public class podioView extends javax.swing.JFrame implements IVista
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinuarActionPerformed
+        if (controlador != null) {
+            controlador.solicitarVolverAlLobby();
+            
+            this.dispose(); 
+        }
+    }//GEN-LAST:event_btnContinuarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -204,6 +229,84 @@ public class podioView extends javax.swing.JFrame implements IVista
         });
     }
 
+    public void cargarJugadores(List<JugadorDTO> jugadores, String nombreGanador) {
+        javax.swing.JPanel[] panelesPodio = {
+            panelJuagador2, panelJugador3, panelJugador4
+        };
+
+        for (javax.swing.JPanel panel : panelesPodio) {
+            if (panel != null) {
+                panel.removeAll();
+                panel.setLayout(new BorderLayout());
+            }
+        }
+
+        if (panelJugador1 != null) {
+            panelJugador1.removeAll();
+            panelJugador1.setLayout(new BorderLayout());
+        }
+
+        JugadorDTO ganador = null;
+        List<JugadorDTO> perdedores = new ArrayList<>();
+
+        for (JugadorDTO jugador : jugadores) {
+            if (jugador.getNombre().equals(nombreGanador)) {
+                ganador = jugador;
+            } else {
+                perdedores.add(jugador);
+            }
+        }
+
+        // 1. DIBUJAR AL GANADOR (Primer Lugar)
+        if (ganador != null && panelJugador1 != null) {
+            String avatarGanador = obtenerAvatarSeguro(ganador);
+            avatarForm visualGanador = new avatarForm(ganador.getNombre(), avatarGanador, true);
+            panelJugador1.add(visualGanador, BorderLayout.CENTER);
+            panelJugador1.revalidate();
+            panelJugador1.repaint();
+        }
+
+        // 2. DIBUJAR A LOS DEMÁS LUGARES
+        int indexPanel = 0;
+        for (JugadorDTO perdedor : perdedores) {
+            // Nos aseguramos de no salirnos de la cantidad de paneles que tenemos
+            if (indexPanel < panelesPodio.length && panelesPodio[indexPanel] != null) {
+                String avatarPerdedor = obtenerAvatarSeguro(perdedor);
+
+                // Nota: Le paso false porque ya no importa si están "listos", el juego acabó.
+                avatarForm visualPerdedor = new avatarForm(perdedor.getNombre(), avatarPerdedor, false);
+
+                panelesPodio[indexPanel].add(visualPerdedor, BorderLayout.CENTER);
+                panelesPodio[indexPanel].revalidate();
+                panelesPodio[indexPanel].repaint();
+
+                indexPanel++;
+            }
+        }
+    }
+
+    private String obtenerAvatarSeguro(JugadorDTO jugador) {
+        if (jugador == null) {
+            return "pfp";
+        }
+        String a = jugador.getAvatar();
+        if (a == null || a.isBlank()) {
+            return "pfp";
+        }
+        try {
+            int lastSlash = Math.max(a.lastIndexOf('/'), a.lastIndexOf('\\'));
+            String base = lastSlash >= 0 ? a.substring(lastSlash + 1) : a;
+            if (base.toLowerCase().endsWith(".png")) {
+                base = base.substring(0, base.length() - 4);
+            }
+            if (base.isBlank()) {
+                return "pfp";
+            }
+            return base;
+        } catch (Exception ex) {
+            return "pfp";
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private vista.DiseñosExtras.botonCircular botonCircular1;
     private vista.DiseñosExtras.botonCircular btnContinuar;
@@ -216,21 +319,22 @@ public class podioView extends javax.swing.JFrame implements IVista
 
     @Override
     public void mostrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        JOptionPane.showMessageDialog(this, mensaje, "UNO", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void actualizar(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        revalidate();
+        repaint();
     }
 }

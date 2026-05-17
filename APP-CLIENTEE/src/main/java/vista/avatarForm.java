@@ -4,6 +4,12 @@
  */
 package vista;
 
+import java.awt.BorderLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.Dimension;
+
 /**
  *
  * @author USER
@@ -13,8 +19,115 @@ public class avatarForm extends javax.swing.JPanel {
     /**
      * Creates new form avatarForm
      */
+    private String nombreUsuario;
+    private String avatarUsuario;
+    private boolean estaListoUsuario;
+    private JLabel lblEstoyListo;
+
     public avatarForm() {
         initComponents();
+        configurarIndicadorListo();
+    }
+
+    public avatarForm(String nombreUsuario, String avatarUsuario) {
+        this(nombreUsuario, avatarUsuario, false);
+    }
+
+    public avatarForm(String nombreUsuario, String avatarUsuario, boolean estaListoUsuario) {
+        initComponents();
+        this.nombreUsuario = nombreUsuario;
+        this.avatarUsuario = avatarUsuario;
+        this.estaListoUsuario = estaListoUsuario;
+        configurarIndicadorListo();
+        mostrarDatosJugador();
+    }
+
+    private ImageIcon cargarImagen(String avatarId) {
+        if (avatarId == null || avatarId.equals("no hay") || avatarId.isBlank()) {
+            avatarId = "pfp";
+        }
+
+        String ruta = "/img/" + avatarId + ".png";
+        try {
+            System.out.println("[IMG] Intentando cargar imagen: " + ruta);
+            java.io.InputStream is = getClass().getResourceAsStream(ruta);
+            if (is != null) {
+                java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+                if (img != null) {
+                    System.out.println("[IMG] Cargada: " + ruta);
+                    return new ImageIcon(img);
+                }
+            } else {
+                System.out.println("[IMG] Recurso no encontrado: " + ruta);
+            }
+            java.io.InputStream isDef = getClass().getResourceAsStream("/img/pfp.png");
+            if (isDef != null) {
+                java.awt.image.BufferedImage imgDef = javax.imageio.ImageIO.read(isDef);
+                if (imgDef != null) {
+                    System.out.println("[IMG] Cargada imagen por defecto: /img/pfp.png");
+                    return new ImageIcon(imgDef);
+                }
+            } else {
+                System.out.println("[IMG] Imagen por defecto no encontrada: /img/pfp.png");
+            }
+        } catch (Exception ex) {
+            System.out.println("Error cargando imagen '" + ruta + "': " + ex.getMessage());
+        }
+
+        java.awt.image.BufferedImage placeholder = new java.awt.image.BufferedImage(65, 65, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2 = placeholder.createGraphics();
+        try {
+            g2.setColor(new java.awt.Color(200, 200, 200));
+            g2.fillRect(0, 0, 65, 65);
+            g2.setColor(new java.awt.Color(150, 150, 150));
+            g2.drawString("?", 28, 38);
+        } finally {
+            g2.dispose();
+        }
+        return new ImageIcon(placeholder);
+    }
+
+    private ImageIcon cargarIconoEstado(boolean estaListo) {
+        String ruta = estaListo ? "/img/palomita.png" : "/img/equis.png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        return recurso != null ? new ImageIcon(recurso) : new ImageIcon();
+    }
+
+    private void configurarIndicadorListo() {
+
+        jPanel2.removeAll();
+        jPanel2.setLayout(new BorderLayout());
+        jPanel2.add(lblNombre, BorderLayout.WEST);
+        jPanel2.add(lblListo,BorderLayout.EAST);
+
+        actualizarEstadoListo(estaListoUsuario);
+        jPanel2.revalidate();
+        jPanel2.repaint();
+    }
+
+    public void actualizarEstadoListo(boolean estaListo) {
+        this.estaListoUsuario = estaListo;
+        if (lblListo != null) {
+            lblListo.setIcon(cargarIconoEstado(estaListo));
+            lblListo.setText("");
+        }
+    }
+
+    private void mostrarDatosJugador() {
+        if (nombreUsuario != null && !nombreUsuario.isBlank()) {
+            lblNombre.setText(nombreUsuario);
+
+            ImageIcon iconoOriginal = cargarImagen(avatarUsuario);
+
+            java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(65, 65, java.awt.Image.SCALE_SMOOTH);
+
+            avatar.setIcon(new ImageIcon(imgEscalada));
+            avatar.setText("");
+            avatar.setHorizontalAlignment(SwingConstants.CENTER);
+            avatar.setPreferredSize(new Dimension(65, 65));
+            avatar.setOpaque(false);
+        }
+        actualizarEstadoListo(estaListoUsuario);
     }
 
     /**
@@ -29,6 +142,7 @@ public class avatarForm extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         lblNombre = new javax.swing.JLabel();
+        lblListo = new javax.swing.JLabel();
         avatar = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -36,7 +150,7 @@ public class avatarForm extends javax.swing.JPanel {
         jPanel2.setBackground(new java.awt.Color(51, 51, 255));
         jPanel2.setForeground(new java.awt.Color(51, 51, 255));
 
-        lblNombre.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        lblNombre.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(255, 255, 255));
         lblNombre.setText("Nombre");
 
@@ -47,14 +161,20 @@ public class avatarForm extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(lblNombre)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblListo)
+                .addGap(16, 16, 16))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblNombre)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblNombre)
+                        .addGap(0, 8, Short.MAX_VALUE))
+                    .addComponent(lblListo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         avatar.setText("jLabel2");
@@ -74,7 +194,7 @@ public class avatarForm extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(avatar, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(avatar, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addGap(12, 12, 12))
         );
 
@@ -95,6 +215,7 @@ public class avatarForm extends javax.swing.JPanel {
     private javax.swing.JLabel avatar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblListo;
     private javax.swing.JLabel lblNombre;
     // End of variables declaration//GEN-END:variables
 }

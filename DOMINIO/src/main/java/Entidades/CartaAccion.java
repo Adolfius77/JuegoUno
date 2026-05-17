@@ -4,11 +4,9 @@
  */
 package Entidades;
 
-
 import Entidades.Logica.Partida;
 import Entidades.enums.Color;
 import Entidades.enums.TipoAccion;
-
 
 /**
  *
@@ -39,21 +37,30 @@ public class CartaAccion extends Carta {
 
     @Override
     public boolean esJugable(Carta cartaTablero) {
-        if(this.color == cartaTablero.getColor()) return true;
-        
-        if(cartaTablero instanceof CartaAccion){
-            return this.accion == ((CartaAccion)cartaTablero).getAccion();
-            
+        if (this.color == cartaTablero.getColor()) {
+            return true;
+        }
+
+        if (cartaTablero instanceof CartaAccion) {
+            return this.accion == ((CartaAccion) cartaTablero).getAccion();
+
         }
         return false;
     }
 
     @Override
     public boolean aplicarEfecto(Partida partida) {
-        switch(this.accion){
-            case SALTAR: partida.saltarTurno(); break;
-            case REVERSA: partida.cambiarSentido();break;
-            case MAS_2: partida.acomularCartas(2); break;
+        switch (this.accion) {
+            case SALTAR:
+                partida.saltarTurno();
+                break;
+            case REVERSA:
+                partida.cambiarSentido();
+                break;
+            case MAS_2:
+                partida.acomularCartas(2);
+                partida.saltarTurno();
+                break;
         }
         return true;
     }

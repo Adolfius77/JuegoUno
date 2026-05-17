@@ -16,8 +16,10 @@ public class Jugador {
     private String nombre;
     private String avatar;
     private Mano mano;
-    private Boolean dijoUno;
+    private boolean dijoUno;
     private int puntaje;
+    private boolean esHost;
+    private boolean estaListo;
 
     public Jugador() {
         this.dijoUno = false;
@@ -27,7 +29,7 @@ public class Jugador {
         this.nombre = nombre;
         this.dijoUno = false;
     }
-
+    
     public Jugador(String id, String nombre) {
         this.Id = id;
         this.nombre = nombre;
@@ -64,6 +66,14 @@ public class Jugador {
         return this.dijoUno;
     }
 
+    public boolean isEstaListo() {
+        return estaListo;
+    }
+
+    public void setEstaListo(boolean estaListo) {
+        this.estaListo = estaListo;
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -83,6 +93,8 @@ public class Jugador {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    
 
     public Boolean getDijoUno() {
         return dijoUno;
@@ -107,4 +119,14 @@ public class Jugador {
     public void setPuntaje(int puntaje) {
         this.puntaje = puntaje;
     }
+
+    public boolean isEsHost() {
+        return esHost;
+    }
+
+    public void setEsHost(boolean esHost) {
+        this.esHost = esHost;
+    }
+
+    
 }

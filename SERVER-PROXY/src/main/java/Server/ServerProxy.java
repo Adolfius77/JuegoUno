@@ -2,122 +2,107 @@ package Server;
 
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
+import Nodos.NodoCliente;
 import broker.Broker;
 import dtos.MensajeDTO;
-import java.io.BufferedReader;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import observador.observadorRed;
+import red.LobbyServidor;
+import red.Servidor;
 
-public class ServerProxy implements Runnable, IProxy {
+public class ServerProxy implements observadorRed {
 
-    private final Socket socketCliente;
+    private final Servidor servidor;
     private final Broker broker;
-    private final BufferedReader in;
-    private final PrintWriter out;
     private final ISerializador serializador;
-    private volatile boolean escuchando;
+    private final LobbyServidor lobbyServidor;
+    private final Map<String, NodoCliente> nodosPorIp;
+    private int contadorJugadores;
 
-    public ServerProxy (Socket socketCliente, Broker broker, ISerializador serializador) throws IOException {
-        if (socketCliente == null) {
-            throw new IllegalArgumentException("[Servidor-proxy] El socket del cliente no puede ser nulo.");
-        }
-        if (broker == null) {
-            throw new IllegalArgumentException("[Servidor-proxy]  El broker no puede ser nulo.");
-        }
+    public ServerProxy(int puerto, String ip, ISerializador serializador) {
         if (serializador == null) {
             throw new IllegalArgumentException("[Servidor-proxy]  El serializador no puede ser nulo.");
         }
-        this.socketCliente = socketCliente;
-        this.broker = broker;
         this.serializador = serializador;
-        this.out = new PrintWriter(socketCliente.getOutputStream(), true);
-        this.in = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
-        this.escuchando = true;
+        this.broker = new Broker();
+        this.lobbyServidor = LobbyServidor.crearLobbyPorDefecto(this.broker);
+        this.servidor = new Servidor(puerto, ip, serializador);
+        this.servidor.agregarObservador(this);
+        this.nodosPorIp = new ConcurrentHashMap<>();
+        this.contadorJugadores = 1;
+    }
+
+    public void iniciar() {
+        servidor.iniciar();
     }
 
     @Override
-    public void run() {
-        try {
-            while (escuchando) {
-                String jsonRecibido = in.readLine();
-                System.out.println("[SERVER-PROXY] recibi el json pa : " + jsonRecibido);
-
-                if (jsonRecibido == null) {
-                    break;
-                }
-                MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
-                if (mensaje == null) {
-                    System.out.println("[Servidor-proxy]  No se pudo deserializar el mensaje: " + jsonRecibido);
-                    continue;
-                }
-                if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
-                    continue;
-                }
-                
-                if ("REGISTRO_JUGADOR".equals(mensaje.getTipo())) {
-                    if (mensaje.getDatos() == null) {
-                        mensaje.setDatos(new HashMap<>());
-                    }
-                    mensaje.getDatos().put("proxy", this);
-                }
-
-                broker.publicar(mensaje.getTipo(), mensaje);
-            }
-        } catch (IOException e) {
-            System.out.println("[Servidor-proxy]  Conexion finalizada: " + e.getMessage());
-        } finally {
-            cerrarConexion();
-        }
-    }
-
-    @Override
-    public synchronized void enviarMensaje(MensajeDTO mensaje) {
-        if (mensaje == null) {
+    public void onMensajeRecibido(String json, String ip) {
+        if (json == null || json.isBlank()) {
             return;
         }
-        try {
-            String jsonEnviar = serializador.serealizar(mensaje);
-            out.println(jsonEnviar);
-        } catch (Exception e) {
-            System.out.println("[Servidor-proxy]  Error enviando mensaje: " + e.getMessage());
+        System.out.println("[SERVER-PROXY] recibi el json pa : " + json);
+
+        MensajeDTO mensaje = serializador.desearealizar(json);
+        if (mensaje == null) {
+            System.out.println("[Servidor-proxy]  No se pudo deserializar el mensaje: " + json);
+            return;
         }
-    }
+        if (mensaje.getTipo() == null || mensaje.getTipo().isBlank()) {
+            return;
+        }
 
-    private void cerrarConexion() {
-        escuchando = false;
-
-        MensajeDTO eventoDesconexion = new MensajeDTO();
-        eventoDesconexion.setTipo("CONEXION_CERRADA");
-        eventoDesconexion.setRemitente("SERVIDOR");
-        Map<String, Object> datos = new HashMap<>();
-        datos.put("proxy", this);
-        eventoDesconexion.setDatos(datos);
-        broker.publicar("CONEXION_CERRADA", eventoDesconexion);
-
-        try {
-            if (in != null) {
-                in.close();
+        IProxy proxy = servidor.obtenerProxyPorIp(ip);
+        NodoCliente nodoExistente = nodosPorIp.get(ip);
+        boolean esNuevoPorIp = nodoExistente == null;
+        boolean esNuevaConexionMismaIp = nodoExistente != null && nodoExistente.getProxy() != proxy;
+        
+        if ("DESCONEXION".equalsIgnoreCase(mensaje.getTipo())) {
+            try {
+                if (nodoExistente != null && nodoExistente.getProxy() != null) {
+                    lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
+                    nodosPorIp.remove(ip);
+                    System.out.println("[SERVER-PROXY] Nodo desconectado y eliminado: " + nodoExistente.getNombre());
+                } else if (proxy != null) {
+                    lobbyServidor.eliminarJugadorPorProxy(proxy);
+                }
+            } catch (Exception ex) {
+                System.out.println("[SERVER-PROXY] Error procesando desconexion: " + ex.getMessage());
             }
-        } catch (IOException ignored) {
+            return;
         }
 
-        try {
-            if (out != null) {
-                out.close();
+        if (proxy != null && (esNuevoPorIp || esNuevaConexionMismaIp)) {
+            if (esNuevaConexionMismaIp && nodoExistente.getProxy() != null) {
+                lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
             }
-        } catch (Exception ignored) {
+            String nombreTemporal = "Jugador_" + contadorJugadores++;
+            NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, proxy, "no hay");
+            nodosPorIp.put(ip, nuevoNodo);
+            lobbyServidor.registrarNuevoJugadorTemporal(nuevoNodo);
+            System.out.println("[SERVER-PROXY] Jugador conectado temporalmente. Esperando mensaje de registro...");
         }
 
-        try {
-            if (socketCliente != null) {
-                socketCliente.close();
+        if ("REGISTRO_JUGADOR".equals(mensaje.getTipo())
+                || "PETICION_CREAR_PARTIDA".equals(mensaje.getTipo())
+                || "PETICION_UNIRSE_PARTIDA".equals(mensaje.getTipo())
+                || "PETICION_LISTA_PARTIDAS".equals(mensaje.getTipo())
+                || "ACTUALIZAR_ESTADO_LISTO".equals(mensaje.getTipo())
+                || "INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())
+                || "PETICION_JUGAR_CARTA".equals(mensaje.getTipo())
+                || "PETICION_TOMAR_CARTA".equals(mensaje.getTipo())
+                || "PETICION_GRITAR_UNO".equals(mensaje.getTipo())
+                || "PETICION_PASAR_TURNO".equals(mensaje.getTipo())) {
+            if (mensaje.getDatos() == null) {
+                mensaje.setDatos(new HashMap<>());
             }
-        } catch (IOException ignored) {
+            if (proxy != null) {
+                mensaje.getDatos().put("proxy", proxy);
+            }
         }
+
+        broker.publicar(mensaje.getTipo(), mensaje);
     }
 }

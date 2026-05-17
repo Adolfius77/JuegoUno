@@ -1,5 +1,6 @@
 package dtos;
 
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,7 @@ public  class MensajeDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String tipo;
     private String remitente;
-    private Map<String,Object> datos;
+    private Map<String,Object> datos = new HashMap<>();
     private long timestamp;
 
     public MensajeDTO() {

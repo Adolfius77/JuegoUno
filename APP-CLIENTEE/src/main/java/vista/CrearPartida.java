@@ -5,7 +5,11 @@
 package vista;
 
 import Interfaces.IVista;
-import dtos.JugadorDTO;
+import cliente.ClienteProxy;
+import controlador.CrearPartidaController;
+import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
@@ -14,45 +18,88 @@ import dtos.JugadorDTO;
 //cc
 public class CrearPartida extends javax.swing.JFrame implements IVista {
 
-    private JugadorDTO jugadorHost;
-    private static final String HOST_SERVIDOR = System.getProperty("uno.server.host", "127.0.0.1");
-    private static final int PUERTO_SERVIDOR = Integer.parseInt(System.getProperty("uno.server.port", "8080"));
+    private CrearPartidaController controlador;
+    private String nombreHost;
+    private String avatarHost;
+    private ClienteProxy proxy;
+    private final JLabel etiquetaAvatar = new JLabel();
+    private int limiteJugadores = 4;
 
-    /**
-     * Creates new form CrearPartida
-     */
     public CrearPartida() {
         initComponents();
     }
 
-    /**
-     * Constructor que recibe el nombre del host (el jugador que crea la sala)
-     */
-    public CrearPartida(JugadorDTO jugadorHost) {
-        this.jugadorHost = jugadorHost;
-        initComponents(); // ← faltaba esto
-        this.setLocationRelativeTo(null);
-        jLabel3.setText(jugadorHost != null ? jugadorHost.getNombre() : "");
-        configurarEventos();
+    public CrearPartida(String nombreHost, ClienteProxy proxy) {
+        this(nombreHost, "", proxy);
     }
-    // limite de jugadores seleccionado (2,3,4)
-    private int limiteJugadores = 4;
+
+    public CrearPartida(String nombreHost, String avatarHost, ClienteProxy proxy) {
+        this();
+        this.nombreHost = nombreHost;
+        this.avatarHost = avatarHost;
+        this.proxy = proxy;
+        this.controlador = new controlador.CrearPartidaController(this, proxy);
+        if (this.nombreHost != null && !this.nombreHost.isBlank()) {
+            lblNombreUsuario.setText("Host: " + this.nombreHost);
+        }
+        configurarEventos();
+        mostrarDatosJugador();
+    }
 
     private void configurarEventos() {
-        // botones para seleccionar limite
         btn2jugadores.addActionListener(e -> seleccionarLimite(2));
         btn3jugadore.addActionListener(e -> seleccionarLimite(3));
         btn4jugadores.addActionListener(e -> seleccionarLimite(4));
 
-        // crear partida: abrir vista de lobby y marcar host
-        btnCrearPartida.addActionListener(e -> crearPartida());
-
-        // volver a la pantalla anterior
         btnVolver.addActionListener(e -> {
-            SeleccionPartida sel = new SeleccionPartida(jugadorHost.getNombre(), jugadorHost.getAvatar());
+            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, this.avatarHost != null ? this.avatarHost : "", this.proxy);
             sel.setVisible(true);
             dispose();
         });
+    }
+
+    private void mostrarDatosJugador() {
+        if (nombreHost != null && !nombreHost.isBlank()) {
+            lblNombreUsuario.setText("Host: " + nombreHost);
+        }
+
+        if (avatarHost != null && !avatarHost.isBlank()) {
+            panelAvatar.removeAll();
+            panelAvatar.setLayout(new BorderLayout());
+            etiquetaAvatar.setHorizontalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalAlignment(SwingConstants.CENTER);
+            etiquetaAvatar.setHorizontalTextPosition(SwingConstants.CENTER);
+            etiquetaAvatar.setVerticalTextPosition(SwingConstants.BOTTOM);
+            etiquetaAvatar.setIcon(cargarAvatar(avatarHost));
+            etiquetaAvatar.setText(formatearNombreAvatar(avatarHost));
+            panelAvatar.add(etiquetaAvatar, BorderLayout.CENTER);
+            panelAvatar.revalidate();
+            panelAvatar.repaint();
+        }
+    }
+
+    private String formatearNombreAvatar(String avatarId) {
+        if (avatarId == null || avatarId.isBlank()) {
+            return "";
+        }
+
+        if (avatarId.startsWith("avatar")) {
+            String numero = avatarId.substring("avatar".length());
+            return numero.isBlank() ? avatarId : "Avatar " + numero;
+        }
+
+        return avatarId;
+    }
+
+    private ImageIcon cargarAvatar(String avatarId) {
+        String ruta = "/img/" + avatarId + ".png";
+        java.net.URL recurso = getClass().getResource(ruta);
+        if (recurso != null) {
+            return new ImageIcon(recurso);
+        }
+        // fallback to default profile picture if specific avatar not found
+        java.net.URL defaultRecurso = getClass().getResource("/img/pfp.png");
+        return defaultRecurso != null ? new ImageIcon(defaultRecurso) : new ImageIcon();
     }
 
     private void seleccionarLimite(int limite) {
@@ -63,21 +110,16 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }
 
     private void crearPartida() {
-        String nombreSala = txtNombreSala.getText().trim();
+        String nombreSala = txtNombreSala.getText() != null ? txtNombreSala.getText().trim() : "";
+        String hostSeguro = (this.nombreHost != null && !this.nombreHost.isBlank()) ? this.nombreHost : "Host";
         if (nombreSala.isEmpty()) {
-            txtNombreSala.requestFocus();
-            return;
+            nombreSala = "Sala de " + hostSeguro;
         }
 
-        btnCrearPartida.setEnabled(false);
-
-        try {
-            dtos.MensajeCrearPartidaDTO msg = new dtos.MensajeCrearPartidaDTO(nombreSala, limiteJugadores);
-            red.ClienteRed.getInstance().setVistaActual(this);
-            red.ClienteRed.getInstance().enviarMensaje(msg);
-        } catch (Exception ex) {
-            btnCrearPartida.setEnabled(true);
-            ex.printStackTrace();
+        if (this.controlador != null) {
+            this.controlador.solicitarCreacion(hostSeguro, nombreSala, this.limiteJugadores);
+        } else {
+            System.out.println("error controlador nulo");
         }
     }
 
@@ -100,7 +142,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        lblNombreUsuario = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
@@ -173,10 +215,10 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
             .addGap(0, 13, Short.MAX_VALUE)
         );
 
-        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Nombre usuario");
+        lblNombreUsuario.setBackground(new java.awt.Color(255, 255, 255));
+        lblNombreUsuario.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblNombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        lblNombreUsuario.setText("Nombre usuario");
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ajustes.png"))); // NOI18N
 
@@ -239,6 +281,11 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         btnCrearPartida.setColorOver(new java.awt.Color(204, 0, 0));
         btnCrearPartida.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         btnCrearPartida.setRadius(30);
+        btnCrearPartida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearPartidaActionPerformed(evt);
+            }
+        });
 
         txtNombreSala.setRadius(40);
 
@@ -325,7 +372,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(14, 14, 14)
@@ -336,8 +383,8 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(panelAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
-                        .addComponent(jLabel3)
+                        .addGap(28, 28, 28)
+                        .addComponent(lblNombreUsuario)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4)))
                 .addContainerGap(63, Short.MAX_VALUE))
@@ -352,9 +399,8 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
                             .addComponent(panelAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(16, 16, 16)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4))))
+                                .addComponent(jLabel4))
+                            .addComponent(lblNombreUsuario, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
@@ -381,20 +427,24 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(2);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(3);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(4);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void btn3jugadoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3jugadoreActionPerformed
-        // TODO add your handling code here:
+        seleccionarLimite(3);
     }//GEN-LAST:event_btn3jugadoreActionPerformed
+
+    private void btnCrearPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearPartidaActionPerformed
+        crearPartida();
+    }//GEN-LAST:event_btnCrearPartidaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -444,7 +494,6 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -453,36 +502,29 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblNombreUsuario;
     private javax.swing.JPanel panelAvatar;
     private javax.swing.JTextField txtFldNombreSala;
     private vista.DiseñosExtras.TextFieldRedondo txtNombreSala;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public void actualizar(String evento) {
-        if (evento.startsWith("SALA_CREADA:")) {
-            String codigo = evento.split(":")[1];
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                LobbyView lobby = new LobbyView(jugadorHost, codigo);
-                red.ClienteRed.getInstance().setVistaActual(lobby);
-                lobby.setVisible(true);
-                this.dispose();
-            });
-        }
+        //aqui no se ocupa
     }
 
     @Override
     public void mostrarVista() {
-        setVisible(true);
+        this.setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        dispose();
+        this.dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        // sin popup, solo log por ahora
-        System.out.println("[CrearPartida] " + mensaje);
+            JOptionPane.showMessageDialog(this, mensaje);
     }
 }

@@ -38,7 +38,7 @@ public class Partida implements IObservable {
         this.mazo = mazo;
         this.pilaCartas = pilaCartas;
         this.estado = estado;
-        this.id = java.util.UUID.randomUUID().toString(); 
+        this.id = java.util.UUID.randomUUID().toString();
         this.sentido = Sentido.HORARIO;
         this.turnoActual = 0;
         this.saltarTurno = false;
@@ -49,25 +49,29 @@ public class Partida implements IObservable {
         estado.iniciarPartida(this);
     }
 
-    public Jugador agregarJugador(Jugador jugador) {
-        estado.agregarJugador(this,jugador);
-        return jugador;
-    }
-
+    private boolean juegoTerminado = false;
 
     public void verificarGanador() {
+        if (juegoTerminado) {
+            return;
+        }
+
         for (Jugador jugador : jugadores) {
-            if (jugador.getMano().getCartas().isEmpty()){
+            if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()) {
+
+                this.juegoTerminado = true;
+
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
-                notificarObservador("PARTIDA_FINALIZADA" + jugador.getNombre());
+                notificarObservador("PARTIDA_FINALIZADA:" + jugador.getNombre());
                 return;
             }
         }
     }
 
     public void jugarCarta(Carta carta, Jugador jugador) {
-       estado.jugarCarta(this, jugador, carta);
-       verificarGanador();
+        estado.jugarCarta(this, jugador, carta);
+        jugador.setDijoUno(false);
+        verificarGanador();
     }
 
     public void tomarCarta(Jugador jugador) {
@@ -76,16 +80,36 @@ public class Partida implements IObservable {
         }
         Carta cartaNueva = mazo.tomarCarta();
         jugador.recibirCarta(cartaNueva);
-        notificarObservador("CARTA_TOMADA");
+        notificarObservador("ACTUALIZACION_MESA");
+    }
+
+    public void resetearALobby() {
+
+        this.setEstado(EstadoFactory.crearEstadoEsperando());
+
+        this.sentido = Sentido.HORARIO;
+        this.turnoActual = 0;
+        this.saltarTurno = false;
+
+        for (Jugador jugador : jugadores) {
+            jugador.setMano(null);
+            jugador.setEstaListo(false);
+            jugador.setDijoUno(false);
+        }
+
+        notificarObservador("VOLVER_A_LOBBY");
     }
 
     public Jugador getJugadorActual() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            return null;
+        }
         return jugadores.get(turnoActual);
     }
 
     public void saltarTurno() {
         this.saltarTurno = true;
-        pasarTurno();
+
     }
 
     public void cambiarSentido() {
@@ -94,6 +118,9 @@ public class Partida implements IObservable {
         } else {
             this.sentido = Sentido.HORARIO;
         }
+        if (jugadores.size() == 2) {
+            this.saltarTurno = true;
+        }
         notificarObservador("SENTIDO_CAMBIADO");
     }
 
@@ -101,14 +128,44 @@ public class Partida implements IObservable {
         if (mazo.estaVacio()) {
             mazo.recargar(pilaCartas);
         }
-        Jugador actual =  getJugadorActual();
+
+        if (jugadores == null || jugadores.isEmpty()) {
+            return;
+        }
+        int destinoIdx = calcularSiguienteIndice();
+        destinoIdx = ((destinoIdx % jugadores.size()) + jugadores.size()) % jugadores.size();
+        Jugador destino = jugadores.get(destinoIdx);
+
+        Jugador actual = getJugadorActual();
+        System.out.println("[DEBUG] acomularCartas -> cantidad=" + cantidad + ", turnoActualIdx=" + turnoActual
+                + ", jugadorActual=" + (actual != null ? actual.getNombre() : "<null>")
+                + ", destinoIdx=" + destinoIdx + ", destino=" + (destino != null ? destino.getNombre() : "<null>"));
+
         for (int i = 0; i < cantidad; i++) {
-            actual.recibirCarta(mazo.tomarCarta());
+            destino.recibirCarta(mazo.tomarCarta());
         }
         notificarObservador("CARTAS_ACUMULADAS");
     }
 
     public void pasarTurno() {
+
+        Jugador jugadorAnterior = jugadores.get(turnoActual);
+
+        if (jugadorAnterior.getMano() != null && jugadorAnterior.getMano().getCartas().size() == 1) {
+            if (!jugadorAnterior.isDijoUno()) {
+                System.out.println("¡" + jugadorAnterior.getNombre() + " no dijo UNO! Castigo de 3 cartas.");
+
+                for (int i = 0; i < 3; i++) {
+                    if (mazo.estaVacio()) {
+                        mazo.recargar(pilaCartas);
+                    }
+                    jugadorAnterior.recibirCarta(mazo.tomarCarta());
+                }
+            }
+        }
+
+        jugadorAnterior.setDijoUno(false);
+
         turnoActual = calcularSiguienteIndice();
 
         if (this.saltarTurno) {
@@ -119,9 +176,19 @@ public class Partida implements IObservable {
         }
     }
 
+    public Jugador agregarJugador(Jugador jugador) {
+        if (this.jugadores.isEmpty()) {
+            jugador.setEsHost(true);
+        }
+        estado.agregarJugador(this, jugador);
+        return jugador;
+    }
+
     public int calcularSiguienteIndice() {
         int numeroJugadores = jugadores.size();
-        if (numeroJugadores == 0) return 0;
+        if (numeroJugadores == 0) {
+            return 0;
+        }
 
         int siguiente;
         if (this.sentido == Sentido.HORARIO) {

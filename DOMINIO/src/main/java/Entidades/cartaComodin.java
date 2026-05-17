@@ -16,8 +16,8 @@ import Entidades.enums.Color;
 public class cartaComodin extends Carta{
     private final boolean EsMasCuatro;
 
-    public cartaComodin(boolean EsMasCuatro, String id, Color color) {
-        super(id, color.NEGRO);
+    public cartaComodin(boolean EsMasCuatro, String id) {
+        super(id, Color.NEGRO);
         this.EsMasCuatro = EsMasCuatro;
     }
     

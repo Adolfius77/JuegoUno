@@ -15,8 +15,13 @@
         <dependency>
             <groupId>org.itson</groupId>
             <artifactId>RED-COMUNICACION</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>DOMINIO</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
@@ -30,14 +35,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
 
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

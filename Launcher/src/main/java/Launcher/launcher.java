@@ -1,7 +1,5 @@
 package Launcher;
 
-
-
 import cliente.ClienteProxy;
 import controlador.LobbyController;
 import serealizador.serializador;
@@ -18,11 +16,11 @@ public class launcher {
 
             ClienteProxy proxy = ClienteProxy.getInstance();
             serializador sere = new serializador();
+
             proxy.setSerializador(sere);
             proxy.conectar();
 
-            LobbyController controlador = new LobbyController(proxy);
-
+            controlador.LobbyController controlador = new controlador.LobbyController(proxy, "", "", false, null);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {

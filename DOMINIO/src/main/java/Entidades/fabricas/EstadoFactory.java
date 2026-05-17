@@ -17,5 +17,5 @@ public class EstadoFactory {
     public static IEstadoPartida crearEstadoFinalizada() {
         return new EstadoFinalizada();
     }
-
+    
 }

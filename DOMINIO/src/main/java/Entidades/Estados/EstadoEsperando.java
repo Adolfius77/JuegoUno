@@ -1,10 +1,7 @@
 package Entidades.Estados;
 
-import Entidades.Carta;
-import Entidades.Jugador;
+import Entidades.*;
 import Entidades.Logica.Partida;
-import Entidades.Mano;
-import Entidades.cartaComodin;
 import Entidades.fabricas.EstadoFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +30,8 @@ public class EstadoEsperando implements IEstadoPartida {
             throw new IllegalArgumentException("la partida ya tiene el maximo de jugadores");
         }
         boolean repetido = partida.getJugadores().stream().anyMatch(j ->
-                j.getId() != null && j.getId().equals(jugador.getId())) ||
-                jugador.getNombre().equalsIgnoreCase(jugador.getNombre());
+                (j.getId() != null && j.getId().equals(jugador.getId()))
+                || (j.getNombre() != null && j.getNombre().equalsIgnoreCase(jugador.getNombre())));
         if(repetido){
             throw new IllegalArgumentException("el jugador ya existe en la partida");
         }
@@ -63,30 +60,28 @@ public class EstadoEsperando implements IEstadoPartida {
         if (partida.getPilaCartas() == null) {
             throw new IllegalStateException("No existe pila de descarte para iniciar la partida");
         }
+        Mazo mazoActual = partida.getMazo();
+        PilaCartas pilaActual = partida.getPilaCartas();
 
-        for (Jugador jugador : partida.getJugadores()) {
-            if (jugador.getMano() == null) {
-                jugador.setMano(new Mano());
-            }
-            jugador.entregarCartas(partida.getMazo().entregarCartas());
+        for(Jugador jugador : partida.getJugadores()){
+            jugador.entregarCartas(mazoActual.entregarCartas());
+        }
+        Carta primeraCarta = mazoActual.tomarCarta();
+        int intentos = 0;
+        int maxIntentos = Math.max(1, mazoActual.getCantidadCartas() + 1);
+        while (primeraCarta instanceof cartaComodin && intentos < maxIntentos) {
+            mazoActual.devolverCartaAlFondo(primeraCarta);
+            primeraCarta = mazoActual.tomarCarta();
+            intentos++;
         }
 
-
-        Carta cartaInicial = partida.getMazo().tomarCarta();
-        List<Carta> comodinesDevolver = new ArrayList();
-        while(cartaInicial instanceof cartaComodin){
-            System.out.println("salio un comodin sacando otra carta ");
-            comodinesDevolver.add(cartaInicial);
-            cartaInicial = partida.getMazo().tomarCarta();
+        if (primeraCarta instanceof cartaComodin) {
+            throw new IllegalStateException("No se pudo iniciar la partida con una carta normal en la mesa.");
         }
-        partida.getPilaCartas().agregarCarta(cartaInicial);
-        
-        for(Carta comodin : comodinesDevolver){
-            partida.getMazo().agregarCarta(comodin);
-        }
-        
+        pilaActual.agregarCarta(primeraCarta);
+        System.out.println("EstadoEsperando: La primera carta en la mesa es de color: " + pilaActual.getColorActivo());
         partida.setEstado(EstadoFactory.crearEstadoJugando());
-        partida.notificarObservador("PARTIDA_INICIADA");
+        System.out.println("Transicion exitosa: La partida ahora esta en EstadoJugando.");
     }
 
     @Override

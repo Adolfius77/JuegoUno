@@ -5,18 +5,50 @@
 package vista;
 
 import Interfaces.IVista;
+import cliente.ClienteProxy;
+import controlador.UnirsePartidaController;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.util.List;
+import java.util.Map;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
 /**
  *
  * @author USER
  */
-public class unirsePartidaView extends javax.swing.JFrame implements IVista{
+public class unirsePartidaView extends javax.swing.JFrame implements IVista {
+
+    private String nombreInvitado;
+    private ClienteProxy proxy;
+    private UnirsePartidaController controlador;
 
     /**
      * Creates new form unirsePartidaView
      */
     public unirsePartidaView() {
+        this("", null);
+    }
+
+    public unirsePartidaView(String nombreInvitado, ClienteProxy proxy) {
         initComponents();
+        this.nombreInvitado = nombreInvitado;
+        this.proxy = proxy;
+        configurarPanelPartidas();
+
+        if (this.proxy != null) {
+            this.controlador = new UnirsePartidaController(this, this.proxy);
+            this.controlador.solicitarListaPartidas();
+        }
+        if (this.nombreInvitado != null && !this.nombreInvitado.isBlank()) {
+            jLabel7.setText(this.nombreInvitado);
+        }
+
+        btnCancelar.addActionListener(e -> volverASeleccion());
     }
 
     /**
@@ -151,7 +183,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
         jLabel18.setText("Codigo de la sala:");
 
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCancelar.setText("Cancelar");
+        btnCancelar.setText("Volver");
         btnCancelar.setBorderColor(new java.awt.Color(255, 255, 255));
         btnCancelar.setColor(new java.awt.Color(204, 0, 0));
         btnCancelar.setColorClick(new java.awt.Color(204, 0, 0));
@@ -258,8 +290,84 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUnirseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirseActionPerformed
-        // TODO add your handling code here:
+        String codigoSala = txtCodigoSala.getText() != null ? txtCodigoSala.getText().trim() : "";
+        if (codigoSala.isEmpty()) {
+            mostrarMensaje("Ingresa un código de sala.");
+            return;
+        }
+        if (controlador == null) {
+            mostrarMensaje("No hay conexión con el servidor.");
+            return;
+        }
+        controlador.solicitarUnirse(nombreInvitado, codigoSala);
     }//GEN-LAST:event_btnUnirseActionPerformed
+
+    public void mostrarPartidasDisponibles(List<Map<String, Object>> partidas) {
+        panelDianamicoPartidas.removeAll();
+        panelDianamicoPartidas.setLayout(new BoxLayout(panelDianamicoPartidas, BoxLayout.Y_AXIS));
+
+        if (partidas == null || partidas.isEmpty()) {
+            JLabel sinPartidas = new JLabel("No hay partidas disponibles por el momento.");
+            sinPartidas.setAlignmentX(Component.CENTER_ALIGNMENT);
+            sinPartidas.setHorizontalAlignment(SwingConstants.CENTER);
+            panelDianamicoPartidas.add(Box.createVerticalGlue());
+            panelDianamicoPartidas.add(sinPartidas);
+            panelDianamicoPartidas.add(Box.createVerticalGlue());
+        } else {
+            for (Map<String, Object> partida : partidas) {
+                String codigo = valorTexto(partida.get("codigoSala"), "----");
+                String nombreSala = valorTexto(partida.get("nombreSala"), "Sala sin nombre");
+                int jugadores = valorEntero(partida.get("jugadoresActuales"), 0);
+                int limite = valorEntero(partida.get("limiteJugadores"), 4);
+
+                partidaForm tarjeta = new partidaForm(nombreSala, codigo, jugadores, limite);
+                tarjeta.setOnSeleccion(() -> txtCodigoSala.setText(codigo));
+                tarjeta.setAlignmentX(Component.LEFT_ALIGNMENT);
+                tarjeta.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+
+                panelDianamicoPartidas.add(tarjeta);
+                panelDianamicoPartidas.add(Box.createVerticalStrut(10));
+            }
+        }
+
+        panelDianamicoPartidas.revalidate();
+        panelDianamicoPartidas.repaint();
+    }
+
+    private void configurarPanelPartidas() {
+        panelDianamicoPartidas.removeAll();
+        panelDianamicoPartidas.setLayout(new BoxLayout(panelDianamicoPartidas, BoxLayout.Y_AXIS));
+        panelDianamicoPartidas.revalidate();
+        panelDianamicoPartidas.repaint();
+    }
+
+    private void volverASeleccion() {
+        SeleccionPartida seleccion = new SeleccionPartida(this.nombreInvitado, "", this.proxy);
+        seleccion.setVisible(true);
+        dispose();
+    }
+
+    private String valorTexto(Object valor, String porDefecto) {
+        if (valor == null) {
+            return porDefecto;
+        }
+        String texto = String.valueOf(valor).trim();
+        return texto.isEmpty() ? porDefecto : texto;
+    }
+
+    private int valorEntero(Object valor, int porDefecto) {
+        if (valor instanceof Number numero) {
+            return numero.intValue();
+        }
+        if (valor instanceof String texto && !texto.isBlank()) {
+            try {
+                return Integer.parseInt(texto.trim());
+            } catch (NumberFormatException ex) {
+                return porDefecto;
+            }
+        }
+        return porDefecto;
+    }
 
     /**
      * @param args the command line arguments
@@ -321,21 +429,22 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista{
 
     @Override
     public void mostrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.setVisible(true);
     }
 
     @Override
     public void cerrarVista() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.dispose();
     }
 
     @Override
     public void mostrarMensaje(String mensaje) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        JOptionPane.showMessageDialog(this, mensaje, "UNO", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void actualizar(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.revalidate();
+        this.repaint();
     }
 }

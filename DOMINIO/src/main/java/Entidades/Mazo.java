@@ -34,7 +34,11 @@ public class Mazo {
     }
 
     public List<Carta> recargar(PilaCartas pilaCartas) {
+        if (pilaCartas == null) {
+            return listaCartas;
+        }
         listaCartas.addAll(pilaCartas.vaciar());
+        barajear();
         return listaCartas;
     }
 
@@ -50,10 +54,19 @@ public class Mazo {
     public boolean estaVacio() {
         return listaCartas.isEmpty();
     }
+    public int getCantidadCartas() {
+        return listaCartas != null ? listaCartas.size() : 0;
+    }
     public void agregarCarta(Carta carta){
         if(carta != null){
             listaCartas.add(carta);
             barajear();
+        }
+    }
+
+    public void devolverCartaAlFondo(Carta carta) {
+        if (carta != null) {
+            listaCartas.add(0, carta);
         }
     }
 }

@@ -5,7 +5,8 @@
 package vista;
 
 import Interfaces.IVista;
-import dtos.JugadorDTO;
+import cliente.ClienteProxy;
+import controlador.LobbyController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,22 +16,22 @@ import java.awt.*;
  * @author emiim
  */
 public class SeleccionPartida extends javax.swing.JFrame implements IVista {
-
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();
+    private ClienteProxy proxy;
 
     public SeleccionPartida() {
-        this(null, null);
+        this(null, null,null);
     }
 
-    public SeleccionPartida(String nombreUsuario, String avatarUsuario) {
+    public SeleccionPartida(String nombreUsuario, String avatarUsuario, ClienteProxy proxy) {
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
+        this.proxy = proxy;
         initComponents();
         this.setLocationRelativeTo(null);
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            ;
+        this.addWindowListener(new java.awt.event.WindowAdapter() {;
             @Override
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 ventanaActual();
@@ -40,7 +41,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
         mostrarDatosJugador();
     }
 
-    private void ventanaActual() {
+    private void ventanaActual(){
         System.out.println("Ventana actual: " + "[" + this.getClass().getSimpleName() + "]");
     }
 
@@ -281,22 +282,19 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        JugadorDTO jugadorHost = new JugadorDTO();
-        jugadorHost.setAvatar(avatarUsuario);
-        jugadorHost.setNombre(nombreUsuario);
-
-        CrearPartida proximaVista = new CrearPartida(jugadorHost);
-        red.ClienteRed.getInstance().setVistaActual(proximaVista);
-        abrirVentana(proximaVista);
+        abrirVentana(new CrearPartida(this.nombreUsuario, this.avatarUsuario != null ? this.avatarUsuario : "", this.proxy));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
-        unirsePartidaView proximaVista = new unirsePartidaView();
-        red.ClienteRed.getInstance().setVistaActual(proximaVista);
-        abrirVentana(proximaVista);    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
+        abrirVentana(new unirsePartidaView(this.nombreUsuario, this.proxy));
+    }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        red.ClienteRed.getInstance().desconectar();
+        if (this.proxy != null) {
+            LobbyController controlador = new LobbyController(this.proxy, "", "", false, null);
+            abrirVentana(new MenuPrincipal(controlador));
+            return;
+        }
         abrirVentana(new MenuPrincipal());
     }//GEN-LAST:event_btnSalirActionPerformed
 

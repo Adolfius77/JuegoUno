@@ -26,15 +26,15 @@ public class PartidaMapper {
         String turnoId = "";
         String mensajeTurno = "Sin turno asignado";
         if (partida.getJugadorActual() != null) {
-            turnoId = partida.getJugadorActual().getId() != null
-                    ? partida.getJugadorActual().getId()
+            turnoId = partida.getJugadorActual().getNombre() != null
+                    ? partida.getJugadorActual().getNombre()
                     : "";
             mensajeTurno = "Es el turno de " + partida.getJugadorActual().getNombre();
         }
 
         CartaDTO cartaCentro = null;
         String colorActual = "SIN_COLOR";
-        if (partida.getPilaCartas() != null) {
+        if (partida.getPilaCartas() != null && !partida.getPilaCartas().getListaCartas().isEmpty()) {
             cartaCentro = cMapper.toDTO(partida.getPilaCartas().obtenerUltimaCarta());
             if (partida.getPilaCartas().getColorActivo() != null) {
                 colorActual = partida.getPilaCartas().getColorActivo().name();
@@ -42,8 +42,8 @@ public class PartidaMapper {
         }
 
         int mazoTamano = 0;
-        if (partida.getMazo() != null && !partida.getMazo().estaVacio()) {
-            mazoTamano = 1;
+        if (partida.getMazo() != null) {
+            mazoTamano = partida.getMazo().getCantidadCartas();
         }
 
         return new PartidaDTO(
@@ -56,7 +56,7 @@ public class PartidaMapper {
                 partida.getSentido() == Entidades.enums.Sentido.HORARIO,
                 mazoTamano,
                 mensajeTurno,
-                0
+                mazoTamano
         );
     }
 

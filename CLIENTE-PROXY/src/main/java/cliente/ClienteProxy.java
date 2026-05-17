@@ -28,7 +28,7 @@ public class ClienteProxy extends Thread implements IProxy {
 
     private ClienteProxy() {
     }
-
+    //singleton para tener una unica instancia hacia el server
     public static ClienteProxy getInstance() {
         if (instance == null) {
             instance = new ClienteProxy();

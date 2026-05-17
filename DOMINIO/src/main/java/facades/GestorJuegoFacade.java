@@ -1,9 +1,9 @@
 package facades;
 
+import Entidades.*;
+import Entidades.Estados.EstadoEsperando;
 import Entidades.Estados.IEstadoPartida;
-import Entidades.Jugador;
 import Entidades.Logica.Partida;
-import Entidades.Mano;
 import Entidades.fabricas.*;
 
 import java.util.ArrayList;
@@ -32,11 +32,32 @@ public class GestorJuegoFacade {
             nuevoJugador.setMano(new Mano());
             listaJugadores.add(nuevoJugador);
         }
-        this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory, this.estado);
+        this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory, new EstadoEsperando());
+        this.partidaActual.getMazo().barajear();
+        this.partidaActual.iniciar();
+
         System.out.println("fachada: construyendo mazo y partida....");
 
     }
 
+    public void eliminarJugador(String nombreJugador) {
+        if (this.partidaActual != null) {
+            this.partidaActual.getJugadores().removeIf(jugador -> jugador.getNombre().equals(nombreJugador));
+            System.out.println("Fachada: Jugador " + nombreJugador + " eliminado de la partida.");
+        }
+    }
+    
+    public String verificarGanador(){
+        if (this.partidaActual != null) {
+            for (Jugador jugador : this.getPartidaActual().getJugadores()) {
+                if (jugador.getMano().getCartas().isEmpty()) {
+                    return jugador.getNombre();
+                }
+            }
+        }
+        return null;
+    }
+    
     public Partida getPartidaActual() {
         return this.partidaActual;
     }
