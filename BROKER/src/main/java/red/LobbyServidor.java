@@ -4,7 +4,6 @@
  */
 package red;
 
-
 import Entidades.fabricas.CartaFactory;
 import Entidades.fabricas.EstadoFactory;
 import Entidades.Logica.Partida;
@@ -23,6 +22,7 @@ import comandos.ComandoPasarTurno;
 import comandos.ComandoJugarCarta;
 import comandos.ComandoTomarCarta;
 import comandos.ComandoUnirsePartida;
+import comandos.ComandoVolverLobby;
 import comandos.comandoCrearPartida;
 import comandos.comandoIniciarPartida;
 
@@ -53,14 +53,15 @@ public class LobbyServidor {
         this.broker.subscribirse("PETICION_TOMAR_CARTA", new ComandoTomarCarta(manejadorNodos, juegoServidor)::ejecutar);
         this.broker.subscribirse("PETICION_PASAR_TURNO", new ComandoPasarTurno(manejadorNodos, juegoServidor)::ejecutar);
         this.broker.subscribirse("PETICION_GRITAR_UNO", new ComandoGritarUno(manejadorNodos, juegoServidor)::ejecutar);
+        this.broker.subscribirse("PETICION_VOLVER_LOBBY", new ComandoVolverLobby(juegoServidor)::ejecutar);
     }
 
     public static LobbyServidor crearLobbyPorDefecto(IBroker broker) {
         JuegoServidor juego = new JuegoServidor(
-            broker,
-            new CartaFactory(),
-            new MazoClasicoFactory(),
-            EstadoFactory.crearEstadoEsperando()
+                broker,
+                new CartaFactory(),
+                new MazoClasicoFactory(),
+                EstadoFactory.crearEstadoEsperando()
         );
         return new LobbyServidor(broker, juego);
     }
@@ -70,7 +71,9 @@ public class LobbyServidor {
     }
 
     public void eliminarJugadorPorProxy(IProxy proxy) {
-        if (proxy == null) return;
+        if (proxy == null) {
+            return;
+        }
 
         Nodos.NodoCliente nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
         String nombreJugador = nodo != null ? nodo.getNombre() : null;
