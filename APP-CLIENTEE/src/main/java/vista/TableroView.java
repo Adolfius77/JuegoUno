@@ -42,7 +42,7 @@ public class TableroView extends javax.swing.JPanel {
     private final JLabel lblTemporizador = new JLabel("Tiempo: 30s");
     private final Border bordeNormal = BorderFactory.createEmptyBorder();
     private final Border bordeSeleccionado = BorderFactory.createLineBorder(new Color(255, 215, 0), 3);
-    private final JLabel lblIndicadorUno = new JLabel();
+    
 
     /**
      * Creates new form TableroView
@@ -58,13 +58,8 @@ public class TableroView extends javax.swing.JPanel {
         lblTemporizador.setHorizontalAlignment(SwingConstants.CENTER);
         panelFondo.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 250, 220, 30));
 
-        lblIndicadorUno.setText("GRITAR UNO!");
-        lblIndicadorUno.setForeground(new Color(255, 0, 0));
-        lblIndicadorUno.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 16));
-        lblIndicadorUno.setHorizontalAlignment(SwingConstants.CENTER);
-        lblIndicadorUno.setVisible(false);
-        panelFondo.add(lblIndicadorUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 220, 30));
-
+        lblUno.setVisible(false);
+        
         temporizadorTurno = new Timer(1000, e -> actualizarCuentaRegresiva());
         btnDecirUno.setVisible(false);
     }
@@ -94,19 +89,19 @@ public class TableroView extends javax.swing.JPanel {
         this.indiceSeleccionado = -1;
 
         if (cartasMiMano.size() == 2) {
-            lblIndicadorUno.setVisible(true);
-            lblIndicadorUno.setText("¡PREPARA TU UNO!");
-            lblIndicadorUno.setForeground(Color.RED);
+            lblUno.setVisible(true);
+            lblUno.setText("¡PREPARA TU UNO!");
+            lblUno.setForeground(Color.RED);
             btnDecirUno.setVisible(true);
 
         } else if (cartasMiMano.size() == 1) {
 
-            lblIndicadorUno.setVisible(true);
-            lblIndicadorUno.setText("¡UNO GRITADO!");
-            lblIndicadorUno.setForeground(new Color(0, 200, 0));
+            lblUno.setVisible(true);
+            lblUno.setText("¡UNO GRITADO!");
+            lblUno.setForeground(new Color(0, 200, 0));
             btnDecirUno.setVisible(false);
         } else {
-            lblIndicadorUno.setVisible(false);
+            lblUno.setVisible(false);
             btnDecirUno.setVisible(false);
         }
 
@@ -429,6 +424,7 @@ public class TableroView extends javax.swing.JPanel {
         panelCartaMedio = new javax.swing.JPanel();
         panelPilaCartas = new javax.swing.JPanel();
         btnDecirUno = new javax.swing.JButton();
+        lblUno = new javax.swing.JLabel();
 
         panelFondo.setBackground(new java.awt.Color(255, 255, 255));
         panelFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -638,6 +634,9 @@ public class TableroView extends javax.swing.JPanel {
         });
         panelFondo.add(btnDecirUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 600, 90, 90));
 
+        lblUno.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        panelFondo.add(lblUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 240, 0, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -665,8 +664,8 @@ public class TableroView extends javax.swing.JPanel {
 
             controlador.decirUno();
             btnDecirUno.setVisible(false);
-            lblIndicadorUno.setText("¡UNO GRITADO!");
-            lblIndicadorUno.setForeground(new Color(0, 200, 0));
+            lblUno.setText("¡UNO GRITADO!");
+            lblUno.setForeground(new Color(0, 200, 0));
         }
     }//GEN-LAST:event_btnDecirUnoActionPerformed
 
@@ -675,6 +674,7 @@ public class TableroView extends javax.swing.JPanel {
     private javax.swing.JButton btnDecirUno;
     private vista.DiseñosExtras.botonCircular btnJugarCarta;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblUno;
     private javax.swing.JPanel panelAvatar1;
     private javax.swing.JPanel panelAvatar2;
     private javax.swing.JPanel panelAvatar3;
