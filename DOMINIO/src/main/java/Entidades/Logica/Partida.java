@@ -83,7 +83,7 @@ public class Partida implements IObservable {
 
     public void saltarTurno() {
         this.saltarTurno = true;
-        pasarTurno();
+
     }
 
     public void cambiarSentido() {
@@ -91,6 +91,9 @@ public class Partida implements IObservable {
             this.sentido = Sentido.ANTIHORARIO;
         } else {
             this.sentido = Sentido.HORARIO;
+        }
+        if (jugadores.size() == 2) {
+            this.saltarTurno = true;
         }
         notificarObservador("SENTIDO_CAMBIADO");
     }
@@ -119,6 +122,24 @@ public class Partida implements IObservable {
     }
 
     public void pasarTurno() {
+
+        Jugador jugadorAnterior = jugadores.get(turnoActual);
+
+        if (jugadorAnterior.getMano() != null && jugadorAnterior.getMano().getCartas().size() == 1) {
+            if (!jugadorAnterior.isDijoUno()) {
+                System.out.println("¡" + jugadorAnterior.getNombre() + " no dijo UNO! Castigo de 3 cartas.");
+
+                for (int i = 0; i < 3; i++) {
+                    if (mazo.estaVacio()) {
+                        mazo.recargar(pilaCartas);
+                    }
+                    jugadorAnterior.recibirCarta(mazo.tomarCarta());
+                }
+            }
+        }
+
+        jugadorAnterior.setDijoUno(false);
+
         turnoActual = calcularSiguienteIndice();
 
         if (this.saltarTurno) {
@@ -151,7 +172,6 @@ public class Partida implements IObservable {
         }
         return siguiente;
     }
-
 
     public void avanzarSiguienteIndice() {
         this.turnoActual = calcularSiguienteIndice();

@@ -125,4 +125,6 @@ public class Jugador {
     public void setEsHost(boolean esHost) {
         this.esHost = esHost;
     }
+
+    
 }
