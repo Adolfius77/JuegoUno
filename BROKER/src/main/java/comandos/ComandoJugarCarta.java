@@ -74,8 +74,28 @@ public class ComandoJugarCarta implements IComandoServidor {
 
             partida.jugarCarta(carta, jugador);
 
-        } catch (Exception e) {
+        String nombreGanador = juegoServidor.getFachadaJuego().verificarGanador();
 
+            if (nombreGanador != null) {
+                MensajeDTO mensajeVictoria = new MensajeDTO();
+                mensajeVictoria.setTipo("PARTIDA_FINALIZADA");
+                mensajeVictoria.setRemitente("SERVIDOR");
+                mensajeVictoria.getDatos().put("ganador", nombreGanador);
+                
+                manejadorNodos.notificarATodos(mensajeVictoria); 
+
+            } else {
+                dtos.PartidaDTO partidaActualizada = Mappers.PartidaMapper.toDTO(partida); 
+                
+                MensajeDTO mensajeActualizacion = new MensajeDTO();
+                mensajeActualizacion.setTipo("ACTUALIZACION_MESA");
+                mensajeActualizacion.setRemitente("SERVIDOR");
+                mensajeActualizacion.getDatos().put("partida", partidaActualizada);
+                
+                manejadorNodos.notificarATodos(mensajeActualizacion);
+            }
+
+        } catch (Exception e) {
             enviarError(nodo, proxy, "ERROR_GENERAL", e.getMessage());
         }
     }

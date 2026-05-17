@@ -47,6 +47,17 @@ public class GestorJuegoFacade {
         }
     }
     
+    public String verificarGanador(){
+        if (this.partidaActual != null) {
+            for (Jugador jugador : this.getPartidaActual().getJugadores()) {
+                if (jugador.getMano().getCartas().isEmpty()) {
+                    return jugador.getNombre();
+                }
+            }
+        }
+        return null;
+    }
+    
     public Partida getPartidaActual() {
         return this.partidaActual;
     }
