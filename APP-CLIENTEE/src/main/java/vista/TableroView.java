@@ -59,7 +59,8 @@ public class TableroView extends javax.swing.JPanel {
         panelFondo.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 250, 220, 30));
 
         lblUno.setVisible(false);
-        
+        lblUno.setHorizontalAlignment(SwingConstants.CENTER); 
+        panelFondo.add(lblUno, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 240, 200, 30));
         temporizadorTurno = new Timer(1000, e -> actualizarCuentaRegresiva());
         btnDecirUno.setVisible(false);
     }

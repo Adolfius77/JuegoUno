@@ -130,7 +130,15 @@ public class GameController {
         });
     }
 
+    private boolean podioAbierto = false;
+
     private void procesarFinDePartida(MensajeDTO mensaje) {
+
+        if (podioAbierto) {
+            return;
+        }
+        podioAbierto = true;
+
         String ganadorTemp = "";
         if (mensaje.getDatos() != null && mensaje.getDatos().get("ganador") != null) {
             ganadorTemp = String.valueOf(mensaje.getDatos().get("ganador"));
@@ -333,17 +341,17 @@ public class GameController {
         }
         tomarCarta();
     }
-    
+
     public void abandonarPartida() {
-        MensajeDesconexionDTO desconexion = new MensajeDesconexionDTO(this.miNombre);   
+        MensajeDesconexionDTO desconexion = new MensajeDesconexionDTO(this.miNombre);
         proxy.enviarMensaje(desconexion);
-        
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
+
         System.exit(0);
     }
 }

@@ -49,9 +49,18 @@ public class Partida implements IObservable {
         estado.iniciarPartida(this);
     }
 
+    private boolean juegoTerminado = false;
+
     public void verificarGanador() {
+        if (juegoTerminado) {
+            return; 
+        }
+
         for (Jugador jugador : jugadores) {
             if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()) {
+                
+                this.juegoTerminado = true;
+                
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
                 notificarObservador("PARTIDA_FINALIZADA:" + jugador.getNombre());
                 return;
