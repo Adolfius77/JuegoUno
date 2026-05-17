@@ -53,14 +53,14 @@ public class Partida implements IObservable {
 
     public void verificarGanador() {
         if (juegoTerminado) {
-            return; 
+            return;
         }
 
         for (Jugador jugador : jugadores) {
             if (jugador.getMano() != null && jugador.getMano().getCartas().isEmpty()) {
-                
+
                 this.juegoTerminado = true;
-                
+
                 this.setEstado(EstadoFactory.crearEstadoFinalizada());
                 notificarObservador("PARTIDA_FINALIZADA:" + jugador.getNombre());
                 return;
@@ -81,6 +81,23 @@ public class Partida implements IObservable {
         Carta cartaNueva = mazo.tomarCarta();
         jugador.recibirCarta(cartaNueva);
         notificarObservador("ACTUALIZACION_MESA");
+    }
+
+    public void resetearALobby() {
+
+        this.setEstado(EstadoFactory.crearEstadoEsperando());
+
+        this.sentido = Sentido.HORARIO;
+        this.turnoActual = 0;
+        this.saltarTurno = false;
+
+        for (Jugador jugador : jugadores) {
+            jugador.setMano(null);
+            jugador.setEstaListo(false);
+            jugador.setDijoUno(false);
+        }
+
+        notificarObservador("VOLVER_A_LOBBY");
     }
 
     public Jugador getJugadorActual() {
