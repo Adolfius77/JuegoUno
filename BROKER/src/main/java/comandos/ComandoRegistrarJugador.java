@@ -70,30 +70,5 @@ public class ComandoRegistrarJugador implements IComandoServidor {
         respuestaRegistro.setDatos(datosRespuesta);
         proxy.enviarMensaje(respuestaRegistro);
 
-//        List<Map<String, String>> listaJugadores = new ArrayList<>();
-//
-//        for (NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()) {
-//            Map<String, String> datosJugador = new HashMap<>();
-//            datosJugador.put("nombre", nodo.getNombre());
-//
-//            if (nodo.getAvatar() != null) {
-//                datosJugador.put("avatar", nodo.getAvatar());
-//
-//            } else {
-//                datosJugador.put("avatar", "pfp");
-//            }
-//            datosJugador.put("estaListo", String.valueOf(nodo.isEstaListo()));
-//            listaJugadores.add(datosJugador);
-//        }
-//        MensajeDTO notificacionLista = new MensajeDTO();
-//        notificacionLista.setTipo("LISTA_ACTUALIZADA");
-//        notificacionLista.setRemitente("SERVIDOR");
-//        Map<String, Object> datosLista = new HashMap<>();
-//        datosLista.put("jugadores", listaJugadores);
-//        notificacionLista.setDatos(datosLista);
-//
-//        for (NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()) {
-//            nodo.enviarMensaje(notificacionLista);
-//        }
     }
 }

@@ -8,6 +8,8 @@ import Observer.IObserver;
 import dtos.MensajeDTO;
 import dtos.PartidaDTO;
 
+
+
 public class ObservadorPartidaRed implements IObserver {
     private final Partida partidaObservada;
     private final ManejadorNodos manejadorNodos;
