@@ -36,8 +36,8 @@ public class ComandoGritarUno implements IComandoServidor {
             Partida partida = juegoServidor.validarPartidaActiva();
             Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
 
-            if (jugador.getMano() == null || jugador.getMano().getCartas().size() != 1) {
-                throw new IllegalStateException("El jugador no tiene 1 sola carta. UNO inválido.");
+           if (jugador.getMano() == null || (jugador.getMano().getCartas().size() != 2 && jugador.getMano().getCartas().size() != 1)) {
+                throw new IllegalStateException("Solo puedes gritar UNO cuando te quedan 2 cartas.");
             }
             jugador.setDijoUno(true);
             partida.notificarObservador("UNO_GRITADO" +":" + nombreJugador);

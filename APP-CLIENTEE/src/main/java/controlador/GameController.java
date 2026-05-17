@@ -122,7 +122,7 @@ public class GameController {
 
         final String jugadorSalvado = quienGrito;
 
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {  
             if (vista != null && !jugadorSalvado.isBlank()) {
 
                 vista.mostrarMensaje("¡" + jugadorSalvado + " ha gritado UNO!");
@@ -130,20 +130,34 @@ public class GameController {
         });
     }
 
+    private boolean podioAbierto = false;
+
+ 
     private void procesarFinDePartida(MensajeDTO mensaje) {
+        if (podioAbierto) {
+            return;
+        }
+        podioAbierto = true;
+
         String ganadorTemp = "";
         if (mensaje.getDatos() != null && mensaje.getDatos().get("ganador") != null) {
             ganadorTemp = String.valueOf(mensaje.getDatos().get("ganador"));
         }
 
         final String ganadorFinal = ganadorTemp;
+        
         SwingUtilities.invokeLater(() -> {
             if (vista != null) {
                 vista.cerrarVista();
             }
+            
             podioView podio = new podioView();
             if (!ganadorFinal.isBlank()) {
                 podio.mostrarMensaje("Ganador: " + ganadorFinal);
+                
+                if (estadoPartida != null && estadoPartida.getJugadores() != null) {
+                    podio.cargarJugadores(estadoPartida.getJugadores(), ganadorFinal);
+                }
             }
             podio.mostrarVista();
         });
