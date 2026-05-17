@@ -40,6 +40,13 @@ public class GestorJuegoFacade {
 
     }
 
+    public void eliminarJugador(String nombreJugador) {
+        if (this.partidaActual != null) {
+            this.partidaActual.getJugadores().removeIf(jugador -> jugador.getNombre().equals(nombreJugador));
+            System.out.println("Fachada: Jugador " + nombreJugador + " eliminado de la partida.");
+        }
+    }
+    
     public Partida getPartidaActual() {
         return this.partidaActual;
     }

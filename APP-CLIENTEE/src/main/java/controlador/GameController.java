@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.JugadorDTO;
 import dtos.MensajeDTO;
+import dtos.MensajeDesconexionDTO;
 import dtos.PartidaDTO;
 
 import java.util.Collections;
@@ -305,5 +306,18 @@ public class GameController {
             return;
         }
         tomarCarta();
+    }
+    
+    public void abandonarPartida() {
+        MensajeDesconexionDTO desconexion = new MensajeDesconexionDTO(this.miNombre);   
+        proxy.enviarMensaje(desconexion);
+        
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.exit(0);
     }
 }
