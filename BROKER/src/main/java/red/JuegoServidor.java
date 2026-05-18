@@ -15,6 +15,7 @@ import Interfacez.IBroker;
 import Mappers.CartaMapper;
 import Mappers.PartidaMapper;
 import Nodos.ManejadorNodos;
+import Nodos.NodoCliente;
 import dtos.PartidaDTO;
 import dtos.CartaDTO;
 import facades.GestorJuegoFacade;
@@ -46,8 +47,21 @@ public class JuegoServidor {
     }
 
     public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
+    
+        java.util.Map<String, String> avataresPorNombre = new java.util.HashMap<>();
+        if (manejadorNodos != null) {
+            for (String nombre : nombreJugadores) {
+                NodoCliente nodo = manejadorNodos.obtenerNodoPorNombre(nombre);
+                if (nodo != null && nodo.getAvatar() != null && !nodo.getAvatar().equals("no hay")) {
+                    avataresPorNombre.put(nombre, nodo.getAvatar());
+                } else {
+                    avataresPorNombre.put(nombre, "pfp");
+                }
+            }
+        }
+        
         this.fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
-        this.fachadaJuego.prepararIniciarPartida(nombreJugadores, manejadorNodos);
+        this.fachadaJuego.prepararIniciarPartida(nombreJugadores, avataresPorNombre);
 
         this.partidaActual = this.fachadaJuego.getPartidaActual();
         this.observadorPartidaRed = new ObservadorPartidaRed(this.partidaActual, manejadorNodos);

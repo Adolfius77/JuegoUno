@@ -5,11 +5,10 @@ import Entidades.Estados.EstadoEsperando;
 import Entidades.Estados.IEstadoPartida;
 import Entidades.Logica.Partida;
 import Entidades.fabricas.*;
-import Nodos.ManejadorNodos;
-import Nodos.NodoCliente;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GestorJuegoFacade {
 
@@ -24,7 +23,7 @@ public class GestorJuegoFacade {
         this.estado = estado;
     }
 
-    public void prepararIniciarPartida(List<String> nombresJugadores, ManejadorNodos manejadorNodos) {
+    public void prepararIniciarPartida(List<String> nombresJugadores, Map<String, String> avataresPorNombre) {
         System.out.println("Fachada: iniciando los preservativos de la partida...");
 
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
@@ -33,11 +32,11 @@ public class GestorJuegoFacade {
             nuevoJugador.setNombre(String.valueOf(nombre));
             nuevoJugador.setMano(new Mano());
             
-            // Asignar avatar desde ManejadorNodos
-            if (manejadorNodos != null) {
-                NodoCliente nodo = manejadorNodos.obtenerNodoPorNombre(nombre);
-                if (nodo != null && nodo.getAvatar() != null && !nodo.getAvatar().equals("no hay")) {
-                    nuevoJugador.setAvatar(nodo.getAvatar());
+        
+            if (avataresPorNombre != null) {
+                String avatar = avataresPorNombre.get(nombre);
+                if (avatar != null && !avatar.isBlank() && !avatar.equals("no hay")) {
+                    nuevoJugador.setAvatar(avatar);
                 } else {
                     nuevoJugador.setAvatar("pfp");
                 }
