@@ -31,6 +31,7 @@ public class Partida implements IObservable {
     private PilaCartas pilaCartas;
     private Boolean saltarTurno = false;
     private int turnoActual = 0;
+    private int saltosConsecutivos = 0;
     private List<IObserver> observadores;
 
     public Partida(List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas, IEstadoPartida estado) {
@@ -77,6 +78,10 @@ public class Partida implements IObservable {
     public void tomarCarta(Jugador jugador) {
         if (mazo.estaVacio()) {
             mazo.recargar(pilaCartas);
+
+            if (mazo.estaVacio()) {
+                throw new IllegalStateException("No hay cartas disponibles en el mazo ni en la pila");
+            }
         }
         Carta cartaNueva = mazo.tomarCarta();
         jugador.recibirCarta(cartaNueva);
@@ -148,6 +153,12 @@ public class Partida implements IObservable {
     }
 
     public void pasarTurno() {
+      
+        if (saltosConsecutivos > jugadores.size()) {
+            saltarTurno = false;
+            saltosConsecutivos = 0;
+            System.out.println("Máximo de saltos consecutivos alcanzado. Limitando recursión.");
+        }
 
         Jugador jugadorAnterior = jugadores.get(turnoActual);
 
@@ -170,8 +181,10 @@ public class Partida implements IObservable {
 
         if (this.saltarTurno) {
             this.saltarTurno = false;
+            saltosConsecutivos++;
             pasarTurno();
         } else {
+            saltosConsecutivos = 0;
             notificarObservador("TURNO_CAMBIADO");
         }
     }

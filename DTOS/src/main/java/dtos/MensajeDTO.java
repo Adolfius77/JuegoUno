@@ -43,11 +43,14 @@ public  class MensajeDTO implements Serializable {
     }
 
     public Map<String, Object> getDatos() {
+        if (datos == null) {
+            datos = new HashMap<>();
+        }
         return datos;
     }
 
     public void setDatos(Map<String, Object> datos) {
-        this.datos = datos;
+        this.datos = (datos != null) ? datos : new HashMap<>();
     }
 
     public long getTimestamp() {

@@ -19,7 +19,8 @@ public class EstadoJugando implements IEstadoPartida {
     @Override
     public void jugarCarta(Partida partida, Jugador jugador, Carta carta) {
 
-        if (!partida.getJugadorActual().equals(jugador)) {
+        Jugador jugadorActual = partida.getJugadorActual();
+        if (jugadorActual == null || !jugadorActual.equals(jugador)) {
             System.out.println("no es turno " + jugador.getNombre());
             return;
         }

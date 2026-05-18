@@ -94,6 +94,7 @@ public class LobbyServidor {
                 if (desconectado != null) {
                     int jugadoresActivos = partida.getJugadores().size();
                     if (jugadoresActivos <= 2) {
+                        // Si quedan <=2 jugadores, finalizar partida
                         Jugador ganador = partida.getJugadores().stream()
                                 .filter(j -> !j.getNombre().equalsIgnoreCase(nombreJugador))
                                 .findFirst().orElse(null);
@@ -101,8 +102,11 @@ public class LobbyServidor {
                             partida.setEstado(EstadoFactory.crearEstadoFinalizada());
                             partida.notificarObservador("PARTIDA_FINALIZADA:" + ganador.getNombre());
                         }
+                        // Eliminar el jugador desconectado de la lista
+                        partida.getJugadores().remove(desconectado);
                     } else {
-                        desconectado.setMano(new Mano());
+                        // Si hay más de 2 jugadores, eliminar del juego pero mantener la partida
+                        partida.getJugadores().remove(desconectado);
                         partida.notificarObservador("JUGADOR_DESCONECTADO:" + nombreJugador);
                     }
                 }

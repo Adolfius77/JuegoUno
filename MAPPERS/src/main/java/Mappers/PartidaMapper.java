@@ -46,12 +46,16 @@ public class PartidaMapper {
             mazoTamano = partida.getMazo().getCantidadCartas();
         }
 
+        // Usar método dedicado para state detection (no string contains)
+        boolean enJuego = partida.getEstado() != null && 
+                         partida.getEstado().getClass().getSimpleName().equals("EstadoJugando");
+
         return new PartidaDTO(
                 partida.getId(),
                 jugadoresDTO,
                 cartaCentro,
                 turnoId,
-                partida.getEstado() != null && partida.getEstado().toString().contains("Jugando"),
+                enJuego,
                 colorActual,
                 partida.getSentido() == Entidades.enums.Sentido.HORARIO,
                 mazoTamano,

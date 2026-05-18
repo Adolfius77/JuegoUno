@@ -28,6 +28,9 @@ public class Mazo {
     }
 
     public Carta tomarCarta() {
+        if (listaCartas.isEmpty()) {
+            throw new IllegalStateException("No hay cartas disponibles en el mazo");
+        }
         Carta ultimaCarta = listaCartas.getLast();
         listaCartas.removeLast();
         return ultimaCarta;
@@ -44,7 +47,8 @@ public class Mazo {
 
     public List<Carta> entregarCartas() {
         List<Carta> cartasEntregables = new ArrayList<Carta>();
-        for (int i = 0; i < 7; i++) {
+        int cartasAEntregar = Math.min(7, listaCartas.size());
+        for (int i = 0; i < cartasAEntregar; i++) {
             cartasEntregables.add(listaCartas.getLast());
             listaCartas.removeLast();
         }

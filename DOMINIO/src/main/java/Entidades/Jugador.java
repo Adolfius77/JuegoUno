@@ -34,36 +34,49 @@ public class Jugador {
     }
      
     public Carta recibirCarta(Carta carta) {
-        return mano.agregarCarta(carta);
-
+       if (mano == null) {
+           throw new IllegalStateException("Mano no inicializada para el jugador: " + nombre);
+       }
+       return mano.agregarCarta(carta);
     }
+    
     public void seleccionarCarta(){
-        
+         
     }
+    
     public Mano entregarCartas(List<Carta> cartasIniciales) {
-        for (Carta cartasInicial : cartasIniciales) {
-            mano.agregarCarta(cartasInicial);
-        }
-        return mano;
+       if (mano == null) {
+           throw new IllegalStateException("Mano no inicializada para el jugador: " + nombre);
+       }
+       for (Carta cartasInicial : cartasIniciales) {
+           mano.agregarCarta(cartasInicial);
+       }
+       return mano;
+    }
+    
+    public void setMano(Mano mano) {
+       this.mano = mano;
     }
 
     public Mano getMano() {
         return this.mano;
     }
+    
     public void removerCarta(Carta carta){
         if(this.mano != null){
             this.mano.eliminarCarta(carta);
         }
     }
+    
     public void setDijoUno() {
-        this.dijoUno = dijoUno;
+        this.dijoUno = true;
     }
 
     public boolean isDijoUno() {
         return this.dijoUno;
     }
+    
     //getters y setters
-
     public boolean isEstaListo() {
         return estaListo;
     }
@@ -78,10 +91,6 @@ public class Jugador {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public void setMano(Mano mano) {
-        this.mano = mano;
     }
 
     public String getAvatar() {

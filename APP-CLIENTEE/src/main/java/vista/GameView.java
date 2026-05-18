@@ -390,7 +390,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
         if (controlador == null) {
             return;
         }
-        if (evento.equals("ACTUALIZAR_TABLERO")) {
+        if ("ACTUALIZAR_TABLERO".equals(evento)) {  
             PartidaDTO partidaActual = controlador.getEstadoPartida();
             String miNombre = controlador.getMiNombre();
 
