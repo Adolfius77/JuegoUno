@@ -46,7 +46,6 @@ public class PartidaMapper {
             mazoTamano = partida.getMazo().getCantidadCartas();
         }
 
-        // Usar método dedicado para state detection (no string contains)
         boolean enJuego = partida.getEstado() != null && 
                          partida.getEstado().getClass().getSimpleName().equals("EstadoJugando");
 

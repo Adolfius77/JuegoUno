@@ -161,7 +161,7 @@ public class LobbyController {
             }
 
             GameView vistaJuego = new GameView();
-            GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
+            GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal(), this);
             vistaJuego.setController(controladorJuego);
 
             if ("PARTIDA_INICIADA".equals(mensaje.getTipo())) {
@@ -217,6 +217,18 @@ public class LobbyController {
 
     public String getNombreJugadorLocal() {
         return nombreJugadorLocal;
+    }
+
+    public void mostrarLobbyDespuesDePartida() {
+        SwingUtilities.invokeLater(() -> {
+          
+            this.listaJugadores = new ArrayList<>();
+            
+            if (this.lobby != null) {
+                this.lobby.mostrarVista();
+                this.vista.actualizar("REINICIAR_LOBBY");
+            }
+        });
     }
 
     public boolean esHost() {

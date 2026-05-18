@@ -27,10 +27,15 @@ public class GameController {
     private final IVista vista;
     private final String miNombre;
     private PartidaDTO estadoPartida;
+    private LobbyController lobbyControllerVuelta; 
 
     private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
 
     public GameController(ClienteProxy proxy, IVista vista, String miNombre) {
+        this(proxy, vista, miNombre, null);
+    }
+
+    public GameController(ClienteProxy proxy, IVista vista, String miNombre, LobbyController lobbyController) {
         if (proxy == null || vista == null) {
             throw new IllegalArgumentException("proxy y vista son obligatorios");
         }
@@ -38,6 +43,7 @@ public class GameController {
         this.proxy = proxy;
         this.vista = vista;
         this.miNombre = miNombre != null ? miNombre : "";
+        this.lobbyControllerVuelta = lobbyController;
         this.manejadoresEventos = new HashMap<>();
 
         inicializarComandos();
@@ -112,8 +118,28 @@ public class GameController {
         this.podioAbierto = false;
 
         SwingUtilities.invokeLater(() -> {
-            if (vista != null) {
-                vista.actualizar("MOSTRAR_LOBBY");
+            try {
+                // Cerrar la vista de juego
+                if (vista != null) {
+                    try {
+                        vista.cerrarVista();
+                    } catch (Exception e) {
+                        // Vista puede ya estar cerrada
+                    }
+                }
+                
+                // Si tenemos referencia al lobby, volver a mostrarlo
+                if (lobbyControllerVuelta != null) {
+                    lobbyControllerVuelta.mostrarLobbyDespuesDePartida();
+                } else {
+                    // Fallback: mostrar mensaje si no hay forma de volver
+                    JOptionPane.showMessageDialog(null, 
+                        "¡Partida finalizada! Por favor cierre esta ventana para volver al menú principal.", 
+                        "Juego terminado", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (Exception e) {
+                System.err.println("[GameController] Error al procesar volver al lobby: " + e.getMessage());
             }
         });
     }
