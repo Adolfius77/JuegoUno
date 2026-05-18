@@ -156,12 +156,24 @@ public class GameController {
 
         final String ganadorFinal = ganadorTemp;
 
+        // Deserializar la partida final desde el mensaje
+        if (mensaje.getDatos() != null && mensaje.getDatos().containsKey("partida")) {
+            Object objetoCrudo = mensaje.getDatos().get("partida");
+            Gson gson = new Gson();
+            String jsonTemporal = gson.toJson(objetoCrudo);
+            PartidaDTO nuevaPartida = gson.fromJson(jsonTemporal, PartidaDTO.class);
+            if (nuevaPartida != null) {
+                this.estadoPartida = nuevaPartida;
+            }
+        }
+
         SwingUtilities.invokeLater(() -> {
             if (vista != null) {
                 vista.cerrarVista();
             }
 
             podioView podio = new podioView();
+            podio.setController(this);
             if (!ganadorFinal.isBlank()) {
                 podio.mostrarMensaje("Ganador: " + ganadorFinal);
 

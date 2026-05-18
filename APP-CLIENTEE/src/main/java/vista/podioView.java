@@ -29,7 +29,6 @@ public class podioView extends javax.swing.JFrame implements IVista {
 
     public podioView() {
         initComponents();
-        btnContinuar.addActionListener(e -> cerrarVista());
     }
 
     /**
@@ -189,9 +188,8 @@ public class podioView extends javax.swing.JFrame implements IVista {
     private void btnContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinuarActionPerformed
         if (controlador != null) {
             controlador.solicitarVolverAlLobby();
-            
-            this.dispose(); 
         }
+        this.dispose(); 
     }//GEN-LAST:event_btnContinuarActionPerformed
 
     /**

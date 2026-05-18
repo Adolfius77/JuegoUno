@@ -47,7 +47,7 @@ public class JuegoServidor {
 
     public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
         this.fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
-        this.fachadaJuego.prepararIniciarPartida(nombreJugadores);
+        this.fachadaJuego.prepararIniciarPartida(nombreJugadores, manejadorNodos);
 
         this.partidaActual = this.fachadaJuego.getPartidaActual();
         this.observadorPartidaRed = new ObservadorPartidaRed(this.partidaActual, manejadorNodos);

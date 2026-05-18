@@ -5,6 +5,8 @@ import Entidades.Estados.EstadoEsperando;
 import Entidades.Estados.IEstadoPartida;
 import Entidades.Logica.Partida;
 import Entidades.fabricas.*;
+import Nodos.ManejadorNodos;
+import Nodos.NodoCliente;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class GestorJuegoFacade {
         this.estado = estado;
     }
 
-    public void prepararIniciarPartida(List<String> nombresJugadores) {
+    public void prepararIniciarPartida(List<String> nombresJugadores, ManejadorNodos manejadorNodos) {
         System.out.println("Fachada: iniciando los preservativos de la partida...");
 
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
@@ -30,6 +32,19 @@ public class GestorJuegoFacade {
             Jugador nuevoJugador = new Jugador();
             nuevoJugador.setNombre(String.valueOf(nombre));
             nuevoJugador.setMano(new Mano());
+            
+            // Asignar avatar desde ManejadorNodos
+            if (manejadorNodos != null) {
+                NodoCliente nodo = manejadorNodos.obtenerNodoPorNombre(nombre);
+                if (nodo != null && nodo.getAvatar() != null && !nodo.getAvatar().equals("no hay")) {
+                    nuevoJugador.setAvatar(nodo.getAvatar());
+                } else {
+                    nuevoJugador.setAvatar("pfp");
+                }
+            } else {
+                nuevoJugador.setAvatar("pfp");
+            }
+            
             listaJugadores.add(nuevoJugador);
         }
         this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory, new EstadoEsperando());
@@ -38,6 +53,10 @@ public class GestorJuegoFacade {
 
         System.out.println("fachada: construyendo mazo y partida....");
 
+    }
+    
+    public void prepararIniciarPartida(List<String> nombresJugadores) {
+        prepararIniciarPartida(nombresJugadores, null);
     }
 
     public void eliminarJugador(String nombreJugador) {
