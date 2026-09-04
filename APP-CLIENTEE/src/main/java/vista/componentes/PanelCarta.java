@@ -1,4 +1,4 @@
-package vista.DiseñosExtras;
+package vista.componentes;
 
 import dtos.CartaDTO;
 

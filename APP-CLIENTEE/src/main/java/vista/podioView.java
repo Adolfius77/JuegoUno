@@ -42,12 +42,12 @@ public class podioView extends javax.swing.JFrame implements IVista {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        botonCircular1 = new vista.DiseñosExtras.botonCircular();
+        botonCircular1 = new vista.componentes.botonCircular();
         panelJugador1 = new javax.swing.JPanel();
         panelJuagador2 = new javax.swing.JPanel();
         panelJugador3 = new javax.swing.JPanel();
         panelJugador4 = new javax.swing.JPanel();
-        btnContinuar = new vista.DiseñosExtras.botonCircular();
+        btnContinuar = new vista.componentes.botonCircular();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -308,8 +308,8 @@ public class podioView extends javax.swing.JFrame implements IVista {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular botonCircular1;
-    private vista.DiseñosExtras.botonCircular btnContinuar;
+    private vista.componentes.botonCircular botonCircular1;
+    private vista.componentes.botonCircular btnContinuar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel panelJuagador2;
     private javax.swing.JPanel panelJugador1;

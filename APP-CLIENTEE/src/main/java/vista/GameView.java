@@ -14,7 +14,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
 import javax.swing.JOptionPane;
-import vista.DiseñosExtras.PanelCarta;
+import vista.componentes.PanelCarta;
 
 /**
  *
@@ -67,10 +67,10 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        panelFondo = new vista.DiseñosExtras.PanelFondo();
+        panelFondo = new vista.componentes.PanelFondo();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelJugadorPrincipal = new javax.swing.JPanel();
-        btnJugarCarta = new vista.DiseñosExtras.botonCircular();
+        btnJugarCarta = new vista.componentes.botonCircular();
         panelAvatar1 = new javax.swing.JPanel();
         panelNumeroCartas1 = new javax.swing.JPanel();
         panelJugador2 = new javax.swing.JPanel();
@@ -349,7 +349,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular btnJugarCarta;
+    private vista.componentes.botonCircular btnJugarCarta;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -358,7 +358,7 @@ public class GameView extends javax.swing.JFrame implements IVista {
     private javax.swing.JPanel panelAvatar3;
     private javax.swing.JPanel panelAvatar4;
     private javax.swing.JPanel panelCartaMedio;
-    private vista.DiseñosExtras.PanelFondo panelFondo;
+    private vista.componentes.PanelFondo panelFondo;
     private javax.swing.JPanel panelJugador2;
     private javax.swing.JPanel panelJugador3;
     private javax.swing.JPanel panelJugador4;

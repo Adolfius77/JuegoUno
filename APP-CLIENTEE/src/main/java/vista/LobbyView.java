@@ -124,14 +124,14 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         jLabel4 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         panelFotoAvatar = new javax.swing.JPanel();
-        txtCodigoSala = new vista.DiseñosExtras.TextFieldRedondo();
-        btnEstoyListo = new vista.DiseñosExtras.botonCircular();
-        btnCancelar = new vista.DiseñosExtras.botonCircular();
+        txtCodigoSala = new vista.componentes.TextFieldRedondo();
+        btnEstoyListo = new vista.componentes.botonCircular();
+        btnCancelar = new vista.componentes.botonCircular();
         panelJugador1 = new javax.swing.JPanel();
         panelJugador2 = new javax.swing.JPanel();
         panelJugador3 = new javax.swing.JPanel();
         panelJugador4 = new javax.swing.JPanel();
-        btnIniciarJuego = new vista.DiseñosExtras.botonCircular();
+        btnIniciarJuego = new vista.componentes.botonCircular();
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pfp.png"))); // NOI18N
 
@@ -470,9 +470,9 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular btnCancelar;
-    private vista.DiseñosExtras.botonCircular btnEstoyListo;
-    private vista.DiseñosExtras.botonCircular btnIniciarJuego;
+    private vista.componentes.botonCircular btnCancelar;
+    private vista.componentes.botonCircular btnEstoyListo;
+    private vista.componentes.botonCircular btnIniciarJuego;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
@@ -505,7 +505,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
     private javax.swing.JPanel panelJugador2;
     private javax.swing.JPanel panelJugador3;
     private javax.swing.JPanel panelJugador4;
-    private vista.DiseñosExtras.TextFieldRedondo txtCodigoSala;
+    private vista.componentes.TextFieldRedondo txtCodigoSala;
     // End of variables declaration//GEN-END:variables
 
     @Override

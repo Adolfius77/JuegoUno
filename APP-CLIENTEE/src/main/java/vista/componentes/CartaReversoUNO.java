@@ -1,4 +1,4 @@
-package vista.DiseñosExtras;
+package vista.componentes;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;

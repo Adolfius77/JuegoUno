@@ -149,13 +149,13 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        btn2jugadores = new vista.DiseñosExtras.botonCircular();
-        btn3jugadore = new vista.DiseñosExtras.botonCircular();
-        btn4jugadores = new vista.DiseñosExtras.botonCircular();
-        btnCrearPartida = new vista.DiseñosExtras.botonCircular();
-        txtNombreSala = new vista.DiseñosExtras.TextFieldRedondo();
+        btn2jugadores = new vista.componentes.botonCircular();
+        btn3jugadore = new vista.componentes.botonCircular();
+        btn4jugadores = new vista.componentes.botonCircular();
+        btnCrearPartida = new vista.componentes.botonCircular();
+        txtNombreSala = new vista.componentes.TextFieldRedondo();
         panelAvatar = new javax.swing.JPanel();
-        btnVolver = new vista.DiseñosExtras.botonCircular();
+        btnVolver = new vista.componentes.botonCircular();
 
         jButton3.setBackground(new java.awt.Color(255, 255, 255));
         jButton3.setForeground(new java.awt.Color(0, 0, 0));
@@ -482,11 +482,11 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular btn2jugadores;
-    private vista.DiseñosExtras.botonCircular btn3jugadore;
-    private vista.DiseñosExtras.botonCircular btn4jugadores;
-    private vista.DiseñosExtras.botonCircular btnCrearPartida;
-    private vista.DiseñosExtras.botonCircular btnVolver;
+    private vista.componentes.botonCircular btn2jugadores;
+    private vista.componentes.botonCircular btn3jugadore;
+    private vista.componentes.botonCircular btn4jugadores;
+    private vista.componentes.botonCircular btnCrearPartida;
+    private vista.componentes.botonCircular btnVolver;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -505,7 +505,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     private javax.swing.JLabel lblNombreUsuario;
     private javax.swing.JPanel panelAvatar;
     private javax.swing.JTextField txtFldNombreSala;
-    private vista.DiseñosExtras.TextFieldRedondo txtNombreSala;
+    private vista.componentes.TextFieldRedondo txtNombreSala;
     // End of variables declaration//GEN-END:variables
 
     @Override

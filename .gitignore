@@ -1,11 +1,26 @@
-/Observer/target/
-/Presentacion/target/
-/presentacionn/target/
-/presentacion/target/
-/Factorys/target/
-/ReglasJuego/target/
-/Dominio/target/
-/ComponenteRedBroker/target/
-/DOMINIO/target/
-/BROKER/target/
-/CONSTANTES/target/
+# Artefactos de compilacion Maven
+target/
+
+# NetBeans
+nbproject/private/
+nbactions-*.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse / VS Code
+.classpath
+.project
+.settings/
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
