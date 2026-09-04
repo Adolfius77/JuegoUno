@@ -42,7 +42,12 @@ public class TableroView extends javax.swing.JPanel {
     private final JLabel lblTemporizador = new JLabel("Tiempo: 30s");
     private final Border bordeNormal = BorderFactory.createEmptyBorder();
     private final Border bordeSeleccionado = BorderFactory.createLineBorder(new Color(255, 215, 0), 3);
-    
+
+    /** Capa donde se dibujan las cartas en vuelo; la instala GameView. */
+    private vista.animacion.CapaAnimacion capaAnimacion;
+    /** Que panel ocupa cada rival, para saber de donde sale su carta. */
+    private final java.util.Map<String, JPanel> panelPorRival = new java.util.HashMap<>();
+
 
     /**
      * Creates new form TableroView
@@ -289,11 +294,15 @@ public class TableroView extends javax.swing.JPanel {
             panelAvatar1.add(new avatarForm(jugadorLocal.getNombre(), obtenerAvatarSeguro(jugadorLocal), jugadorLocal.isEstaListo()), BorderLayout.CENTER);
         }
 
+        panelPorRival.clear();
         int indexPanel = 1;
         for (JugadorDTO j : obtenerRivales(jugadores, miNombre)) {
             if (indexPanel < panelesAvatares.length) {
                 panelesAvatares[indexPanel].setVisible(true);
                 panelesAvatares[indexPanel].add(new avatarForm(j.getNombre(), obtenerAvatarSeguro(j), j.isEstaListo()), BorderLayout.CENTER);
+                // Se recuerda para que las animaciones sepan desde donde sale
+                // la carta que juega cada rival.
+                panelPorRival.put(j.getNombre(), panelesAvatares[indexPanel]);
                 indexPanel++;
             }
         }
@@ -382,6 +391,50 @@ public class TableroView extends javax.swing.JPanel {
             }
         }
         return null;
+    }
+
+    // --- Animaciones -------------------------------------------------------
+
+    public void setCapaAnimacion(vista.animacion.CapaAnimacion capa) {
+        this.capaAnimacion = capa;
+    }
+
+    public vista.animacion.CapaAnimacion getCapaAnimacion() {
+        return capaAnimacion;
+    }
+
+    /**
+     * Traduce el centro de un componente a coordenadas de la capa de animacion,
+     * descontando media carta para que el dibujo quede centrado ahi.
+     */
+    private java.awt.Point anclaDe(java.awt.Component comp) {
+        if (comp == null || capaAnimacion == null || !comp.isShowing() || !capaAnimacion.isShowing()) {
+            return null;
+        }
+        java.awt.Point centro = new java.awt.Point(comp.getWidth() / 2, comp.getHeight() / 2);
+        java.awt.Point enCapa = SwingUtilities.convertPoint(comp, centro, capaAnimacion);
+        return new java.awt.Point(enCapa.x - 35, enCapa.y - 49);
+    }
+
+    /** Monton de descarte, donde aterrizan las cartas jugadas. */
+    public java.awt.Point puntoCentro() {
+        return anclaDe(panelCartaMedio);
+    }
+
+    /** Mazo del que se roba. */
+    public java.awt.Point puntoMazo() {
+        return anclaDe(panelPilaCartas);
+    }
+
+    /** Mano del jugador local. */
+    public java.awt.Point puntoManoPropia() {
+        return anclaDe(panelJugadorPrincipal);
+    }
+
+    /** Posicion de un rival; null si no esta en pantalla. */
+    public java.awt.Point puntoDeJugador(String nombre) {
+        JPanel panel = panelPorRival.get(nombre);
+        return panel != null ? anclaDe(panel) : null;
     }
 
     private List<JugadorDTO> obtenerRivales(List<JugadorDTO> jugadores, String nombre) {
