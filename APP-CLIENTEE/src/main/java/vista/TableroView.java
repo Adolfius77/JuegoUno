@@ -162,12 +162,27 @@ public class TableroView extends javax.swing.JPanel {
 
     private JPanel crearCartaSeleccionable(CartaDTO carta, boolean seleccionada, int indice) {
         PanelCarta cartaVisual = new PanelCarta(carta);
-        cartaVisual.setPreferredSize(new java.awt.Dimension(75, 110));
-        cartaVisual.setBorder(seleccionada ? bordeSeleccionado : bordeNormal);
+        cartaVisual.setPreferredSize(new java.awt.Dimension(75, 112));
+        // La carta ya se levanta sola al pasar el raton o al quedar elegida; el
+        // borde dorado que se usaba antes sobra.
+        cartaVisual.setInteractiva(true);
+        cartaVisual.setSeleccionada(seleccionada);
+
         cartaVisual.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 seleccionarCarta(indice);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Las cartas de la mano se solapan: sin traerla al frente, la
+                // carta que sube quedaria parcialmente tapada por su vecina.
+                java.awt.Container padre = cartaVisual.getParent();
+                if (padre != null) {
+                    padre.setComponentZOrder(cartaVisual, 0);
+                    padre.repaint();
+                }
             }
         });
         return cartaVisual;
