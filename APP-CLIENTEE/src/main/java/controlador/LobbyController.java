@@ -184,7 +184,7 @@ public class LobbyController extends ControladorSuscriptor {
         }
     }
 
-    //getters y setters y otras cosas xd
+    // Getters, setters y utilidades de la vista
     public void cargarDatosIniciales(List<?> jugadoresIniciales) {
         this.listaJugadores = normalizarJugadores(jugadoresIniciales);
         if (this.vista != null) {
