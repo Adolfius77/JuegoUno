@@ -32,14 +32,24 @@ public class ComandoTomarCarta implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, idSesion);
 
         try {
-            Partida partida = juegoServidor.getPartidaActualEntidad();
-            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
-            juegoServidor.validarTurno(jugador);
+            // La sala se toma del nodo del remitente, no de los datos del
+            // mensaje: el cliente puede mandarla vacia o equivocada.
+            String codigoSala = salaDe(nodo);
+            Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
+            Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
+            juegoServidor.validarTurno(codigoSala, jugador);
             partida.tomarCarta(jugador);
             
         } catch (Exception e) {
             enviarError(nodo, "ERROR_TOMAR_CARTA", e.getMessage());
         }
+    }
+
+    private String salaDe(NodoCliente nodo) {
+        if (nodo == null || nodo.getCodigoSala() == null) {
+            throw new IllegalStateException("El jugador no esta en ninguna sala.");
+        }
+        return nodo.getCodigoSala();
     }
 
     private NodoCliente resolverNodo(String nombreJugador, String idSesion) {

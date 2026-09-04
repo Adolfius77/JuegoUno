@@ -43,6 +43,22 @@ public class GestorSalas {
         return sala.unirJugador();
     }
 
+    /**
+     * Libera una plaza al desconectarse un jugador. Antes el contador solo
+     * subia, asi que una sala se quedaba llena para siempre aunque todos
+     * hubieran salido.
+     */
+    public void salirJugador(String codigoSala) {
+        SalaDisponible sala = obtenerSala(codigoSala);
+        if (sala == null) {
+            return;
+        }
+        if (sala.salirJugador() == 0) {
+            salasPorCodigo.remove(normalizarCodigo(codigoSala));
+            System.out.println("[GestorSalas] Sala vacia eliminada: " + normalizarCodigo(codigoSala));
+        }
+    }
+
     public List<Map<String, Object>> obtenerSalasSerializables() {
         List<Map<String, Object>> serializables = new ArrayList<>();
         for (SalaDisponible sala : salasPorCodigo.values()) {
@@ -99,6 +115,19 @@ public class GestorSalas {
                 }
                 if (jugadoresActuales.compareAndSet(jugadores, jugadores + 1)) {
                     return true;
+                }
+            }
+        }
+
+        /** @return jugadores que quedan en la sala. */
+        private int salirJugador() {
+            while (true) {
+                int jugadores = jugadoresActuales.get();
+                if (jugadores <= 0) {
+                    return 0;
+                }
+                if (jugadoresActuales.compareAndSet(jugadores, jugadores - 1)) {
+                    return jugadores - 1;
                 }
             }
         }

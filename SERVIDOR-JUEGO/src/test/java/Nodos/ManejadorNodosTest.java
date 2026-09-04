@@ -92,14 +92,69 @@ class ManejadorNodosTest {
     }
 
     @Test
-    void todosListosRequiereAlMenosUnaSesion() {
+    void todosListosRequiereAlMenosUnaSesionEnLaSala() {
         ManejadorNodos manejador = new ManejadorNodos();
-        assertFalse(manejador.estanTodosListos(), "sin jugadores no se puede iniciar");
+        assertFalse(manejador.estanTodosListosEnSala("AAAA"), "sin jugadores no se puede iniciar");
 
         manejador.registrarNuevoJugador(new NodoCliente("S1", new ProxyEspia(), "Ana", "pfp"));
-        assertFalse(manejador.estanTodosListos());
+        manejador.obtenerNodoPorSesion("S1").setCodigoSala("AAAA");
+        assertFalse(manejador.estanTodosListosEnSala("AAAA"));
 
         manejador.obtenerNodoPorSesion("S1").setEstaListo(true);
-        assertTrue(manejador.estanTodosListos());
+        assertTrue(manejador.estanTodosListosEnSala("AAAA"));
+    }
+
+    // --- Aislamiento entre salas -------------------------------------------
+
+    private ManejadorNodos conDosSalas(ProxyEspia pAna, ProxyEspia pBeto, ProxyEspia pCarla) {
+        ManejadorNodos m = new ManejadorNodos();
+        m.registrarNuevoJugador(new NodoCliente("S1", pAna, "Ana", "pfp"));
+        m.registrarNuevoJugador(new NodoCliente("S2", pBeto, "Beto", "pfp"));
+        m.registrarNuevoJugador(new NodoCliente("S3", pCarla, "Carla", "pfp"));
+        m.obtenerNodoPorSesion("S1").setCodigoSala("AAAA");
+        m.obtenerNodoPorSesion("S2").setCodigoSala("AAAA");
+        m.obtenerNodoPorSesion("S3").setCodigoSala("BBBB");
+        return m;
+    }
+
+    @Test
+    void notificarASalaNoAlcanzaALaOtraSala() {
+        ProxyEspia pAna = new ProxyEspia(), pBeto = new ProxyEspia(), pCarla = new ProxyEspia();
+        ManejadorNodos m = conDosSalas(pAna, pBeto, pCarla);
+
+        m.notificarASala("AAAA", mensaje("ACTUALIZACION_MESA"));
+
+        assertEquals(List.of("ACTUALIZACION_MESA"), pAna.enviados);
+        assertEquals(List.of("ACTUALIZACION_MESA"), pBeto.enviados);
+        assertTrue(pCarla.enviados.isEmpty(), "la sala BBBB no debe ver el tablero de AAAA");
+    }
+
+    @Test
+    void unaPartidaSoloTomaALosJugadoresDeSuSala() {
+        ManejadorNodos m = conDosSalas(new ProxyEspia(), new ProxyEspia(), new ProxyEspia());
+
+        assertEquals(List.of("Ana", "Beto"), m.obtenerNombresDeSala("AAAA").stream().sorted().toList());
+        assertEquals(List.of("Carla"), m.obtenerNombresDeSala("BBBB"));
+    }
+
+    @Test
+    void listosDeUnaSalaNoDependenDeLaOtra() {
+        ManejadorNodos m = conDosSalas(new ProxyEspia(), new ProxyEspia(), new ProxyEspia());
+        m.obtenerNodoPorSesion("S1").setEstaListo(true);
+        m.obtenerNodoPorSesion("S2").setEstaListo(true);
+
+        assertTrue(m.estanTodosListosEnSala("AAAA"), "Carla, en otra sala, no debe bloquear a AAAA");
+        assertFalse(m.estanTodosListosEnSala("BBBB"));
+    }
+
+    @Test
+    void quienNoEntroAUnaSalaSigueEnElLobby() {
+        ManejadorNodos m = new ManejadorNodos();
+        m.registrarNuevoJugador(new NodoCliente("S1", new ProxyEspia(), "Ana", "pfp"));
+        m.registrarNuevoJugador(new NodoCliente("S2", new ProxyEspia(), "Beto", "pfp"));
+        m.obtenerNodoPorSesion("S1").setCodigoSala("AAAA");
+
+        assertEquals(1, m.obtenerNodosEnLobby().size());
+        assertEquals("Beto", m.obtenerNodosEnLobby().get(0).getNombre());
     }
 }

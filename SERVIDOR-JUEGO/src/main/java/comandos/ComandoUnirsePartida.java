@@ -55,8 +55,17 @@ public class ComandoUnirsePartida implements IComandoServidor {
             return;
         }
 
+        // El invitado entra a la sala antes de armar la lista, para que aparezca
+        // en ella y para que los eventos siguientes le lleguen.
+        NodoCliente invitado = ManejadorNodos.obtenerNodoPorSesion(mensaje.getIdSesion());
+        if (invitado == null) {
+            return;
+        }
+        invitado.setCodigoSala(codigoSala);
+        invitado.setEstaListo(false);
+
         sala = gestorSalas.obtenerSala(codigoSala);
-        List<Map<String, String>> listaJugadoresConAvatar = construirListaJugadores();
+        List<Map<String, String>> listaJugadoresConAvatar = construirListaJugadores(codigoSala);
 
         respuesta.setTipo("UNIDO_EXITO");
         respuesta.getDatos().put("codigoSala", codigoSala);
@@ -76,16 +85,14 @@ public class ComandoUnirsePartida implements IComandoServidor {
         datosLista.put("jugadores", listaJugadoresConAvatar);
         notificacionLista.setDatos(datosLista);
 
-        for (NodoCliente n : ManejadorNodos.obtenerNodosConectados()) {
-            n.enviarMensaje(notificacionLista);
-        }
+        ManejadorNodos.notificarASala(codigoSala, notificacionLista);
 
         notificarPartidasDisponibles();
     }
 
-    private List<Map<String, String>> construirListaJugadores() {
+    private List<Map<String, String>> construirListaJugadores(String codigoSala) {
         List<Map<String, String>> listaJugadoresConAvatar = new java.util.ArrayList<>();
-        for (NodoCliente n : ManejadorNodos.obtenerNodosConectados()) {
+        for (NodoCliente n : ManejadorNodos.obtenerNodosDeSala(codigoSala)) {
             Map<String, String> datosJugador = new HashMap<>();
             datosJugador.put("nombre", n.getNombre());
             if (n.getAvatar() != null && !n.getAvatar().equals("no hay")) {
@@ -128,8 +135,8 @@ public class ComandoUnirsePartida implements IComandoServidor {
         datos.put("partidas", gestorSalas.obtenerSalasSerializables());
         listaPartidas.setDatos(datos);
 
-        for (NodoCliente nodo : ManejadorNodos.obtenerNodosConectados()) {
-            nodo.enviarMensaje(listaPartidas);
-        }
+        // Alcance global a proposito: lo espera todo el que este eligiendo
+        // partida en el lobby.
+        ManejadorNodos.notificarATodos(listaPartidas);
     }
 }

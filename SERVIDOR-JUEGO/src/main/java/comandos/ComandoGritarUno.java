@@ -32,8 +32,11 @@ public class ComandoGritarUno implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, idSesion);
 
         try {
-            Partida partida = juegoServidor.validarPartidaActiva();
-            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
+            // La sala se toma del nodo del remitente, no de los datos del
+            // mensaje: el cliente puede mandarla vacia o equivocada.
+            String codigoSala = salaDe(nodo);
+            Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
+            Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
 
            if (jugador.getMano() == null || (jugador.getMano().getCartas().size() != 2 && jugador.getMano().getCartas().size() != 1)) {
                 throw new IllegalStateException("Solo puedes gritar UNO cuando te quedan 2 cartas.");
@@ -44,6 +47,13 @@ public class ComandoGritarUno implements IComandoServidor {
         } catch (Exception e) {
             enviarError(nodo, "ERROR_GRITAR_UNO", e.getMessage());
         }
+    }
+
+    private String salaDe(NodoCliente nodo) {
+        if (nodo == null || nodo.getCodigoSala() == null) {
+            throw new IllegalStateException("El jugador no esta en ninguna sala.");
+        }
+        return nodo.getCodigoSala();
     }
 
     private NodoCliente resolverNodo(String nombreJugador, String idSesion) {

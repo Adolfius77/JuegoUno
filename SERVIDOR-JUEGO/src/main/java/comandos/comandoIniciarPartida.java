@@ -46,9 +46,12 @@ public class comandoIniciarPartida implements IComandoServidor {
             return;
         }
 
-        String codigoSala = mensaje.getDatos().get("codigoSala") != null
-                ? String.valueOf(mensaje.getDatos().get("codigoSala")).trim().toUpperCase()
-                : "";
+        // La sala sale del nodo del solicitante; el codigo del mensaje solo se
+        // usa como respaldo, porque el cliente puede mandarlo vacio.
+        String codigoSala = nodoSolicitante.getCodigoSala();
+        if (codigoSala == null && mensaje.getDatos().get("codigoSala") != null) {
+            codigoSala = String.valueOf(mensaje.getDatos().get("codigoSala")).trim().toUpperCase();
+        }
         GestorSalas.SalaDisponible sala = gestorSalas.obtenerSala(codigoSala);
         if (sala == null) {
             enviarErrorInicio(idSesion, "No se encontro la sala para iniciar.");
@@ -60,18 +63,21 @@ public class comandoIniciarPartida implements IComandoServidor {
             return;
         }
 
-        List<String> jugadores = manejadorNodos.obtenerNombresDeNodosConectados();
+        // Solo los jugadores de ESTA sala. Antes se tomaban todos los conectados
+        // del servidor, asi que arrancar una partida arrastraba a quien estuviera
+        // en cualquier otra sala.
+        List<String> jugadores = manejadorNodos.obtenerNombresDeSala(codigoSala);
         if (jugadores.size() < 2) {
             enviarErrorInicio(idSesion, "Se requieren al menos 2 jugadores para iniciar.");
             return;
         }
 
-        if (!manejadorNodos.estanTodosListos()) {
+        if (!manejadorNodos.estanTodosListosEnSala(codigoSala)) {
             enviarErrorInicio(idSesion, "Todos los jugadores deben estar listos.");
             return;
         }
 
-        PartidaDTO estadoInicialDTO = juegoServidor.iniciarNuevoJuego(jugadores, this.manejadorNodos);
+        PartidaDTO estadoInicialDTO = juegoServidor.iniciarNuevoJuego(codigoSala, jugadores, this.manejadorNodos);
         MensajeDTO estadoPartida = new MensajeDTO();
         estadoPartida.setTipo("PARTIDA_INICIADA");
         estadoPartida.setRemitente("SERVIDOR");
@@ -81,10 +87,8 @@ public class comandoIniciarPartida implements IComandoServidor {
         datos.put("partida", estadoInicialDTO);
         estadoPartida.setDatos(datos);
 
-        //enviamos el sobre a todos los jugadores
-        for (NodoCliente nodo : manejadorNodos.obtenerNodosConectados()) {
-            nodo.enviarMensaje(estadoPartida);
-        }
+        //enviamos el sobre a los jugadores de la sala
+        manejadorNodos.notificarASala(codigoSala, estadoPartida);
 
     }
 

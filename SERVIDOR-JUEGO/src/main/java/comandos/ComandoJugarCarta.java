@@ -37,6 +37,9 @@ public class ComandoJugarCarta implements IComandoServidor {
         NodoCliente nodo = resolverNodo(nombreJugador, idSesion);
 
         try {
+            // La sala se toma del nodo del remitente, no de los datos del
+            // mensaje: el cliente puede mandarla vacia o equivocada.
+            String codigoSala = salaDe(nodo);
            
             CartaDTO cartaDTO = convertirCartaDTO(mensaje.getDatos().get("carta"));
             String colorElegido = mensaje.getDatos().get("colorElegido") != null
@@ -44,11 +47,11 @@ public class ComandoJugarCarta implements IComandoServidor {
                     : null;
 
             
-            Partida partida = juegoServidor.getPartidaActualEntidad();
-            Jugador jugador = juegoServidor.obtenerJugador(nombreJugador);
+            Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
+            Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
 
           
-            juegoServidor.validarTurno(jugador);
+            juegoServidor.validarTurno(codigoSala, jugador);
 
             Carta carta = juegoServidor.buscarCartaEnMano(jugador, cartaDTO);
             if (carta == null) {
@@ -91,6 +94,13 @@ public class ComandoJugarCarta implements IComandoServidor {
         }
         String json = gson.toJson(cartaCruda);
         return gson.fromJson(json, CartaDTO.class);
+    }
+
+    private String salaDe(NodoCliente nodo) {
+        if (nodo == null || nodo.getCodigoSala() == null) {
+            throw new IllegalStateException("El jugador no esta en ninguna sala.");
+        }
+        return nodo.getCodigoSala();
     }
 
     private NodoCliente resolverNodo(String nombreJugador, String idSesion) {

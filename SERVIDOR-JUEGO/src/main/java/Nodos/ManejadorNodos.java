@@ -87,17 +87,66 @@ public class ManejadorNodos {
         return nombres;
     }
 
+    /**
+     * Difunde a TODAS las sesiones del servidor. Reservar para eventos de
+     * alcance global, como la lista de partidas disponibles. Para lo que ocurre
+     * dentro de una partida usar notificarASala.
+     */
     public void notificarATodos(MensajeDTO mensaje) {
         for (NodoCliente nodo : nodosPorSesion.values()) {
             nodo.enviarMensaje(mensaje);
         }
     }
 
-    public boolean estanTodosListos() {
-        if (nodosPorSesion.isEmpty()) {
-            return false;
+    // --- Operaciones por sala ---------------------------------------------
+    // Antes todo era global: iniciar una partida tomaba a todos los conectados
+    // del servidor y cada evento se difundia a todo el mundo, aunque estuviera
+    // en otra sala.
+
+    public List<NodoCliente> obtenerNodosDeSala(String codigoSala) {
+        List<NodoCliente> deLaSala = new ArrayList<>();
+        if (codigoSala == null) {
+            return deLaSala;
         }
         for (NodoCliente nodo : nodosPorSesion.values()) {
+            if (nodo.estaEnSala(codigoSala)) {
+                deLaSala.add(nodo);
+            }
+        }
+        return deLaSala;
+    }
+
+    public List<String> obtenerNombresDeSala(String codigoSala) {
+        List<String> nombres = new ArrayList<>();
+        for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {
+            nombres.add(nodo.getNombre());
+        }
+        return nombres;
+    }
+
+    public void notificarASala(String codigoSala, MensajeDTO mensaje) {
+        for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {
+            nodo.enviarMensaje(mensaje);
+        }
+    }
+
+    /** Sesiones que todavia no entraron a ninguna sala. */
+    public List<NodoCliente> obtenerNodosEnLobby() {
+        List<NodoCliente> enLobby = new ArrayList<>();
+        for (NodoCliente nodo : nodosPorSesion.values()) {
+            if (nodo.getCodigoSala() == null) {
+                enLobby.add(nodo);
+            }
+        }
+        return enLobby;
+    }
+
+    public boolean estanTodosListosEnSala(String codigoSala) {
+        List<NodoCliente> deLaSala = obtenerNodosDeSala(codigoSala);
+        if (deLaSala.isEmpty()) {
+            return false;
+        }
+        for (NodoCliente nodo : deLaSala) {
             if (!nodo.isEstaListo()) {
                 return false;
             }
