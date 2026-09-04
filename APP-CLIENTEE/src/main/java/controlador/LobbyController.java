@@ -2,6 +2,7 @@ package controlador;
 
 import Interfaces.IVista;
 import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import dtos.MensajeDTO;
 import dtos.MensajeRegistroDTO;
 
@@ -127,9 +128,7 @@ public class LobbyController extends ControladorSuscriptor {
             if (vista != null) {
                 this.vista.cerrarVista();
             }
-            SeleccionPartida seleccionVista = new SeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal, this.clienteProxy);
-            seleccionVista.setVisible(true);
-            this.setVista(seleccionVista);
+            this.setVista(MVCFactory.abrirSeleccionPartida(nombreJugadorTemporal, nombreAvatarTemporal));
         });
     }
 
@@ -144,16 +143,8 @@ public class LobbyController extends ControladorSuscriptor {
             if (vista != null) {
                 this.vista.cerrarVista();
             }
-
-            GameView vistaJuego = new GameView();
-            GameController controladorJuego = new GameController(this.clienteProxy, vistaJuego, this.getNombreJugadorLocal());
-            vistaJuego.setController(controladorJuego);
-
-            if ("PARTIDA_INICIADA".equals(mensaje.getTipo())) {
-                controladorJuego.procesarEventoRed(mensaje);
-            }
-
-            vistaJuego.setVisible(true);
+            MVCFactory.abrirJuego(this.getNombreJugadorLocal(),
+                    "PARTIDA_INICIADA".equals(mensaje.getTipo()) ? mensaje : null);
         });
     }
 
@@ -184,7 +175,7 @@ public class LobbyController extends ControladorSuscriptor {
         }
     }
 
-    //getters y setters y otras cosas xd
+    // Getters, setters y utilidades de la vista
     public void cargarDatosIniciales(List<?> jugadoresIniciales) {
         this.listaJugadores = normalizarJugadores(jugadoresIniciales);
         if (this.vista != null) {

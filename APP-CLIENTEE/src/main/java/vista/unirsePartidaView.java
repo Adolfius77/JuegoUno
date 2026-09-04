@@ -5,7 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
-import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import controlador.UnirsePartidaController;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -24,26 +24,22 @@ import javax.swing.SwingConstants;
 public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     private String nombreInvitado;
-    private ClienteProxy proxy;
     private UnirsePartidaController controlador;
 
     /**
      * Creates new form unirsePartidaView
      */
     public unirsePartidaView() {
-        this("", null);
+        this("");
     }
 
-    public unirsePartidaView(String nombreInvitado, ClienteProxy proxy) {
+    public unirsePartidaView(String nombreInvitado) {
         initComponents();
         this.nombreInvitado = nombreInvitado;
-        this.proxy = proxy;
         configurarPanelPartidas();
 
-        if (this.proxy != null) {
-            this.controlador = new UnirsePartidaController(this, this.proxy);
-            this.controlador.solicitarListaPartidas();
-        }
+        this.controlador = MVCFactory.controladorDe(this);
+        this.controlador.solicitarListaPartidas();
         if (this.nombreInvitado != null && !this.nombreInvitado.isBlank()) {
             jLabel7.setText(this.nombreInvitado);
         }
@@ -342,8 +338,10 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     }
 
     private void volverASeleccion() {
-        SeleccionPartida seleccion = new SeleccionPartida(this.nombreInvitado, "", this.proxy);
-        seleccion.setVisible(true);
+        if (this.controlador != null) {
+            this.controlador.liberar();
+        }
+        MVCFactory.abrirSeleccionPartida(this.nombreInvitado, "");
         dispose();
     }
 

@@ -18,6 +18,9 @@ public class NodoCliente {
     private String avatar;
     private boolean estaListo;
 
+    /** Sala en la que esta el jugador; null mientras sigue en el lobby. */
+    private String codigoSala;
+
     public NodoCliente(String idSesion, IProxy proxy, String nombre, String avatar) {
         if (idSesion == null || idSesion.isBlank()) {
             throw new IllegalArgumentException("El idSesion del nodo es obligatorio.");
@@ -37,6 +40,18 @@ public class NodoCliente {
 
     public String getIdSesion() {
         return idSesion;
+    }
+
+    public String getCodigoSala() {
+        return codigoSala;
+    }
+
+    public void setCodigoSala(String codigoSala) {
+        this.codigoSala = codigoSala;
+    }
+
+    public boolean estaEnSala(String codigo) {
+        return codigoSala != null && codigoSala.equalsIgnoreCase(codigo);
     }
 
     public String getAvatar() {

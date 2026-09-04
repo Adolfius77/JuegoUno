@@ -5,7 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
-import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import controlador.LobbyController;
 
 import javax.swing.*;
@@ -19,16 +19,14 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     private String nombreUsuario;
     private String avatarUsuario;
     private final JLabel etiquetaAvatar = new JLabel();
-    private ClienteProxy proxy;
 
     public SeleccionPartida() {
-        this(null, null,null);
+        this("", "");
     }
 
-    public SeleccionPartida(String nombreUsuario, String avatarUsuario, ClienteProxy proxy) {
+    public SeleccionPartida(String nombreUsuario, String avatarUsuario) {
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
-        this.proxy = proxy;
         initComponents();
         this.setLocationRelativeTo(null);
         this.addWindowListener(new java.awt.event.WindowAdapter() {;
@@ -93,6 +91,13 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     private void abrirVentana(javax.swing.JFrame ventana) {
         ventana.setLocationRelativeTo(this);
         ventana.setVisible(true);
+        dispose();
+    }
+
+    /** Abre la siguiente pantalla a traves de la fabrica y cierra esta. */
+    private void cerrarYAbrir(java.util.function.Supplier<javax.swing.JFrame> apertura) {
+        javax.swing.JFrame ventana = apertura.get();
+        ventana.setLocationRelativeTo(this);
         dispose();
     }
 
@@ -282,20 +287,16 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearJuegoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearJuegoActionPerformed
-        abrirVentana(new CrearPartida(this.nombreUsuario, this.avatarUsuario != null ? this.avatarUsuario : "", this.proxy));
+        cerrarYAbrir(() -> MVCFactory.abrirCrearPartida(
+                this.nombreUsuario, this.avatarUsuario != null ? this.avatarUsuario : ""));
     }//GEN-LAST:event_btnCrearJuegoActionPerformed
 
     private void btnUnirsePartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnirsePartidaActionPerformed
-        abrirVentana(new unirsePartidaView(this.nombreUsuario, this.proxy));
+        cerrarYAbrir(() -> MVCFactory.abrirUnirsePartida(this.nombreUsuario));
     }//GEN-LAST:event_btnUnirsePartidaActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        if (this.proxy != null) {
-            LobbyController controlador = new LobbyController(this.proxy, "", "", false, null);
-            abrirVentana(new MenuPrincipal(controlador));
-            return;
-        }
-        abrirVentana(new MenuPrincipal());
+        cerrarYAbrir(MVCFactory::abrirMenuPrincipal);
     }//GEN-LAST:event_btnSalirActionPerformed
 
     /**

@@ -5,7 +5,7 @@
 package vista;
 
 import Interfaces.IVista;
-import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import controlador.CrearPartidaController;
 import javax.swing.JOptionPane;
 import javax.swing.*;
@@ -21,7 +21,6 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
     private CrearPartidaController controlador;
     private String nombreHost;
     private String avatarHost;
-    private ClienteProxy proxy;
     private final JLabel etiquetaAvatar = new JLabel();
     private int limiteJugadores = 4;
 
@@ -29,16 +28,15 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         initComponents();
     }
 
-    public CrearPartida(String nombreHost, ClienteProxy proxy) {
-        this(nombreHost, "", proxy);
+    public CrearPartida(String nombreHost) {
+        this(nombreHost, "");
     }
 
-    public CrearPartida(String nombreHost, String avatarHost, ClienteProxy proxy) {
+    public CrearPartida(String nombreHost, String avatarHost) {
         this();
         this.nombreHost = nombreHost;
         this.avatarHost = avatarHost;
-        this.proxy = proxy;
-        this.controlador = new controlador.CrearPartidaController(this, proxy);
+        this.controlador = MVCFactory.controladorDe(this);
         if (this.nombreHost != null && !this.nombreHost.isBlank()) {
             lblNombreUsuario.setText("Host: " + this.nombreHost);
         }
@@ -52,8 +50,12 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
         btn4jugadores.addActionListener(e -> seleccionarLimite(4));
 
         btnVolver.addActionListener(e -> {
-            SeleccionPartida sel = new SeleccionPartida(this.nombreHost, this.avatarHost != null ? this.avatarHost : "", this.proxy);
-            sel.setVisible(true);
+            // Al salir de la pantalla el controlador deja de escuchar; si no,
+            // seguiria suscrito al broker con la ventana ya cerrada.
+            if (this.controlador != null) {
+                this.controlador.liberar();
+            }
+            MVCFactory.abrirSeleccionPartida(this.nombreHost, this.avatarHost != null ? this.avatarHost : "");
             dispose();
         });
     }

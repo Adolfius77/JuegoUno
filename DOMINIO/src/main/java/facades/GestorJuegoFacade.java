@@ -23,8 +23,6 @@ public class GestorJuegoFacade {
     }
 
     public void prepararIniciarPartida(List<String> nombresJugadores) {
-        System.out.println("Fachada: iniciando los preservativos de la partida...");
-
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
         for (String nombre : nombresJugadores) {
             Jugador nuevoJugador = new Jugador();
@@ -35,9 +33,6 @@ public class GestorJuegoFacade {
         this.partidaActual = PartidaFactory.crearPartida(listaJugadores, this.cartaFactory, this.mazoFactory, new EstadoEsperando());
         this.partidaActual.getMazo().barajear();
         this.partidaActual.iniciar();
-
-        System.out.println("fachada: construyendo mazo y partida....");
-
     }
 
     public void eliminarJugador(String nombreJugador) {

@@ -32,7 +32,17 @@ public class comandoCrearPartida implements IComandoServidor {
         int limiteJugadores = obtenerLimite(mensaje.getDatos().get("limiteJugadores"));
         String codigoSala = generarCodigoSala();
         GestorSalas.SalaDisponible salaCreada = gestorSalas.registrarSala(codigoSala, nombreSala, nombreHost, limiteJugadores);
-        List<java.util.Map<String, String>> listaJugadoresConAvatar = construirListaJugadores();
+
+        // El host entra a su propia sala: a partir de aqui sus eventos son de
+        // esta sala y no del servidor entero.
+        NodoCliente host = ManejadorNodos.obtenerNodoPorSesion(mensaje.getIdSesion());
+        if (host == null) {
+            return;
+        }
+        host.setCodigoSala(codigoSala);
+        host.setEstaListo(false);
+
+        List<java.util.Map<String, String>> listaJugadoresConAvatar = construirListaJugadores(codigoSala);
 
         MensajeDTO respuesto = new MensajeDTO();
         respuesto.setTipo("SALA_CREADA");
@@ -56,9 +66,7 @@ public class comandoCrearPartida implements IComandoServidor {
         datosLista.put("jugadores", listaJugadoresConAvatar);
         notificacionLista.setDatos(datosLista);
 
-        for (NodoCliente n : ManejadorNodos.obtenerNodosConectados()) {
-            n.enviarMensaje(notificacionLista);
-        }
+        ManejadorNodos.notificarASala(codigoSala, notificacionLista);
 
         notificarPartidasDisponibles();
     }
@@ -71,9 +79,9 @@ public class comandoCrearPartida implements IComandoServidor {
         return codigo;
     }
 
-    private List<java.util.Map<String, String>> construirListaJugadores() {
+    private List<java.util.Map<String, String>> construirListaJugadores(String codigoSala) {
         List<java.util.Map<String, String>> listaJugadoresConAvatar = new ArrayList<>();
-        for (NodoCliente n : ManejadorNodos.obtenerNodosConectados()) {
+        for (NodoCliente n : ManejadorNodos.obtenerNodosDeSala(codigoSala)) {
             java.util.Map<String, String> datosJugador = new java.util.HashMap<>();
             datosJugador.put("nombre", n.getNombre());
             if (n.getAvatar() != null && !n.getAvatar().equals("no hay")) {
@@ -123,8 +131,8 @@ public class comandoCrearPartida implements IComandoServidor {
         datos.put("partidas", gestorSalas.obtenerSalasSerializables());
         listaPartidas.setDatos(datos);
 
-        for (NodoCliente n : ManejadorNodos.obtenerNodosConectados()) {
-            n.enviarMensaje(listaPartidas);
-        }
+        // Este si es un evento de alcance global: lo espera todo el que este
+        // eligiendo partida en el lobby.
+        ManejadorNodos.notificarATodos(listaPartidas);
     }
 }

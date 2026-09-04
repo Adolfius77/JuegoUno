@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package servidor;
 
 import Entidades.Estados.IEstadoPartida;
@@ -11,7 +7,6 @@ import Entidades.Logica.Partida;
 import Entidades.enums.Color;
 import Entidades.fabricas.ICartaFactory;
 import Entidades.fabricas.IMazoFactory;
-import Interfacez.IBroker;
 import Mappers.CartaMapper;
 import Mappers.PartidaMapper;
 import Nodos.ManejadorNodos;
@@ -21,72 +16,109 @@ import facades.GestorJuegoFacade;
 import servidor.observador.ObservadorPartidaRed;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Mantiene una partida por sala.
  *
- * @author USER
+ * Antes guardaba una unica partidaActual, asi que el servidor solo soportaba una
+ * partida a la vez aunque GestorSalas administrara varias salas: iniciar en una
+ * sala pisaba la partida de las demas.
  */
 public class JuegoServidor {
 
-    private final IBroker broker;
-    private GestorJuegoFacade fachadaJuego;
     private final ICartaFactory cartaFactory;
     private final IMazoFactory mazoFactory;
     private final IEstadoPartida estadoInicial;
     private final CartaMapper cartaMapper = new CartaMapper();
-    private Partida partidaActual;
-    private ObservadorPartidaRed observadorPartidaRed;
 
-    public JuegoServidor(IBroker broker, ICartaFactory cartaFactory, IMazoFactory mazoFactory, IEstadoPartida estadoInicial) {
-        this.broker = broker;
+    private final Map<String, GestorJuegoFacade> partidasPorSala = new ConcurrentHashMap<>();
+    /** Un candado por sala: serializa las jugadas sin frenar a las demas salas. */
+    private final Map<String, Object> candadosPorSala = new ConcurrentHashMap<>();
+
+    public JuegoServidor(ICartaFactory cartaFactory, IMazoFactory mazoFactory, IEstadoPartida estadoInicial) {
         this.cartaFactory = cartaFactory;
         this.mazoFactory = mazoFactory;
         this.estadoInicial = estadoInicial;
     }
 
-    public PartidaDTO iniciarNuevoJuego(List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
-        this.fachadaJuego = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
-        this.fachadaJuego.prepararIniciarPartida(nombreJugadores);
+    public PartidaDTO iniciarNuevoJuego(String codigoSala, List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
+        GestorJuegoFacade fachada = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
+        fachada.prepararIniciarPartida(nombreJugadores);
 
-        this.partidaActual = this.fachadaJuego.getPartidaActual();
-        this.observadorPartidaRed = new ObservadorPartidaRed(this.partidaActual, manejadorNodos);
-        this.partidaActual.agregarObservador(this.observadorPartidaRed);
+        Partida partida = fachada.getPartidaActual();
+        // El observador solo difunde a los jugadores de esta sala.
+        partida.agregarObservador(new ObservadorPartidaRed(partida, manejadorNodos, codigoSala));
 
-        return PartidaMapper.toDTO(this.partidaActual);
+        partidasPorSala.put(normalizar(codigoSala), fachada);
+        return PartidaMapper.toDTO(partida);
     }
 
-    public synchronized Partida getPartidaActualEntidad() {
-        return partidaActual;
+    public Partida getPartidaDeSala(String codigoSala) {
+        GestorJuegoFacade fachada = partidasPorSala.get(normalizar(codigoSala));
+        return fachada != null ? fachada.getPartidaActual() : null;
     }
 
-    public synchronized PartidaDTO obtenerEstadoActual() {
-        return PartidaMapper.toDTO(this.partidaActual);
-    }
-
-    public Partida validarPartidaActiva() {
-        if (this.partidaActual == null) {
-            throw new IllegalStateException("No hay una partida activa.");
+    /**
+     * Ejecuta una jugada con la partida de la sala tomada en exclusiva.
+     *
+     * El servidor atiende a cada cliente en su propio hilo, asi que sin esto dos
+     * jugadores de la misma sala podian mutar la Partida a la vez: la validacion
+     * de turno de uno podia pasar mientras el otro ya estaba cambiando el turno.
+     * El candado es por sala, de modo que las partidas de salas distintas siguen
+     * corriendo en paralelo.
+     */
+    public void ejecutarEnPartida(String codigoSala, Runnable jugada) {
+        Object candado = candadoDeSala(codigoSala);
+        synchronized (candado) {
+            jugada.run();
         }
-        if (this.partidaActual.getEstado() == null || !this.partidaActual.getEstado().estaEnCurso()) {
+    }
+
+    private Object candadoDeSala(String codigoSala) {
+        return candadosPorSala.computeIfAbsent(normalizar(codigoSala), k -> new Object());
+    }
+
+    public GestorJuegoFacade getFachadaDeSala(String codigoSala) {
+        return partidasPorSala.get(normalizar(codigoSala));
+    }
+
+    public void terminarPartida(String codigoSala) {
+        partidasPorSala.remove(normalizar(codigoSala));
+        candadosPorSala.remove(normalizar(codigoSala));
+    }
+
+    public PartidaDTO obtenerEstadoActual(String codigoSala) {
+        Partida partida = getPartidaDeSala(codigoSala);
+        return partida != null ? PartidaMapper.toDTO(partida) : null;
+    }
+
+    public Partida validarPartidaActiva(String codigoSala) {
+        Partida partida = getPartidaDeSala(codigoSala);
+        if (partida == null) {
+            throw new IllegalStateException("No hay una partida activa en la sala " + codigoSala + ".");
+        }
+        if (partida.getEstado() == null || !partida.getEstado().estaEnCurso()) {
             throw new IllegalStateException("La partida no esta en curso.");
         }
-        return this.partidaActual;
+        return partida;
     }
 
-    public Jugador obtenerJugador(String nombreJugador) {
+    public Jugador obtenerJugador(String codigoSala, String nombreJugador) {
         if (nombreJugador == null || nombreJugador.isBlank()) {
             throw new IllegalArgumentException("El nombre del jugador es obligatorio.");
         }
-        Partida partida = validarPartidaActiva();
+        Partida partida = validarPartidaActiva(codigoSala);
         return partida.getJugadores().stream()
                 .filter(j -> nombreJugador.equalsIgnoreCase(j.getNombre()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No se encontro el jugador en la partida."));
     }
 
-    public void validarTurno(Jugador jugador) {
-        Partida partida = validarPartidaActiva();
+    public void validarTurno(String codigoSala, Jugador jugador) {
+        Partida partida = validarPartidaActiva(codigoSala);
         if (partida.getJugadorActual() == null) {
             throw new IllegalStateException("La partida aun no tiene turno activo.");
         }
@@ -109,10 +141,6 @@ public class JuegoServidor {
         }
         return null;
     }
-    
-    private String normalizar(String texto) {
-        return texto == null ? "" : texto.trim().toUpperCase();
-    }
 
     public Color colorDesdeTexto(String color) {
         if (color == null || color.isBlank()) {
@@ -125,8 +153,7 @@ public class JuegoServidor {
         }
     }
 
-    public GestorJuegoFacade getFachadaJuego() {
-        return fachadaJuego;
+    private String normalizar(String texto) {
+        return texto == null ? "" : texto.trim().toUpperCase();
     }
-    
 }

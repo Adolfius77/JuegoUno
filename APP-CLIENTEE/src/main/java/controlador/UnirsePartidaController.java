@@ -2,6 +2,7 @@ package controlador;
 
 import Interfaces.IVista;
 import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import dtos.MensajeDTO;
 
 import java.util.ArrayList;
@@ -100,14 +101,10 @@ public class UnirsePartidaController extends ControladorSuscriptor {
         liberar();
 
         SwingUtilities.invokeLater(() -> {
-            LobbyView lobby = new LobbyView();
-            LobbyController control = new LobbyController(proxy, codigoSalaFinal, nombreFinal, false, lobby);
-            control.cargarDatosIniciales(jugadoresFinal);
-
+            MVCFactory.abrirLobby(codigoSalaFinal, nombreFinal, false, jugadoresFinal);
             if (vista != null) {
                 vista.cerrarVista();
             }
-            lobby.setVisible(true);
         });
     }
 

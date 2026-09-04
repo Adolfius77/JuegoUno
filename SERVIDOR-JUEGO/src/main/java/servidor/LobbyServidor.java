@@ -52,12 +52,11 @@ public class LobbyServidor {
         this.broker.subscribirse("PETICION_TOMAR_CARTA", new ComandoTomarCarta(manejadorNodos, juegoServidor)::ejecutar);
         this.broker.subscribirse("PETICION_PASAR_TURNO", new ComandoPasarTurno(manejadorNodos, juegoServidor)::ejecutar);
         this.broker.subscribirse("PETICION_GRITAR_UNO", new ComandoGritarUno(manejadorNodos, juegoServidor)::ejecutar);
-        this.broker.subscribirse("PETICION_VOLVER_LOBBY", new ComandoVolverLobby(juegoServidor)::ejecutar);
+        this.broker.subscribirse("PETICION_VOLVER_LOBBY", new ComandoVolverLobby(manejadorNodos, juegoServidor)::ejecutar);
     }
 
     public static LobbyServidor crearLobbyPorDefecto(IBroker broker) {
         JuegoServidor juego = new JuegoServidor(
-                broker,
                 new CartaFactory(),
                 new MazoClasicoFactory(),
                 EstadoFactory.crearEstadoEsperando()
@@ -83,13 +82,18 @@ public class LobbyServidor {
             return;
         }
         String nombreJugador = nodo.getNombre();
+        String codigoSala = nodo.getCodigoSala();
 
         manejadorNodos.eliminarNodo(idSesion);
+        if (codigoSala != null) {
+            // Libera la plaza para que la sala no quede llena para siempre.
+            gestorSalas.salirJugador(codigoSala);
+        }
 
         try {
             Partida partida = null;
-            if (this.juegoServidor != null) {
-                partida = this.juegoServidor.getPartidaActualEntidad();
+            if (this.juegoServidor != null && codigoSala != null) {
+                partida = this.juegoServidor.getPartidaDeSala(codigoSala);
             }
 
             if (partida != null && nombreJugador != null) {
