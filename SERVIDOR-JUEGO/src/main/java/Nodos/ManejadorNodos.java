@@ -124,6 +124,22 @@ public class ManejadorNodos {
         return nombres;
     }
 
+    /**
+     * Nombre -> avatar de cada jugador de la sala, en orden de turno.
+     *
+     * El avatar solo vivia aqui, en la sesion: al arrancar la partida se
+     * enviaban unicamente los nombres, asi que el tablero nunca recibia la foto.
+     */
+    public java.util.Map<String, String> obtenerAvataresDeSala(String codigoSala) {
+        java.util.Map<String, String> avatares = new java.util.LinkedHashMap<>();
+        for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {
+            String avatar = nodo.getAvatar();
+            boolean sinAvatar = avatar == null || avatar.isBlank() || "no hay".equals(avatar);
+            avatares.put(nodo.getNombre(), sinAvatar ? "" : avatar);
+        }
+        return avatares;
+    }
+
     public void notificarASala(String codigoSala, MensajeDTO mensaje) {
         for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {
             nodo.enviarMensaje(mensaje);
