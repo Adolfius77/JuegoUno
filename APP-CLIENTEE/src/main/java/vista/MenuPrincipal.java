@@ -6,6 +6,7 @@ package vista;
 
 import Interfaces.IVista;
 import cliente.ClienteProxy;
+import controlador.Factorys.MVCFactory;
 import controlador.LobbyController;
 
 import utileria.GestorAudio;
@@ -345,18 +346,12 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
         /* Create and display the form */
         try {
             ClienteProxy proxy = ClienteProxy.getInstance();
-            serealizador.serializador sere = new serealizador.serializador();
-            proxy.setSerializador(sere);
+            proxy.setSerializador(new serealizador.serializador());
             proxy.setBroker(new broker.Broker());
             proxy.conectar();
 
-            LobbyController controlador = new LobbyController(proxy, "", "", false, null);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    new MenuPrincipal(controlador).setVisible(true);
-                }
-            });
+            MVCFactory.configurar(proxy);
+            java.awt.EventQueue.invokeLater(MVCFactory::abrirMenuPrincipal);
         } catch (Exception e) {
             System.err.println("[MenuPrincipal] Error crítico al iniciar: " + e.getMessage());
             e.printStackTrace();

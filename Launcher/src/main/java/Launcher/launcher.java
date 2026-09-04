@@ -2,9 +2,8 @@ package Launcher;
 
 import broker.Broker;
 import cliente.ClienteProxy;
-import controlador.LobbyController;
+import controlador.Factorys.MVCFactory;
 import serealizador.serializador;
-import vista.MenuPrincipal;
 
 /**
  * Clase principal que arranca la aplicación del cliente.
@@ -24,16 +23,10 @@ public class launcher {
             proxy.setBroker(new Broker());
             proxy.conectar();
 
-            controlador.LobbyController controlador = new controlador.LobbyController(proxy, "", "", false, null);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-
-                    MenuPrincipal menu = new MenuPrincipal(controlador);
-                    controlador.setVista(menu);
-                    menu.setVisible(true);
-                }
-            });
+            // La fabrica es el unico lugar que arma vista + controlador; a
+            // partir de aqui la capa de presentacion no conoce el proxy.
+            MVCFactory.configurar(proxy);
+            java.awt.EventQueue.invokeLater(MVCFactory::abrirMenuPrincipal);
 
         } catch (Exception e) {
             System.err.println("Error crítico al iniciar el juego: " + e.getMessage());
