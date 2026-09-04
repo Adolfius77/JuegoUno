@@ -263,6 +263,7 @@ public class podioView extends javax.swing.JFrame implements IVista {
             String avatarGanador = obtenerAvatarSeguro(ganador);
             avatarForm visualGanador = new avatarForm(ganador.getNombre(), avatarGanador, true);
             panelJugador1.add(visualGanador, BorderLayout.CENTER);
+            decorarPuesto(panelJugador1, 1);
             panelJugador1.revalidate();
             panelJugador1.repaint();
         }
@@ -278,12 +279,42 @@ public class podioView extends javax.swing.JFrame implements IVista {
                 avatarForm visualPerdedor = new avatarForm(perdedor.getNombre(), avatarPerdedor, false);
 
                 panelesPodio[indexPanel].add(visualPerdedor, BorderLayout.CENTER);
+                decorarPuesto(panelesPodio[indexPanel], indexPanel + 2);
                 panelesPodio[indexPanel].revalidate();
                 panelesPodio[indexPanel].repaint();
 
                 indexPanel++;
             }
         }
+
+        // Los puestos que sobran se ocultan: antes quedaban como cajas blancas
+        // vacias al lado del podio.
+        for (int i = indexPanel; i < panelesPodio.length; i++) {
+            if (panelesPodio[i] != null) {
+                panelesPodio[i].setVisible(false);
+            }
+        }
+    }
+
+    /** Marca el panel con el color y el numero del puesto. */
+    private void decorarPuesto(javax.swing.JPanel panel, int puesto) {
+        java.awt.Color medalla = switch (puesto) {
+            case 1 -> new java.awt.Color(0xF5, 0xB9, 0x24);   // oro
+            case 2 -> new java.awt.Color(0xB6, 0xBD, 0xC6);   // plata
+            case 3 -> new java.awt.Color(0xC8, 0x7B, 0x3F);   // bronce
+            default -> vista.tema.Tema.BORDE;
+        };
+
+        panel.setVisible(true);
+        panel.setBorder(javax.swing.BorderFactory.createMatteBorder(6, 0, 0, 0, medalla));
+
+        javax.swing.JLabel lugar = new javax.swing.JLabel(puesto + "\u00ba", javax.swing.SwingConstants.CENTER);
+        lugar.setOpaque(true);
+        lugar.setBackground(medalla);
+        lugar.setForeground(puesto == 2 ? vista.tema.Tema.TEXTO : java.awt.Color.WHITE);
+        lugar.setFont(vista.tema.Tema.titulo(puesto == 1 ? 22 : 18));
+        lugar.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 0, 4, 0));
+        panel.add(lugar, BorderLayout.SOUTH);
     }
 
     private String obtenerAvatarSeguro(JugadorDTO jugador) {

@@ -31,8 +31,10 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class PanelCarta extends JPanel {
 
-    private static final int ANCHO = 78;
-    private static final int ALTO = 116;
+    // El contenedor de la mano tiene altura fija desde el editor de formularios:
+    // con cartas mas altas se cortaban por abajo.
+    private static final int ANCHO = 70;
+    private static final int ALTO = 98;
 
     private CartaDTO carta;
     private boolean seleccionada;

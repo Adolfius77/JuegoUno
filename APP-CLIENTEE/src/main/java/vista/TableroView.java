@@ -51,8 +51,14 @@ public class TableroView extends javax.swing.JPanel {
         initComponents();
         vista.tema.Tema.aplicar(this);
         panelFondo.setImagen("/img/juegoUno (2).jpg");
-        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
+        // Sin margen vertical: el contenedor tiene altura fija y esos 10px de
+        // arriba y abajo eran justo los que cortaban las cartas.
+        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -18, 0));
         btnJugarCarta.setEnabled(false);
+        // El ancho del boton viene fijo del editor y con la fuente nueva el
+        // texto largo salia como "Jugar C...".
+        btnJugarCarta.setText("Jugar");
+        btnJugarCarta.setFont(vista.tema.Tema.boton(15));
         btnJugarCarta.addActionListener(evt -> jugarCartaSeleccionada());
         lblTemporizador.setForeground(Color.WHITE);
         lblTemporizador.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 20));
