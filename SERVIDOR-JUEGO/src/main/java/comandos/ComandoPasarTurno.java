@@ -35,11 +35,16 @@ public class ComandoPasarTurno implements IComandoServidor {
             // La sala se toma del nodo del remitente, no de los datos del
             // mensaje: el cliente puede mandarla vacia o equivocada.
             String codigoSala = salaDe(nodo);
-            Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
-            Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
-            juegoServidor.validarTurno(codigoSala, jugador);
-            partida.pasarTurno();
+            // La jugada se ejecuta con la partida de la sala en exclusiva:
+            // hay un hilo por cliente y sin esto dos jugadores de la misma
+            // sala podian mutar la Partida a la vez.
+            juegoServidor.ejecutarEnPartida(codigoSala, () -> {
+                Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
+                Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
+                juegoServidor.validarTurno(codigoSala, jugador);
+                partida.pasarTurno();
             
+            });
         } catch (Exception e) {
             enviarError(nodo, "ERROR_PASAR_TURNO", e.getMessage());
         }

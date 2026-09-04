@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
  */
 public class ClienteProxy extends Thread implements IProxy {
 
-    private static ClienteProxy instance;
     private Socket socket;
 
     private BufferedReader in;
@@ -33,14 +32,13 @@ public class ClienteProxy extends Thread implements IProxy {
     private ISerializador serializador;
     private IBroker broker;
 
-    private ClienteProxy() {
-    }
-    //singleton para tener una unica instancia hacia el server
-    public static synchronized ClienteProxy getInstance() {
-        if (instance == null) {
-            instance = new ClienteProxy();
-        }
-        return instance;
+    /**
+     * Lo construye el arranque del cliente, que lo entrega a MVCFactory. Antes
+     * era un singleton con getInstance() sin sincronizar y estado mutable
+     * global; ahora hay una unica instancia porque hay un unico punto de
+     * composicion, no porque la clase lo imponga.
+     */
+    public ClienteProxy() {
     }
 
     public void setSerializador(ISerializador serializador) {

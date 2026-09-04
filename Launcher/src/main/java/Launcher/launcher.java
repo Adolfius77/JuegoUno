@@ -16,7 +16,7 @@ public class launcher {
 
             // Punto de composicion del cliente: aqui se arma el proxy con su
             // serializador y el bus donde publicara lo que llegue del servidor.
-            ClienteProxy proxy = ClienteProxy.getInstance();
+            ClienteProxy proxy = new ClienteProxy();
             serializador sere = new serializador();
 
             proxy.setSerializador(sere);

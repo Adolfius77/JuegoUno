@@ -35,15 +35,19 @@ public class ComandoGritarUno implements IComandoServidor {
             // La sala se toma del nodo del remitente, no de los datos del
             // mensaje: el cliente puede mandarla vacia o equivocada.
             String codigoSala = salaDe(nodo);
-            Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
-            Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
+            // La jugada se ejecuta con la partida de la sala en exclusiva:
+            // hay un hilo por cliente y sin esto dos jugadores de la misma
+            // sala podian mutar la Partida a la vez.
+            juegoServidor.ejecutarEnPartida(codigoSala, () -> {
+                Partida partida = juegoServidor.validarPartidaActiva(codigoSala);
+                Jugador jugador = juegoServidor.obtenerJugador(codigoSala, nombreJugador);
 
-           if (jugador.getMano() == null || (jugador.getMano().getCartas().size() != 2 && jugador.getMano().getCartas().size() != 1)) {
-                throw new IllegalStateException("Solo puedes gritar UNO cuando te quedan 2 cartas.");
-            }
-            jugador.setDijoUno(true);
-            partida.notificarObservador("UNO_GRITADO" +":" + nombreJugador);
-
+               if (jugador.getMano() == null || (jugador.getMano().getCartas().size() != 2 && jugador.getMano().getCartas().size() != 1)) {
+                    throw new IllegalStateException("Solo puedes gritar UNO cuando te quedan 2 cartas.");
+                }
+                jugador.setDijoUno(true);
+                partida.notificarObservador("UNO_GRITADO" +":" + nombreJugador);
+            });
         } catch (Exception e) {
             enviarError(nodo, "ERROR_GRITAR_UNO", e.getMessage());
         }

@@ -35,6 +35,8 @@ public class JuegoServidor {
     private final CartaMapper cartaMapper = new CartaMapper();
 
     private final Map<String, GestorJuegoFacade> partidasPorSala = new ConcurrentHashMap<>();
+    /** Un candado por sala: serializa las jugadas sin frenar a las demas salas. */
+    private final Map<String, Object> candadosPorSala = new ConcurrentHashMap<>();
 
     public JuegoServidor(ICartaFactory cartaFactory, IMazoFactory mazoFactory, IEstadoPartida estadoInicial) {
         this.cartaFactory = cartaFactory;
@@ -59,12 +61,33 @@ public class JuegoServidor {
         return fachada != null ? fachada.getPartidaActual() : null;
     }
 
+    /**
+     * Ejecuta una jugada con la partida de la sala tomada en exclusiva.
+     *
+     * El servidor atiende a cada cliente en su propio hilo, asi que sin esto dos
+     * jugadores de la misma sala podian mutar la Partida a la vez: la validacion
+     * de turno de uno podia pasar mientras el otro ya estaba cambiando el turno.
+     * El candado es por sala, de modo que las partidas de salas distintas siguen
+     * corriendo en paralelo.
+     */
+    public void ejecutarEnPartida(String codigoSala, Runnable jugada) {
+        Object candado = candadoDeSala(codigoSala);
+        synchronized (candado) {
+            jugada.run();
+        }
+    }
+
+    private Object candadoDeSala(String codigoSala) {
+        return candadosPorSala.computeIfAbsent(normalizar(codigoSala), k -> new Object());
+    }
+
     public GestorJuegoFacade getFachadaDeSala(String codigoSala) {
         return partidasPorSala.get(normalizar(codigoSala));
     }
 
     public void terminarPartida(String codigoSala) {
         partidasPorSala.remove(normalizar(codigoSala));
+        candadosPorSala.remove(normalizar(codigoSala));
     }
 
     public PartidaDTO obtenerEstadoActual(String codigoSala) {
