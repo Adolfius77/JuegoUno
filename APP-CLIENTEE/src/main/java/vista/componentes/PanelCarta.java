@@ -36,9 +36,19 @@ public class PanelCarta extends JPanel {
     private static final int ANCHO = 70;
     private static final int ALTO = 98;
 
+    /** Cuanto sube la carta al pasar el raton o al quedar seleccionada. */
+    private static final int ELEVACION_MAX = 14;
+    private static final int MS_CUADRO = 16;
+
     private CartaDTO carta;
     private boolean seleccionada;
     private boolean jugable = true;
+
+    /** 0 = abajo, 1 = arriba del todo. Se anima, no salta. */
+    private float elevacion = 0f;
+    private float elevacionObjetivo = 0f;
+    private javax.swing.Timer animacionElevacion;
+    private boolean interactiva;
 
     public PanelCarta(CartaDTO carta) {
         this.carta = carta;
@@ -58,7 +68,63 @@ public class PanelCarta extends JPanel {
     public void setSeleccionada(boolean seleccionada) {
         if (this.seleccionada != seleccionada) {
             this.seleccionada = seleccionada;
-            repaint();
+            recalcularObjetivo(false);
+        }
+    }
+
+    /**
+     * Activa la reaccion al raton: la carta sube al pasar por encima y baja al
+     * salir, con una transicion suave.
+     */
+    public void setInteractiva(boolean interactiva) {
+        if (this.interactiva == interactiva) {
+            return;
+        }
+        this.interactiva = interactiva;
+        if (interactiva) {
+            setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    recalcularObjetivo(true);
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    recalcularObjetivo(false);
+                }
+            });
+        }
+    }
+
+    private boolean raton;
+
+    private void recalcularObjetivo(boolean sobreLaCarta) {
+        this.raton = sobreLaCarta;
+        // La seleccionada se queda arriba aunque el raton se vaya.
+        this.elevacionObjetivo = (raton || seleccionada) ? 1f : 0f;
+        arrancarAnimacion();
+    }
+
+    /**
+     * Acerca la elevacion actual a la deseada un poco en cada cuadro. Mover la
+     * carta de golpe se siente brusco; asi entra y sale con suavidad.
+     */
+    private void arrancarAnimacion() {
+        if (animacionElevacion == null) {
+            animacionElevacion = new javax.swing.Timer(MS_CUADRO, e -> {
+                float paso = 0.18f;
+                if (Math.abs(elevacionObjetivo - elevacion) < 0.02f) {
+                    elevacion = elevacionObjetivo;
+                    animacionElevacion.stop();
+                } else {
+                    elevacion += (elevacionObjetivo - elevacion) * paso * 2.2f;
+                }
+                repaint();
+            });
+        }
+        if (!animacionElevacion.isRunning()) {
+            animacionElevacion.start();
         }
     }
 
@@ -88,16 +154,18 @@ public class PanelCarta extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        // La carta seleccionada se levanta unos pixeles en vez de recibir un
-        // borde: se lee mejor cuando las cartas estan solapadas en la mano.
-        int subida = seleccionada ? 10 : 0;
+        // La carta sube al pasar el raton o al quedar seleccionada, en vez de
+        // recibir un borde: se lee mucho mejor con las cartas solapadas.
+        // El alto de la carta NO cambia; solo se mueve dentro del componente,
+        // reservando ELEVACION_MAX de margen arriba.
         int margen = 4;
         int cw = w - margen * 2;
-        int ch = h - margen * 2 - subida;
+        int ch = h - margen * 2 - ELEVACION_MAX;
         int cx = margen;
-        int cy = margen + (seleccionada ? 0 : subida);
+        int cy = margen + Math.round(ELEVACION_MAX * (1f - elevacion));
 
-        dibujarSombra(g2, cx, cy, cw, ch, seleccionada ? 7 : 4);
+        // La sombra crece con la elevacion: da sensacion de despegue.
+        dibujarSombra(g2, cx, cy, cw, ch, 3 + Math.round(elevacion * 6));
 
         Color base = colorDe(carta.getColor());
         boolean comodin = esComodin();

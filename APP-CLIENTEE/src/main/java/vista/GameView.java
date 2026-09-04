@@ -27,6 +27,8 @@ public class GameView extends javax.swing.JFrame implements IVista {
      */
     private GameController controlador;
     private TableroView tablero;
+    private vista.animacion.CapaAnimacion capaAnimacion;
+    private vista.animacion.AnimadorTablero animador;
 
     public GameView() {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -38,6 +40,21 @@ public class GameView extends javax.swing.JFrame implements IVista {
 
         setSize(1360, 820);
         setPreferredSize(new java.awt.Dimension(1360, 820));
+
+        // Capa de animaciones por encima del tablero. Va en el JLayeredPane
+        // para quedar sobre todo, y deja pasar los clics.
+        capaAnimacion = new vista.animacion.CapaAnimacion();
+        capaAnimacion.setBounds(0, 0, 1360, 820);
+        getLayeredPane().add(capaAnimacion, javax.swing.JLayeredPane.PALETTE_LAYER);
+        tablero.setCapaAnimacion(capaAnimacion);
+        animador = new vista.animacion.AnimadorTablero(tablero);
+
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                capaAnimacion.setBounds(0, 0, getWidth(), getHeight());
+            }
+        });
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -406,6 +423,13 @@ public class GameView extends javax.swing.JFrame implements IVista {
                     }
                 }
                 if (miMano != null) {
+                    // Se comparan las dos ultimas fotos del estado ANTES de
+                    // pintar la nueva: de ahi salen la carta que vuela al centro
+                    // y los avisos de +2, +4, salto y cambio de sentido.
+                    if (animador != null) {
+                        animador.alActualizar(partidaActual, miNombre);
+                    }
+
                     tablero.mostrarCartas(miMano);
                     tablero.actualizar(cartaCentro);
                     tablero.actualizarMazo(cartasEnMazo);
