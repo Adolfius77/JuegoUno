@@ -23,6 +23,9 @@ import java.util.List;
  */
 public class Partida implements IObservable {
 
+    /** Cartas que roba quien se queda con una sola sin gritar UNO. */
+    public static final int CASTIGO_NO_GRITAR_UNO = 3;
+
     private String id;
     private IEstadoPartida estado;
     private Sentido sentido = Sentido.HORARIO;
@@ -162,9 +165,10 @@ public class Partida implements IObservable {
 
         if (jugadorAnterior.getMano() != null && jugadorAnterior.getMano().getCartas().size() == 1) {
             if (!jugadorAnterior.isDijoUno()) {
-                System.out.println("¡" + jugadorAnterior.getNombre() + " no dijo UNO! Castigo de 3 cartas.");
+                System.out.println("¡" + jugadorAnterior.getNombre() + " no dijo UNO! Castigo de "
+                        + CASTIGO_NO_GRITAR_UNO + " cartas.");
 
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < CASTIGO_NO_GRITAR_UNO; i++) {
                     if (mazo.estaVacio()) {
                         mazo.recargar(pilaCartas);
                     }

@@ -64,43 +64,11 @@ public class JuegoServidor {
         return PartidaMapper.toDTO(this.partidaActual);
     }
 
-    public synchronized boolean debeGritarUno(String nombreJugador) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-
-        if (jugador.getMano() == null) {
-            return false;
-        }
-
-        int cartasEnMano = jugador.getMano().getCartas().size();
-        return cartasEnMano == 1 && !jugador.isDijoUno();
-    }
-
-    public synchronized PartidaDTO penalizarNoUno(String nombreJugador) {
-        Partida partida = validarPartidaActiva();
-        Jugador jugador = obtenerJugador(nombreJugador);
-
-        if (jugador.getMano() != null && !jugador.isDijoUno()
-                && jugador.getMano().getCartas().size() > 1) {
-            int cartasActuales = jugador.getMano().getCartas().size();
-            if (cartasActuales == 2) {
-                for (int i = 0; i < 2; i++) {
-                    if (!partida.getMazo().estaVacio()) {
-                        partida.tomarCarta(jugador);
-                    }
-                }
-                partida.notificarObservador("PENALIZACION_NO_UNO:" + nombreJugador);
-            }
-        }
-
-        return PartidaMapper.toDTO(partida);
-    }
-
     public Partida validarPartidaActiva() {
         if (this.partidaActual == null) {
             throw new IllegalStateException("No hay una partida activa.");
         }
-        if (this.partidaActual.getEstado() == null || !this.partidaActual.getEstado().toString().contains("Jugando")) {
+        if (this.partidaActual.getEstado() == null || !this.partidaActual.getEstado().estaEnCurso()) {
             throw new IllegalStateException("La partida no esta en curso.");
         }
         return this.partidaActual;
