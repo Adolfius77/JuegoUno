@@ -4,7 +4,6 @@
  */
 package comandos;
 
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
@@ -36,7 +35,6 @@ public class ComandoUnirsePartida implements IComandoServidor {
 
         String nombreInviado = obtenerNombreJugador(mensaje.getDatos().get("nombre"));
         String codigoSala = normalizarCodigo(mensaje.getDatos().get("codigoSala"));
-        IProxy proxySolicitante = (IProxy) mensaje.getDatos().get("proxy");
         GestorSalas.SalaDisponible sala = gestorSalas.obtenerSala(codigoSala);
 
         System.out.println("[COMANDO-UNIRSE-PARTIDA] " + nombreInviado + "intenta unirse ala partida" + codigoSala);
@@ -46,14 +44,14 @@ public class ComandoUnirsePartida implements IComandoServidor {
         if (sala == null) {
             respuesta.setTipo("ERROR_UNIRSE");
             respuesta.getDatos().put("motivo", "La sala no existe o el codigo es incorrecto");
-            enviarRespuesta(proxySolicitante, respuesta);
+            enviarRespuesta(mensaje.getIdSesion(), respuesta);
             return;
         }
 
         if (!gestorSalas.unirJugador(codigoSala)) {
             respuesta.setTipo("ERROR_UNIRSE");
             respuesta.getDatos().put("motivo", "La sala ya esta llena");
-            enviarRespuesta(proxySolicitante, respuesta);
+            enviarRespuesta(mensaje.getIdSesion(), respuesta);
             return;
         }
 
@@ -69,7 +67,7 @@ public class ComandoUnirsePartida implements IComandoServidor {
         respuesta.getDatos().put("jugadoresActuales", sala.getJugadoresActuales());
         respuesta.getDatos().put("jugadores", listaJugadoresConAvatar);
         respuesta.getDatos().put("esHost", false);
-        enviarRespuesta(proxySolicitante, respuesta);
+        enviarRespuesta(mensaje.getIdSesion(), respuesta);
 
         MensajeDTO notificacionLista = new MensajeDTO();
         notificacionLista.setTipo("LISTA_ACTUALIZADA");
@@ -115,9 +113,9 @@ public class ComandoUnirsePartida implements IComandoServidor {
         return "";
     }
 
-    private void enviarRespuesta(IProxy proxySolicitante, MensajeDTO respuesta) {
-        if (proxySolicitante != null) {
-            proxySolicitante.enviarMensaje(respuesta);
+    private void enviarRespuesta(String idSesion, MensajeDTO respuesta) {
+        if (idSesion != null) {
+            ManejadorNodos.enviarNodo(idSesion, respuesta);
         }
     }
 

@@ -4,7 +4,6 @@ import Entidades.Carta;
 import Entidades.Jugador;
 import Entidades.Logica.Partida;
 import Entidades.enums.Color; 
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import com.google.gson.Gson;
@@ -34,8 +33,8 @@ public class ComandoJugarCarta implements IComandoServidor {
         }
 
         String nombreJugador = mensaje.getRemitente();
-        IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
-        NodoCliente nodo = resolverNodo(nombreJugador, proxy);
+        String idSesion = mensaje.getIdSesion();
+        NodoCliente nodo = resolverNodo(nombreJugador, idSesion);
 
         try {
            
@@ -96,7 +95,7 @@ public class ComandoJugarCarta implements IComandoServidor {
             }
 
         } catch (Exception e) {
-            enviarError(nodo, proxy, "ERROR_GENERAL", e.getMessage());
+            enviarError(nodo, "ERROR_GENERAL", e.getMessage());
         }
     }
 
@@ -111,18 +110,15 @@ public class ComandoJugarCarta implements IComandoServidor {
         return gson.fromJson(json, CartaDTO.class);
     }
 
-    private NodoCliente resolverNodo(String nombreJugador, IProxy proxy) {
-        NodoCliente nodo = null;
-        if (proxy != null) {
-            nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
-        }
+    private NodoCliente resolverNodo(String nombreJugador, String idSesion) {
+        NodoCliente nodo = manejadorNodos.obtenerNodoPorSesion(idSesion);
         if (nodo == null) {
             nodo = manejadorNodos.obtenerNodoPorNombre(nombreJugador);
         }
         return nodo;
     }
 
-    private void enviarError(NodoCliente nodo, IProxy proxy, String tipo, String motivo) {
+    private void enviarError(NodoCliente nodo, String tipo, String motivo) {
         MensajeDTO error = new MensajeDTO();
         error.setTipo(tipo);
         error.setRemitente("SERVIDOR");
@@ -132,8 +128,6 @@ public class ComandoJugarCarta implements IComandoServidor {
 
         if (nodo != null) {
             nodo.enviarMensaje(error);
-        } else if (proxy != null) {
-            proxy.enviarMensaje(error);
         }
     }
 }

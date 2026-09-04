@@ -11,7 +11,6 @@ import Entidades.Jugador;
 import Entidades.Mano;
 import Entidades.fabricas.MazoClasicoFactory;
 import Interfacez.IBroker;
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import comandos.ComandoListarPartidas;
@@ -47,7 +46,7 @@ public class LobbyServidor {
         this.broker.subscribirse("REGISTRO_JUGADOR", new ComandoRegistrarJugador(manejadorNodos)::ejecutar);
         this.broker.subscribirse("PETICION_CREAR_PARTIDA", new comandoCrearPartida(manejadorNodos, gestorSalas)::ejecutar);
         this.broker.subscribirse("PETICION_UNIRSE_PARTIDA", new ComandoUnirsePartida(manejadorNodos, gestorSalas)::ejecutar);
-        this.broker.subscribirse("PETICION_LISTA_PARTIDAS", new ComandoListarPartidas(gestorSalas)::ejecutar);
+        this.broker.subscribirse("PETICION_LISTA_PARTIDAS", new ComandoListarPartidas(manejadorNodos, gestorSalas)::ejecutar);
         this.broker.subscribirse("ACTUALIZAR_ESTADO_LISTO", new ComandoActualizarEstadoListo(manejadorNodos)::ejecutar);
         this.broker.subscribirse("PETICION_JUGAR_CARTA", new ComandoJugarCarta(manejadorNodos, juegoServidor)::ejecutar);
         this.broker.subscribirse("PETICION_TOMAR_CARTA", new ComandoTomarCarta(manejadorNodos, juegoServidor)::ejecutar);
@@ -70,15 +69,22 @@ public class LobbyServidor {
         manejadorNodos.registrarNuevoJugador(nuevoNodo);
     }
 
-    public void eliminarJugadorPorProxy(IProxy proxy) {
-        if (proxy == null) {
+    public boolean conoceSesion(String idSesion) {
+        return manejadorNodos.obtenerNodoPorSesion(idSesion) != null;
+    }
+
+    public void eliminarJugadorPorSesion(String idSesion) {
+        if (idSesion == null) {
             return;
         }
 
-        Nodos.NodoCliente nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
-        String nombreJugador = nodo != null ? nodo.getNombre() : null;
+        NodoCliente nodo = manejadorNodos.obtenerNodoPorSesion(idSesion);
+        if (nodo == null) {
+            return;
+        }
+        String nombreJugador = nodo.getNombre();
 
-        manejadorNodos.eliminarPorProxy(proxy);
+        manejadorNodos.eliminarNodo(idSesion);
 
         try {
             Partida partida = null;

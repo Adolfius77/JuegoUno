@@ -2,7 +2,6 @@ package comandos;
 
 import Entidades.Jugador;
 import Entidades.Logica.Partida;
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
@@ -29,8 +28,8 @@ public class ComandoGritarUno implements IComandoServidor {
         }
 
         String nombreJugador = mensaje.getRemitente();
-        IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
-        NodoCliente nodo = resolverNodo(nombreJugador, proxy);
+        String idSesion = mensaje.getIdSesion();
+        NodoCliente nodo = resolverNodo(nombreJugador, idSesion);
 
         try {
             Partida partida = juegoServidor.validarPartidaActiva();
@@ -43,22 +42,19 @@ public class ComandoGritarUno implements IComandoServidor {
             partida.notificarObservador("UNO_GRITADO" +":" + nombreJugador);
 
         } catch (Exception e) {
-            enviarError(nodo, proxy, "ERROR_GRITAR_UNO", e.getMessage());
+            enviarError(nodo, "ERROR_GRITAR_UNO", e.getMessage());
         }
     }
 
-    private NodoCliente resolverNodo(String nombreJugador, IProxy proxy) {
-        NodoCliente nodo = null;
-        if (proxy != null) {
-            nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
-        }
+    private NodoCliente resolverNodo(String nombreJugador, String idSesion) {
+        NodoCliente nodo = manejadorNodos.obtenerNodoPorSesion(idSesion);
         if (nodo == null) {
             nodo = manejadorNodos.obtenerNodoPorNombre(nombreJugador);
         }
         return nodo;
     }
 
-    private void enviarError(NodoCliente nodo, IProxy proxy, String tipo, String motivo) {
+    private void enviarError(NodoCliente nodo, String tipo, String motivo) {
         MensajeDTO error = new MensajeDTO();
         error.setTipo(tipo);
         error.setRemitente("SERVIDOR");
@@ -68,8 +64,6 @@ public class ComandoGritarUno implements IComandoServidor {
 
         if (nodo != null) {
             nodo.enviarMensaje(error);
-        } else if (proxy != null) {
-            proxy.enviarMensaje(error);
         }
     }
 }

@@ -1,6 +1,6 @@
 package comandos;
 
-import Interfacez.IProxy;
+import Nodos.ManejadorNodos;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
 import java.util.HashMap;
@@ -9,20 +9,17 @@ import servidor.GestorSalas;
 
 public class ComandoListarPartidas implements IComandoServidor {
 
+    private final ManejadorNodos manejadorNodos;
     private final GestorSalas gestorSalas;
 
-    public ComandoListarPartidas(GestorSalas gestorSalas) {
+    public ComandoListarPartidas(ManejadorNodos manejadorNodos, GestorSalas gestorSalas) {
+        this.manejadorNodos = manejadorNodos;
         this.gestorSalas = gestorSalas;
     }
 
     @Override
     public void ejecutar(MensajeDTO mensaje) {
-        if (mensaje == null || mensaje.getDatos() == null) {
-            return;
-        }
-
-        IProxy proxySolicitante = (IProxy) mensaje.getDatos().get("proxy");
-        if (proxySolicitante == null) {
+        if (mensaje == null || mensaje.getIdSesion() == null) {
             return;
         }
 
@@ -34,6 +31,6 @@ public class ComandoListarPartidas implements IComandoServidor {
         datos.put("partidas", gestorSalas.obtenerSalasSerializables());
         respuesta.setDatos(datos);
 
-        proxySolicitante.enviarMensaje(respuesta);
+        manejadorNodos.enviarNodo(mensaje.getIdSesion(), respuesta);
     }
 }

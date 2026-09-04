@@ -1,6 +1,5 @@
 package comandos;
 
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
@@ -24,12 +23,7 @@ public class ComandoActualizarEstadoListo implements IComandoServidor {
             return;
         }
 
-        IProxy proxy = (IProxy) mensaje.getDatos().get("proxy");
-        if (proxy == null) {
-            return;
-        }
-
-        NodoCliente nodo = manejadorNodos.obtenerNodoPorProxy(proxy);
+        NodoCliente nodo = manejadorNodos.obtenerNodoPorSesion(mensaje.getIdSesion());
         if (nodo == null) {
             return;
         }

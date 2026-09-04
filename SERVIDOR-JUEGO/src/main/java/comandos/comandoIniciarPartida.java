@@ -4,7 +4,6 @@
  */
 package comandos;
 
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
@@ -41,8 +40,8 @@ public class comandoIniciarPartida implements IComandoServidor {
 
         System.out.println("[COMANDO-INICIAR-PARTIDA] el broker recibio el msj");
 
-        IProxy proxySolicitante = (IProxy) mensaje.getDatos().get("proxy");
-        NodoCliente nodoSolicitante = manejadorNodos.obtenerNodoPorProxy(proxySolicitante);
+        String idSesion = mensaje.getIdSesion();
+        NodoCliente nodoSolicitante = manejadorNodos.obtenerNodoPorSesion(idSesion);
         if (nodoSolicitante == null) {
             return;
         }
@@ -52,23 +51,23 @@ public class comandoIniciarPartida implements IComandoServidor {
                 : "";
         GestorSalas.SalaDisponible sala = gestorSalas.obtenerSala(codigoSala);
         if (sala == null) {
-            enviarErrorInicio(proxySolicitante, "No se encontro la sala para iniciar.");
+            enviarErrorInicio(idSesion, "No se encontro la sala para iniciar.");
             return;
         }
 
         if (!sala.getHost().equalsIgnoreCase(nodoSolicitante.getNombre())) {
-            enviarErrorInicio(proxySolicitante, "Solo el host puede iniciar la partida.");
+            enviarErrorInicio(idSesion, "Solo el host puede iniciar la partida.");
             return;
         }
 
         List<String> jugadores = manejadorNodos.obtenerNombresDeNodosConectados();
         if (jugadores.size() < 2) {
-            enviarErrorInicio(proxySolicitante, "Se requieren al menos 2 jugadores para iniciar.");
+            enviarErrorInicio(idSesion, "Se requieren al menos 2 jugadores para iniciar.");
             return;
         }
 
         if (!manejadorNodos.estanTodosListos()) {
-            enviarErrorInicio(proxySolicitante, "Todos los jugadores deben estar listos.");
+            enviarErrorInicio(idSesion, "Todos los jugadores deben estar listos.");
             return;
         }
 
@@ -89,8 +88,8 @@ public class comandoIniciarPartida implements IComandoServidor {
 
     }
 
-    private void enviarErrorInicio(IProxy proxySolicitante, String motivo) {
-        if (proxySolicitante == null) {
+    private void enviarErrorInicio(String idSesion, String motivo) {
+        if (idSesion == null) {
             return;
         }
         MensajeDTO error = new MensajeDTO();
@@ -99,6 +98,6 @@ public class comandoIniciarPartida implements IComandoServidor {
         Map<String, Object> datosError = new HashMap<>();
         datosError.put("motivo", motivo);
         error.setDatos(datosError);
-        proxySolicitante.enviarMensaje(error);
+        manejadorNodos.enviarNodo(idSesion, error);
     }
 }

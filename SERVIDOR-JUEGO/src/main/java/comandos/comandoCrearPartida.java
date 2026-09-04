@@ -1,6 +1,5 @@
 package comandos;
 
-import Interfacez.IProxy;
 import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
@@ -32,7 +31,6 @@ public class comandoCrearPartida implements IComandoServidor {
         String nombreSala = obtenerTexto(mensaje.getDatos().get("nombreSala"), "Sala de " + nombreHost);
         int limiteJugadores = obtenerLimite(mensaje.getDatos().get("limiteJugadores"));
         String codigoSala = generarCodigoSala();
-        IProxy proxySolicitante = (IProxy) mensaje.getDatos().get("proxy");
         GestorSalas.SalaDisponible salaCreada = gestorSalas.registrarSala(codigoSala, nombreSala, nombreHost, limiteJugadores);
         List<java.util.Map<String, String>> listaJugadoresConAvatar = construirListaJugadores();
 
@@ -48,9 +46,7 @@ public class comandoCrearPartida implements IComandoServidor {
         respuesto.getDatos().put("jugadores", listaJugadoresConAvatar);
         respuesto.getDatos().put("esHost", true);
 
-        if (proxySolicitante != null) {
-            proxySolicitante.enviarMensaje(respuesto);
-        }
+        ManejadorNodos.enviarNodo(mensaje.getIdSesion(), respuesto);
 
         MensajeDTO notificacionLista = new MensajeDTO();
         notificacionLista.setTipo("LISTA_ACTUALIZADA");
