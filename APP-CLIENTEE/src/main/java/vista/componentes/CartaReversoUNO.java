@@ -40,8 +40,14 @@ public class CartaReversoUNO extends JPanel {
 
     private void dibujarCarta(Graphics2D g2) {
         // ── 1. Fondo negro con esquinas redondeadas ──────────────────────────
+        // Sombra, para que el reverso tenga el mismo volumen que el frente
+        for (int i = 8; i > 0; i--) {
+            g2.setColor(new Color(0, 0, 0, 12));
+            g2.fill(new RoundRectangle2D.Float(-i / 2f, i, BASE_W + i, BASE_H + i, 26, 26));
+        }
+
         RoundRectangle2D fondo = new RoundRectangle2D.Float(0, 0, BASE_W, BASE_H, 24, 24);
-        g2.setColor(Color.BLACK);
+        g2.setColor(new Color(0x18, 0x18, 0x1C));
         g2.fill(fondo);
 
         // Borde blanco fino
@@ -69,7 +75,7 @@ public class CartaReversoUNO extends JPanel {
 
         Shape ovaloRotado = rotacion.createTransformedShape(ovalo);
 
-        g2.setColor(new Color(204, 0, 0)); // Rojo UNO
+        g2.setColor(vista.tema.Tema.ROJO);
         g2.fill(ovaloRotado);
 
         // Restauramos el clip
@@ -110,7 +116,9 @@ public class CartaReversoUNO extends JPanel {
      *  3. Relleno amarillo
      */
     private void dibujarLetra(Graphics2D g2, String letra, float cx, float cy) {
-        Font font = new Font("Arial Black", Font.BOLD, 52);
+        // "Arial Black" no existe en Linux ni en muchos macOS; sin este respaldo
+        // el logo caia a una fuente fina y perdia el aspecto de UNO.
+        Font font = new Font(vista.tema.Tema.familia(), Font.BOLD, 52);
 
         // Obtenemos el contorno de la letra como Shape
         FontRenderContext frc = g2.getFontRenderContext();

@@ -77,7 +77,10 @@ public class comandoIniciarPartida implements IComandoServidor {
             return;
         }
 
-        PartidaDTO estadoInicialDTO = juegoServidor.iniciarNuevoJuego(codigoSala, jugadores, this.manejadorNodos);
+        // Se envian los avatares junto con los nombres: antes solo iban los
+        // nombres y la foto elegida en el menu se quedaba en la sesion.
+        PartidaDTO estadoInicialDTO = juegoServidor.iniciarNuevoJuego(
+                codigoSala, manejadorNodos.obtenerAvataresDeSala(codigoSala), this.manejadorNodos);
         MensajeDTO estadoPartida = new MensajeDTO();
         estadoPartida.setTipo("PARTIDA_INICIADA");
         estadoPartida.setRemitente("SERVIDOR");

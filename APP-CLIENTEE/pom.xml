@@ -34,6 +34,12 @@
             <artifactId>BROKER</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Look and Feel moderno. Sin esto Swing usa Metal, de los anos 90. -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.5.4</version>
+        </dependency>
     </dependencies>
 
 

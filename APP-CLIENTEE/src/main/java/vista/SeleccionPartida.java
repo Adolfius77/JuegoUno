@@ -28,6 +28,7 @@ public class SeleccionPartida extends javax.swing.JFrame implements IVista {
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
         initComponents();
+        vista.tema.Tema.aplicar(this);
         this.setLocationRelativeTo(null);
         this.addWindowListener(new java.awt.event.WindowAdapter() {;
             @Override

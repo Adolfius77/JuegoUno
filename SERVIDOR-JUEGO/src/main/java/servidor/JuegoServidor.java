@@ -44,9 +44,15 @@ public class JuegoServidor {
         this.estadoInicial = estadoInicial;
     }
 
-    public PartidaDTO iniciarNuevoJuego(String codigoSala, List<String> nombreJugadores, ManejadorNodos manejadorNodos) {
+    /**
+     * @param avataresPorNombre nombre -> avatar de cada jugador de la sala, en
+     *                          orden de turno. Antes solo viajaban los nombres y
+     *                          el avatar se perdia entre la sesion y la partida.
+     */
+    public PartidaDTO iniciarNuevoJuego(String codigoSala, Map<String, String> avataresPorNombre,
+                                        ManejadorNodos manejadorNodos) {
         GestorJuegoFacade fachada = new GestorJuegoFacade(cartaFactory, mazoFactory, estadoInicial);
-        fachada.prepararIniciarPartida(nombreJugadores);
+        fachada.prepararIniciarPartida(avataresPorNombre);
 
         Partida partida = fachada.getPartidaActual();
         // El observador solo difunde a los jugadores de esta sala.

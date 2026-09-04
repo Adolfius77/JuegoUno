@@ -26,6 +26,7 @@ public class avatarForm extends javax.swing.JPanel {
 
     public avatarForm() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         configurarIndicadorListo();
     }
 
@@ -35,6 +36,7 @@ public class avatarForm extends javax.swing.JPanel {
 
     public avatarForm(String nombreUsuario, String avatarUsuario, boolean estaListoUsuario) {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
         this.estaListoUsuario = estaListoUsuario;
@@ -42,49 +44,81 @@ public class avatarForm extends javax.swing.JPanel {
         mostrarDatosJugador();
     }
 
+    private static final int LADO_AVATAR = 76;
+
     private ImageIcon cargarImagen(String avatarId) {
-        if (avatarId == null || avatarId.equals("no hay") || avatarId.isBlank()) {
-            avatarId = "pfp";
-        }
-
-        String ruta = "/img/" + avatarId + ".png";
-        try {
-            System.out.println("[IMG] Intentando cargar imagen: " + ruta);
-            java.io.InputStream is = getClass().getResourceAsStream(ruta);
-            if (is != null) {
-                java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
-                if (img != null) {
-                    System.out.println("[IMG] Cargada: " + ruta);
-                    return new ImageIcon(img);
+        if (avatarId != null && !avatarId.isBlank()
+                && !avatarId.equals("no hay") && !avatarId.equals("pfp")) {
+            try (java.io.InputStream is = getClass().getResourceAsStream("/img/" + avatarId + ".png")) {
+                if (is != null) {
+                    java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+                    if (img != null) {
+                        return new ImageIcon(recortarEnCirculo(img));
+                    }
                 }
-            } else {
-                System.out.println("[IMG] Recurso no encontrado: " + ruta);
+            } catch (Exception ex) {
+                System.out.println("[Avatar] No se pudo cargar '" + avatarId + "': " + ex.getMessage());
             }
-            java.io.InputStream isDef = getClass().getResourceAsStream("/img/pfp.png");
-            if (isDef != null) {
-                java.awt.image.BufferedImage imgDef = javax.imageio.ImageIO.read(isDef);
-                if (imgDef != null) {
-                    System.out.println("[IMG] Cargada imagen por defecto: /img/pfp.png");
-                    return new ImageIcon(imgDef);
-                }
-            } else {
-                System.out.println("[IMG] Imagen por defecto no encontrada: /img/pfp.png");
-            }
-        } catch (Exception ex) {
-            System.out.println("Error cargando imagen '" + ruta + "': " + ex.getMessage());
         }
+        // Antes se caia a /img/pfp.png, que es una imagen COMPLETAMENTE EN BLANCO:
+        // por eso los jugadores sin avatar salian como cuadros vacios. Se dibuja
+        // en su lugar la inicial sobre un color derivado del nombre.
+        return new ImageIcon(avatarDeInicial(nombreUsuario));
+    }
 
-        java.awt.image.BufferedImage placeholder = new java.awt.image.BufferedImage(65, 65, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-        java.awt.Graphics2D g2 = placeholder.createGraphics();
+    /** Recorta la imagen en un circulo, para que todas se vean iguales. */
+    private java.awt.image.BufferedImage recortarEnCirculo(java.awt.image.BufferedImage origen) {
+        java.awt.image.BufferedImage salida = new java.awt.image.BufferedImage(
+                LADO_AVATAR, LADO_AVATAR, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2 = salida.createGraphics();
         try {
-            g2.setColor(new java.awt.Color(200, 200, 200));
-            g2.fillRect(0, 0, 65, 65);
-            g2.setColor(new java.awt.Color(150, 150, 150));
-            g2.drawString("?", 28, 38);
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                    java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,
+                    java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.setColor(java.awt.Color.WHITE);
+            g2.fillOval(0, 0, LADO_AVATAR, LADO_AVATAR);
+            g2.setClip(new java.awt.geom.Ellipse2D.Float(2, 2, LADO_AVATAR - 4, LADO_AVATAR - 4));
+            g2.drawImage(origen, 2, 2, LADO_AVATAR - 4, LADO_AVATAR - 4, null);
         } finally {
             g2.dispose();
         }
-        return new ImageIcon(placeholder);
+        return salida;
+    }
+
+    /** Circulo de color con la inicial: respaldo para quien no eligio avatar. */
+    private java.awt.image.BufferedImage avatarDeInicial(String nombre) {
+        String texto = (nombre == null || nombre.isBlank())
+                ? "?" : nombre.trim().substring(0, 1).toUpperCase();
+
+        java.awt.Color[] paleta = {
+            vista.tema.Tema.ROJO, vista.tema.Tema.AZUL,
+            vista.tema.Tema.VERDE, vista.tema.Tema.AMARILLO_OSCURO};
+        java.awt.Color fondo = paleta[Math.abs((nombre == null ? 0 : nombre.hashCode())) % paleta.length];
+
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(
+                LADO_AVATAR, LADO_AVATAR, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2 = img.createGraphics();
+        try {
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                    java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING,
+                    java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setColor(java.awt.Color.WHITE);
+            g2.fillOval(0, 0, LADO_AVATAR, LADO_AVATAR);
+            g2.setColor(fondo);
+            g2.fillOval(2, 2, LADO_AVATAR - 4, LADO_AVATAR - 4);
+
+            g2.setColor(java.awt.Color.WHITE);
+            g2.setFont(vista.tema.Tema.titulo(34));
+            java.awt.FontMetrics fm = g2.getFontMetrics();
+            g2.drawString(texto,
+                    (LADO_AVATAR - fm.stringWidth(texto)) / 2,
+                    (LADO_AVATAR - fm.getHeight()) / 2 + fm.getAscent());
+        } finally {
+            g2.dispose();
+        }
+        return img;
     }
 
     private ImageIcon cargarIconoEstado(boolean estaListo) {
@@ -115,16 +149,21 @@ public class avatarForm extends javax.swing.JPanel {
 
     private void mostrarDatosJugador() {
         if (nombreUsuario != null && !nombreUsuario.isBlank()) {
-            lblNombre.setText(nombreUsuario);
+            lblNombre.setText("  " + nombreUsuario);
+            lblNombre.setFont(vista.tema.Tema.titulo(14));
+            lblNombre.setForeground(vista.tema.Tema.TEXTO_CLARO);
 
+            // La foto ya viene recortada en circulo; se agranda para que llene la
+            // tarjeta, que antes era casi todo espacio blanco.
             ImageIcon iconoOriginal = cargarImagen(avatarUsuario);
-
-            java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(65, 65, java.awt.Image.SCALE_SMOOTH);
+            java.awt.Image imgEscalada = iconoOriginal.getImage()
+                    .getScaledInstance(LADO_AVATAR, LADO_AVATAR, java.awt.Image.SCALE_SMOOTH);
 
             avatar.setIcon(new ImageIcon(imgEscalada));
             avatar.setText("");
             avatar.setHorizontalAlignment(SwingConstants.CENTER);
-            avatar.setPreferredSize(new Dimension(65, 65));
+            avatar.setVerticalAlignment(SwingConstants.CENTER);
+            avatar.setPreferredSize(new Dimension(LADO_AVATAR, LADO_AVATAR));
             avatar.setOpaque(false);
         }
         actualizarEstadoListo(estaListoUsuario);

@@ -14,11 +14,41 @@ public class NumeroDeCartasForm extends javax.swing.JPanel {
     
     public NumeroDeCartasForm() {
         initComponents();
-        
-        
+        vista.tema.Tema.aplicar(this);
+
+        // Antes era un rectangulo naranja plano con un numero suelto. Ahora es
+        // una ficha oscura con borde, que se lee sobre la imagen de fondo.
+        setOpaque(false);
+        jPanel1.setOpaque(false);
+        lblNumero.setOpaque(false);
+        lblNumero.setForeground(vista.tema.Tema.TEXTO_CLARO);
+        lblNumero.setFont(vista.tema.Tema.titulo(16));
+        lblNumero.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNumero.setToolTipText("Cartas en la mano");
     }
-    public void MostrarNumeroCartas(int cantidad){
+
+    public void MostrarNumeroCartas(int cantidad) {
         lblNumero.setText(String.valueOf(cantidad));
+    }
+
+    @Override
+    protected void paintComponent(java.awt.Graphics g) {
+        java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+        g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+                java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int w = getWidth();
+        int h = getHeight();
+        int arco = Math.min(w, h);
+
+        g2.setColor(new java.awt.Color(0, 0, 0, 165));
+        g2.fillRoundRect(0, 0, w, h, arco, arco);
+        g2.setColor(vista.tema.Tema.AMARILLO);
+        g2.setStroke(new java.awt.BasicStroke(2f));
+        g2.drawRoundRect(1, 1, w - 2, h - 2, arco, arco);
+
+        g2.dispose();
+        super.paintComponent(g);
     }
     /**
      * This method is called from within the constructor to initialize the form.

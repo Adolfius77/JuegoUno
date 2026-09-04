@@ -22,11 +22,18 @@ public class GestorJuegoFacade {
         this.estado = estado;
     }
 
-    public void prepararIniciarPartida(List<String> nombresJugadores) {
+    /**
+     * @param avataresPorNombre nombre del jugador -> id de su avatar, en orden de
+     *                          turno. Antes solo se recibian los nombres, asi que
+     *                          el avatar elegido en el menu nunca llegaba a la
+     *                          partida y el tablero mostraba cuadros vacios.
+     */
+    public void prepararIniciarPartida(java.util.Map<String, String> avataresPorNombre) {
         List<Jugador> listaJugadores = new ArrayList<Jugador>();
-        for (String nombre : nombresJugadores) {
+        for (java.util.Map.Entry<String, String> entrada : avataresPorNombre.entrySet()) {
             Jugador nuevoJugador = new Jugador();
-            nuevoJugador.setNombre(String.valueOf(nombre));
+            nuevoJugador.setNombre(String.valueOf(entrada.getKey()));
+            nuevoJugador.setAvatar(entrada.getValue());
             nuevoJugador.setMano(new Mano());
             listaJugadores.add(nuevoJugador);
         }

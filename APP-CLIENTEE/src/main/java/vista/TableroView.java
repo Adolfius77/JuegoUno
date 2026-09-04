@@ -49,13 +49,25 @@ public class TableroView extends javax.swing.JPanel {
      */
     public TableroView() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         panelFondo.setImagen("/img/juegoUno (2).jpg");
-        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
+        // Sin margen vertical: el contenedor tiene altura fija y esos 10px de
+        // arriba y abajo eran justo los que cortaban las cartas.
+        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -18, 0));
         btnJugarCarta.setEnabled(false);
+        // El ancho del boton viene fijo del editor y con la fuente nueva el
+        // texto largo salia como "Jugar C...".
+        btnJugarCarta.setText("Jugar");
+        btnJugarCarta.setFont(vista.tema.Tema.boton(15));
         btnJugarCarta.addActionListener(evt -> jugarCartaSeleccionada());
+        // El temporizador flotaba como texto suelto sobre la imagen de fondo.
+        // Con fondo propio se lee siempre, sin depender de lo que haya detras.
         lblTemporizador.setForeground(Color.WHITE);
-        lblTemporizador.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 20));
+        lblTemporizador.setFont(vista.tema.Tema.titulo(19));
         lblTemporizador.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTemporizador.setOpaque(true);
+        lblTemporizador.setBackground(new Color(0, 0, 0, 150));
+        lblTemporizador.setBorder(BorderFactory.createEmptyBorder(4, 14, 4, 14));
         panelFondo.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 250, 220, 30));
 
         lblUno.setVisible(false);
@@ -265,6 +277,8 @@ public class TableroView extends javax.swing.JPanel {
 
         for (JPanel panel : panelesAvatares) {
             panel.removeAll();
+            panel.setOpaque(false);
+            panel.setBorder(null);
             panel.setLayout(new BorderLayout());
             panel.setVisible(false);
         }
@@ -294,6 +308,10 @@ public class TableroView extends javax.swing.JPanel {
         JPanel[] panelNumero = {panelNumeroCartas1, panelNumeroCartas2, panelNumeroCartas3, panelNumeroCartas4};
         for (JPanel panel : panelNumero) {
             panel.removeAll();
+            // El contenedor venia opaco del editor y dejaba un cuadro solido
+            // detras de la ficha redonda.
+            panel.setOpaque(false);
+            panel.setBorder(null);
             panel.setLayout(new BorderLayout());
             panel.setVisible(false);
         }
@@ -328,7 +346,11 @@ public class TableroView extends javax.swing.JPanel {
 
         for (JPanel panel : mazosVolteados) {
             panel.removeAll();
-            panel.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
+            // Sin el borde negro que traia del editor: los reversos se veian
+            // encajonados en una caja opaca sobre el fondo.
+            panel.setBorder(null);
+            panel.setOpaque(false);
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, -22, 4));
             panel.setVisible(false);
         }
 

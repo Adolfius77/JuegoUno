@@ -24,6 +24,7 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
     public LobbyView() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         setLocationRelativeTo(null);
     }
 
@@ -40,16 +41,36 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
         JPanel paneles[] = {panelJugador1, panelJugador2, panelJugador3, panelJugador4};
         for (int i = 0; i < paneles.length; i++) {
             paneles[i].removeAll();
+            paneles[i].setLayout(new BorderLayout());
+
             if (i < jugadores.size()) {
                 Map<String, String> d = jugadores.get(i);
-                paneles[i].setLayout(new BorderLayout());
+                paneles[i].setBackground(vista.tema.Tema.SUPERFICIE);
                 boolean estaListo = Boolean.parseBoolean(d.getOrDefault("estaListo", "false"));
                 paneles[i].add(new avatarForm(d.get("nombre"), d.get("avatar"), estaListo), BorderLayout.CENTER);
-
+            } else {
+                // Antes la plaza libre era un rectangulo blanco vacio, que no
+                // decia nada.
+                paneles[i].setBackground(new java.awt.Color(255, 255, 255, 38));
+                paneles[i].add(marcadorPlazaLibre(), BorderLayout.CENTER);
             }
             paneles[i].revalidate();
             paneles[i].repaint();
         }
+    }
+
+    /** Hueco de jugador todavia sin ocupar. */
+    private JPanel marcadorPlazaLibre() {
+        JPanel hueco = new JPanel(new java.awt.GridBagLayout());
+        hueco.setOpaque(false);
+        hueco.setBorder(javax.swing.BorderFactory.createDashedBorder(
+                new java.awt.Color(255, 255, 255, 130), 2f, 6f, 4f, true));
+
+        javax.swing.JLabel texto = new javax.swing.JLabel("Esperando jugador…");
+        texto.setForeground(new java.awt.Color(255, 255, 255, 190));
+        texto.setFont(vista.tema.Tema.cuerpo(13));
+        hueco.add(texto);
+        return hueco;
     }
 
     public void configurarLobby(String codigoSala, String nombreUsuario, String idAvatar) {

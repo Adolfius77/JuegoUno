@@ -24,6 +24,7 @@ public class partidaForm extends javax.swing.JPanel {
      */
     public partidaForm() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
     }
 
     public partidaForm(String nombreLobby, String codigoSala, int jugadoresActuales, int limiteJugadores) {
