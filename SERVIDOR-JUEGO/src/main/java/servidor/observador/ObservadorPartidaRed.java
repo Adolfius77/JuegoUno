@@ -1,4 +1,4 @@
-package observador;
+package servidor.observador;
 
 import Entidades.Logica.Partida;
 import Mappers.PartidaMapper;

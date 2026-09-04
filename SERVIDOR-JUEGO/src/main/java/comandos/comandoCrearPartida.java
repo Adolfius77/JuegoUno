@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import red.GestorSalas;
+import servidor.GestorSalas;
 
 public class comandoCrearPartida implements IComandoServidor {
 

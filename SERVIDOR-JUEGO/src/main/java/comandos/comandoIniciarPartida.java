@@ -14,8 +14,8 @@ import interfaces.IComandoServidor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import red.GestorSalas;
-import red.JuegoServidor;
+import servidor.GestorSalas;
+import servidor.JuegoServidor;
 
 /**
  *

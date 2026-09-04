@@ -5,7 +5,7 @@ import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
 import java.util.HashMap;
 import java.util.Map;
-import red.GestorSalas;
+import servidor.GestorSalas;
 
 public class ComandoListarPartidas implements IComandoServidor {
 

@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import dtos.CartaDTO;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
-import red.JuegoServidor;
+import servidor.JuegoServidor;
 
 import java.util.HashMap;
 import java.util.Map;

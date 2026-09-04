@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package red;
+package servidor;
 
 import Entidades.Estados.IEstadoPartida;
 import Entidades.Carta;
@@ -18,7 +18,7 @@ import Nodos.ManejadorNodos;
 import dtos.PartidaDTO;
 import dtos.CartaDTO;
 import facades.GestorJuegoFacade;
-import observador.ObservadorPartidaRed;
+import servidor.observador.ObservadorPartidaRed;
 
 import java.util.List;
 import java.util.Objects;

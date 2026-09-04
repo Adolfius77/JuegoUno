@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import observador.observadorRed;
-import red.LobbyServidor;
+import servidor.LobbyServidor;
 import red.Servidor;
 
 public class ServerProxy implements observadorRed {

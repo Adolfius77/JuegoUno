@@ -1,7 +1,6 @@
-package red;
+package Server;
 
 import Lector.LectorConfiguracion;
-import Server.ServerProxy;
 import serealizador.serializador;
 
 public class servidorMain {

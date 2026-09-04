@@ -3,7 +3,7 @@ package comandos;
 import Entidades.Logica.Partida;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
-import red.JuegoServidor;
+import servidor.JuegoServidor;
 
 public class ComandoVolverLobby implements IComandoServidor {
 

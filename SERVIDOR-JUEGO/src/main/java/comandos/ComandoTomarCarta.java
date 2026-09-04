@@ -7,7 +7,7 @@ import Nodos.ManejadorNodos;
 import Nodos.NodoCliente;
 import dtos.MensajeDTO;
 import interfaces.IComandoServidor;
-import red.JuegoServidor;
+import servidor.JuegoServidor;
 
 import java.util.HashMap;
 import java.util.Map;
