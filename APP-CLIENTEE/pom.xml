@@ -33,6 +33,12 @@
             <artifactId>CLIENTE-PROXY</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- El bus de eventos del cliente: mismo Broker que usa el servidor. -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>BROKER</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

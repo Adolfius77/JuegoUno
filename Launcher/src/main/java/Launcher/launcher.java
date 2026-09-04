@@ -1,5 +1,6 @@
 package Launcher;
 
+import broker.Broker;
 import cliente.ClienteProxy;
 import controlador.LobbyController;
 import serealizador.serializador;
@@ -14,10 +15,13 @@ public class launcher {
 
         try {
 
+            // Punto de composicion del cliente: aqui se arma el proxy con su
+            // serializador y el bus donde publicara lo que llegue del servidor.
             ClienteProxy proxy = ClienteProxy.getInstance();
             serializador sere = new serializador();
 
             proxy.setSerializador(sere);
+            proxy.setBroker(new Broker());
             proxy.conectar();
 
             controlador.LobbyController controlador = new controlador.LobbyController(proxy, "", "", false, null);

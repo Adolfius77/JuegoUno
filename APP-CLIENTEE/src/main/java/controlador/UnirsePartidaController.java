@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 
 import vista.LobbyView;
 import vista.unirsePartidaView;
 
-public class UnirsePartidaController {
+public class UnirsePartidaController extends ControladorSuscriptor {
 
     private final IVista vista;
     private final unirsePartidaView vistaUnirse;
@@ -24,25 +23,19 @@ public class UnirsePartidaController {
     private String codigoSalaTemporal;
     private boolean esperandoRespuestaUnirse;
 
-    private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
-
     public UnirsePartidaController(unirsePartidaView vista, ClienteProxy proxy) {
+        super(proxy.getBroker());
         this.vista = vista;
         this.vistaUnirse = vista;
         this.proxy = proxy;
-        this.manejadoresEventos = new HashMap<>();
 
         inicializarComandos();
-
-        if (this.proxy != null) {
-            this.proxy.setReceptor(this::escucharEventoRed);
-        }
     }
 
     private void inicializarComandos() {
-        manejadoresEventos.put("UNIDO_EXITO", this::procesarUnidoExito);
-        manejadoresEventos.put("ERROR_UNIRSE", this::procesarErrorUnirse);
-        manejadoresEventos.put("LISTA_PARTIDAS_DISPONIBLES", this::procesarListaPartidas);
+        suscribir("UNIDO_EXITO", this::procesarUnidoExito);
+        suscribir("ERROR_UNIRSE", this::procesarErrorUnirse);
+        suscribir("LISTA_PARTIDAS_DISPONIBLES", this::procesarListaPartidas);
     }
 
     public void solicitarListaPartidas() {
@@ -78,21 +71,6 @@ public class UnirsePartidaController {
         proxy.enviarMensaje(peticion);
     }
 
-    private void escucharEventoRed(MensajeDTO mensaje) {
-        if (mensaje == null || mensaje.getTipo() == null) {
-            return;
-        }
-
-        String tipoMensaje = mensaje.getTipo();
-        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
-
-        if (manejador != null) {
-            manejador.accept(mensaje);
-        } else {
-            System.out.println("[UnirsePartidaController] Evento ignorado: " + tipoMensaje);
-        }
-    }
-
     private void procesarUnidoExito(MensajeDTO mensaje) {
         if (!esperandoRespuestaUnirse || mensaje.getDatos() == null) {
             return;
@@ -116,6 +94,10 @@ public class UnirsePartidaController {
         final String nombreFinal = nombreTemp;
         final String codigoSalaFinal = codigoSala;
         final List<?> jugadoresFinal = jugadoresRawList;
+
+        // Este controlador cede la pantalla al lobby: deja de escuchar antes de
+        // que el nuevo controlador se suscriba.
+        liberar();
 
         SwingUtilities.invokeLater(() -> {
             LobbyView lobby = new LobbyView();

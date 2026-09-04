@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 
 import vista.GameView;
 import vista.LobbyView;
 import vista.SeleccionPartida;
 
-public class LobbyController {
+public class LobbyController extends ControladorSuscriptor {
 
     private IVista vista;
     private final ClienteProxy clienteProxy;
@@ -29,19 +28,15 @@ public class LobbyController {
     private String nombreJugadorLocal;
     private List<Map<String, String>> listaJugadores;
     private LobbyView lobby;
-    private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
 
     public LobbyController(ClienteProxy clienteProxy, String codigoSala, String nombreHost, Boolean esHost, LobbyView lobby) {
-        if (clienteProxy == null) {
-            throw new IllegalArgumentException("El ClienteProxy es obligatorio para la red.");
-        }
+        super(clienteProxy != null ? clienteProxy.getBroker() : null);
         this.clienteProxy = clienteProxy;
         this.codigoSala = codigoSala;
         this.nombreJugadorLocal = nombreHost;
         this.esHost = esHost;
         this.lobby = lobby;
         this.vista = lobby;
-        this.manejadoresEventos = new HashMap<>();
 
         inicializarComandos();
 
@@ -54,7 +49,6 @@ public class LobbyController {
                 }
             });
         }
-        configurarReceptorRed();
     }
 
     //Peticiones al Servidor
@@ -113,36 +107,22 @@ public class LobbyController {
 
     
     // Respuestas del Servidor
-    private void configurarReceptorRed() {
-        clienteProxy.setReceptor(mensaje -> {
-            procesarEventoRed(mensaje);
-        });
-    }
-
-    public void inicializarComandos() {
-        manejadoresEventos.put("REGISTRO_EXITOSO", this::procesarRegistroExitoso);
-        manejadoresEventos.put("PARTIDA_INICIADA", this::procesarInicioPartida);
-        manejadoresEventos.put("INTENCION_INICIAR_PARTIDA", this::procesarInicioPartida);
-        manejadoresEventos.put("LISTA_ACTUALIZADA", this::procesarListaActualizada);
-        manejadoresEventos.put("ERROR_INICIAR_PARTIDA", this::procesarErrorIniciarPartida);
-    }
-
-    public void procesarEventoRed(MensajeDTO mensaje) {
-        if (mensaje == null || mensaje.getTipo() == null) {
-            return;
-        }
-        String tipoMensaje = mensaje.getTipo();
-        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
-
-        if (manejador != null) {
-            manejador.accept(mensaje);
-        } else {
-            System.out.println("[lobby-controller] evento ignorado: " + tipoMensaje);
-        }
+    public final void inicializarComandos() {
+        suscribir("REGISTRO_EXITOSO", this::procesarRegistroExitoso);
+        suscribir("PARTIDA_INICIADA", this::procesarInicioPartida);
+        suscribir("INTENCION_INICIAR_PARTIDA", this::procesarInicioPartida);
+        suscribir("LISTA_ACTUALIZADA", this::procesarListaActualizada);
+        suscribir("ERROR_INICIAR_PARTIDA", this::procesarErrorIniciarPartida);
     }
 
     private void procesarRegistroExitoso(MensajeDTO mensaje) {
         System.out.println("LobbyController: Registro confirmado. Cambiando a SeleccionPartida...");
+
+        // Terminado el registro, la pantalla pasa a SeleccionPartida y desde ahi
+        // el flujo lo toman CrearPartidaController / UnirsePartidaController.
+        // Este controlador deja de escuchar para no duplicar su trabajo.
+        liberar();
+
         SwingUtilities.invokeLater(() -> {
             if (vista != null) {
                 this.vista.cerrarVista();
@@ -155,6 +135,11 @@ public class LobbyController {
 
     private void procesarInicioPartida(MensajeDTO mensaje) {
         System.out.println("La partida va a comenzar, cambiando de pantalla...");
+
+        // El lobby cede la pantalla a la partida: deja de escuchar antes de que
+        // el GameController se suscriba a los mismos eventos.
+        liberar();
+
         SwingUtilities.invokeLater(() -> {
             if (vista != null) {
                 this.vista.cerrarVista();

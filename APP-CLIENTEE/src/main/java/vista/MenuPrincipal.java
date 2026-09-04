@@ -347,6 +347,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
             ClienteProxy proxy = ClienteProxy.getInstance();
             serealizador.serializador sere = new serealizador.serializador();
             proxy.setSerializador(sere);
+            proxy.setBroker(new broker.Broker());
             proxy.conectar();
 
             LobbyController controlador = new LobbyController(proxy, "", "", false, null);
