@@ -24,8 +24,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
-import vista.DiseñosExtras.CartaReversoUNO;
-import vista.DiseñosExtras.PanelCarta;
+import vista.componentes.CartaReversoUNO;
+import vista.componentes.PanelCarta;
 
 /**
  *
@@ -407,10 +407,10 @@ public class TableroView extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelFondo = new vista.DiseñosExtras.PanelFondo();
+        panelFondo = new vista.componentes.PanelFondo();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelJugadorPrincipal = new javax.swing.JPanel();
-        btnJugarCarta = new vista.DiseñosExtras.botonCircular();
+        btnJugarCarta = new vista.componentes.botonCircular();
         panelAvatar1 = new javax.swing.JPanel();
         panelNumeroCartas1 = new javax.swing.JPanel();
         panelJugador2 = new javax.swing.JPanel();
@@ -673,7 +673,7 @@ public class TableroView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDecirUno;
-    private vista.DiseñosExtras.botonCircular btnJugarCarta;
+    private vista.componentes.botonCircular btnJugarCarta;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblUno;
     private javax.swing.JPanel panelAvatar1;
@@ -681,7 +681,7 @@ public class TableroView extends javax.swing.JPanel {
     private javax.swing.JPanel panelAvatar3;
     private javax.swing.JPanel panelAvatar4;
     private javax.swing.JPanel panelCartaMedio;
-    private vista.DiseñosExtras.PanelFondo panelFondo;
+    private vista.componentes.PanelFondo panelFondo;
     private javax.swing.JPanel panelJugador2;
     private javax.swing.JPanel panelJugador3;
     private javax.swing.JPanel panelJugador4;

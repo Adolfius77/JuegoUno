@@ -13,7 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Escucha conexiones entrantes y entrega el texto recibido a sus observadores.
+ *
+ * Cada conexion aceptada recibe un identificador de sesion propio. Antes se
+ * indexaba por direccion IP, con lo que dos clientes de la misma maquina (o
+ * detras del mismo NAT) compartian entrada y el segundo desplazaba al primero.
+ */
 public class Servidor {
 
     private final int puerto;
@@ -21,7 +29,8 @@ public class Servidor {
     private final ISerializador serializador;
     private volatile boolean escuchando;
     private final List<observadorRed> observadores;
-    private final Map<String, IProxy> proxiesPorIp;
+    private final Map<String, IProxy> proxiesPorSesion;
+    private final AtomicLong secuenciaSesiones = new AtomicLong();
 
     public Servidor(int puerto, String ip, ISerializador serializador) {
         this.puerto = puerto;
@@ -29,7 +38,7 @@ public class Servidor {
         this.serializador = serializador;
         this.escuchando = true;
         this.observadores = new CopyOnWriteArrayList<>();
-        this.proxiesPorIp = new ConcurrentHashMap<>();
+        this.proxiesPorSesion = new ConcurrentHashMap<>();
     }
 
     public void agregarObservador(observadorRed observador) {
@@ -39,8 +48,8 @@ public class Servidor {
         this.observadores.add(observador);
     }
 
-    public IProxy obtenerProxyPorIp(String ipCliente) {
-        return proxiesPorIp.get(ipCliente);
+    public IProxy obtenerProxy(String idSesion) {
+        return idSesion == null ? null : proxiesPorSesion.get(idSesion);
     }
 
     public void iniciar() {
@@ -49,12 +58,13 @@ public class Servidor {
 
             while (escuchando) {
                 Socket socketCliente = serverSocket.accept();
-                String ipCliente = socketCliente.getInetAddress().getHostAddress();
-                System.out.println("[Servidor Red] Nueva conexion aceptada desde: " + ipCliente);
+                String idSesion = "S" + secuenciaSesiones.incrementAndGet();
+                System.out.println("[Servidor Red] Nueva conexion aceptada: " + idSesion
+                        + " desde " + socketCliente.getInetAddress().getHostAddress());
 
                 try {
                     ProxyCliente proxy = new ProxyCliente(socketCliente, serializador);
-                    proxiesPorIp.put(ipCliente, proxy);
+                    proxiesPorSesion.put(idSesion, proxy);
                 } catch (IOException e) {
                     System.err.println("[Servidor Red] Error creando proxy para el cliente: " + e.getMessage());
                     try {
@@ -64,7 +74,7 @@ public class Servidor {
                     continue;
                 }
 
-                Thread hilo = new Thread(() -> escucharCliente(socketCliente, ipCliente), "ServidorHilo-" + ipCliente);
+                Thread hilo = new Thread(() -> escucharCliente(socketCliente, idSesion), "ServidorHilo-" + idSesion);
                 hilo.start();
             }
         } catch (IOException e) {
@@ -73,38 +83,38 @@ public class Servidor {
         }
     }
 
-    private void escucharCliente(Socket socketCliente, String ipCliente) {
+    private void escucharCliente(Socket socketCliente, String idSesion) {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()))) {
             String jsonRecibido;
             while ((jsonRecibido = in.readLine()) != null) {
-                notificarObservadores(jsonRecibido, ipCliente);
+                notificarObservadores(jsonRecibido, idSesion);
             }
         } catch (IOException e) {
-            System.out.println("[Servidor Red] Conexion finalizada con " + ipCliente + ": " + e.getMessage());
+            System.out.println("[Servidor Red] Conexion finalizada con " + idSesion + ": " + e.getMessage());
         } finally {
-            cerrarConexion(socketCliente, ipCliente);
+            cerrarConexion(socketCliente, idSesion);
         }
     }
 
-    private void notificarObservadores(String json, String ipCliente) {
+    private void notificarObservadores(String json, String idSesion) {
         for (observadorRed observador : observadores) {
-            observador.onMensajeRecibido(json, ipCliente);
+            observador.onMensajeRecibido(json, idSesion);
         }
     }
 
-    private void cerrarConexion(Socket socketCliente, String ipCliente) {
+    private void cerrarConexion(Socket socketCliente, String idSesion) {
         try {
             if (serializador != null) {
                 dtos.MensajeDTO mensaje = new dtos.MensajeDTO();
                 mensaje.setTipo("DESCONEXION");
                 String json = serializador.serealizar(mensaje);
-                notificarObservadores(json, ipCliente);
+                notificarObservadores(json, idSesion);
             }
         } catch (Exception ex) {
             System.out.println("[Servidor Red] Error notificando desconexion: " + ex.getMessage());
         }
 
-        proxiesPorIp.remove(ipCliente);
+        proxiesPorSesion.remove(idSesion);
         try {
             if (socketCliente != null && !socketCliente.isClosed()) {
                 socketCliente.close();

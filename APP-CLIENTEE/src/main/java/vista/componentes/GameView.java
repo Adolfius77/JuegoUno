@@ -1,0 +1,21 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package vista.componentes;
+
+import javax.swing.*;
+
+/**
+ *
+ * @author USER
+ */
+public class GameView extends JFrame{
+    public GameView(){
+        PanelFondo panelPrincipal = new PanelFondo();
+        
+        panelPrincipal.setImagen("/img/juegoUno (2).jpg");
+        panelPrincipal.setLayout(null);
+        this.setContentPane(panelPrincipal);
+    }
+}

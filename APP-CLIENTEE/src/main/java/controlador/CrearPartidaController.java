@@ -3,38 +3,28 @@ package controlador;
 import Interfaces.IVista;
 import cliente.ClienteProxy;
 import dtos.MensajeDTO;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 import vista.CrearPartida;
 import vista.LobbyView;
 
-public class CrearPartidaController {
+public class CrearPartidaController extends ControladorSuscriptor {
 
     private IVista vista;
     private ClienteProxy proxy;
     private String nombreHostTemporal;
 
-     private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
-
     public CrearPartidaController(CrearPartida vista, ClienteProxy proxy) {
+        super(proxy.getBroker());
         this.vista = vista;
         this.proxy = proxy;
-        this.manejadoresEventos = new HashMap<>();
 
         inicializarComandos();
-        configurarReceptorRed();
-    }
-
-    private void configurarReceptorRed() {
-        this.proxy.setReceptor(this::procesarEventoRed);
     }
 
     private void inicializarComandos() {
-        manejadoresEventos.put("SALA_CREADA", this::procesarSalaCreada);
-        manejadoresEventos.put("ERROR_CREAR_PARTIDA", this::procesarError);
+        suscribir("SALA_CREADA", this::procesarSalaCreada);
+        suscribir("ERROR_CREAR_PARTIDA", this::procesarError);
     }
 
     public void solicitarCreacion(String nombreHost) {
@@ -54,22 +44,6 @@ public class CrearPartidaController {
         proxy.enviarMensaje(peticion);
     }
 
-    private void procesarEventoRed(MensajeDTO mensaje) {
-        if (mensaje == null || mensaje.getTipo() == null) {
-            return;
-        }
-
-        String tipoMensaje = mensaje.getTipo();
-        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
-
-        if (manejador != null) {
-            manejador.accept(mensaje);
-        } else {
-
-            System.out.println("[CrearPartidaController] Evento ignorado: " + tipoMensaje);
-        }
-    }
-
     private void procesarSalaCreada(MensajeDTO mensaje) {
         String codigoSala = (String) mensaje.getDatos().get("codigoSala");
         String nombreHost = (String) mensaje.getDatos().getOrDefault("nombre", nombreHostTemporal);
@@ -81,6 +55,10 @@ public class CrearPartidaController {
         }
 
         final List<?> jugadoresFinales = jugadoresTemp;
+
+        // Este controlador cede la pantalla al lobby: deja de escuchar antes de
+        // que el nuevo controlador se suscriba.
+        liberar();
 
         SwingUtilities.invokeLater(() -> {
             LobbyView lobby = new LobbyView();

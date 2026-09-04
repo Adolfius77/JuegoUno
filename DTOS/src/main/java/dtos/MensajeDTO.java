@@ -12,6 +12,15 @@ public  class MensajeDTO implements Serializable {
     private Map<String,Object> datos = new HashMap<>();
     private long timestamp;
 
+    /**
+     * Identifica la conexion que envio el mensaje. Lo asigna el proxy del
+     * servidor al recibirlo; el cliente nunca lo manda.
+     *
+     * Antes se metia el propio IProxy (un socket vivo) dentro de 'datos', lo que
+     * rompia la serializacion del DTO y ataba los comandos al transporte.
+     */
+    private transient String idSesion;
+
     public MensajeDTO() {
     }
 
@@ -56,6 +65,14 @@ public  class MensajeDTO implements Serializable {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getIdSesion() {
+        return idSesion;
+    }
+
+    public void setIdSesion(String idSesion) {
+        this.idSesion = idSesion;
     }
 
     @Override

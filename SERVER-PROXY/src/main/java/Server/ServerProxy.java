@@ -1,25 +1,31 @@
 package Server;
 
+import Interfacez.IBroker;
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
 import Nodos.NodoCliente;
 import broker.Broker;
 import dtos.MensajeDTO;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import observador.observadorRed;
-import red.LobbyServidor;
 import red.Servidor;
+import servidor.LobbyServidor;
 
+/**
+ * Proxy del lado servidor del patron Broker.
+ *
+ * Su unica responsabilidad es traducir entre la red y el bus: deserializa,
+ * marca de que sesion viene el mensaje y lo publica. No conoce los tipos de
+ * evento; antes tenia una cadena de diez comparaciones que habia que ampliar
+ * cada vez que se agregaba un evento.
+ */
 public class ServerProxy implements observadorRed {
 
     private final Servidor servidor;
-    private final Broker broker;
+    private final IBroker broker;
     private final ISerializador serializador;
     private final LobbyServidor lobbyServidor;
-    private final Map<String, NodoCliente> nodosPorIp;
-    private int contadorJugadores;
+    private final AtomicInteger contadorJugadores = new AtomicInteger(1);
 
     public ServerProxy(int puerto, String ip, ISerializador serializador) {
         if (serializador == null) {
@@ -30,8 +36,6 @@ public class ServerProxy implements observadorRed {
         this.lobbyServidor = LobbyServidor.crearLobbyPorDefecto(this.broker);
         this.servidor = new Servidor(puerto, ip, serializador);
         this.servidor.agregarObservador(this);
-        this.nodosPorIp = new ConcurrentHashMap<>();
-        this.contadorJugadores = 1;
     }
 
     public void iniciar() {
@@ -39,11 +43,10 @@ public class ServerProxy implements observadorRed {
     }
 
     @Override
-    public void onMensajeRecibido(String json, String ip) {
+    public void onMensajeRecibido(String json, String idSesion) {
         if (json == null || json.isBlank()) {
             return;
         }
-        System.out.println("[SERVER-PROXY] recibi el json pa : " + json);
 
         MensajeDTO mensaje = serializador.desearealizar(json);
         if (mensaje == null) {
@@ -54,55 +57,31 @@ public class ServerProxy implements observadorRed {
             return;
         }
 
-        IProxy proxy = servidor.obtenerProxyPorIp(ip);
-        NodoCliente nodoExistente = nodosPorIp.get(ip);
-        boolean esNuevoPorIp = nodoExistente == null;
-        boolean esNuevaConexionMismaIp = nodoExistente != null && nodoExistente.getProxy() != proxy;
-        
+        // La sesion la fija el servidor, nunca el cliente.
+        mensaje.setIdSesion(idSesion);
+
         if ("DESCONEXION".equalsIgnoreCase(mensaje.getTipo())) {
-            try {
-                if (nodoExistente != null && nodoExistente.getProxy() != null) {
-                    lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
-                    nodosPorIp.remove(ip);
-                    System.out.println("[SERVER-PROXY] Nodo desconectado y eliminado: " + nodoExistente.getNombre());
-                } else if (proxy != null) {
-                    lobbyServidor.eliminarJugadorPorProxy(proxy);
-                }
-            } catch (Exception ex) {
-                System.out.println("[SERVER-PROXY] Error procesando desconexion: " + ex.getMessage());
-            }
+            lobbyServidor.eliminarJugadorPorSesion(idSesion);
             return;
         }
 
-        if (proxy != null && (esNuevoPorIp || esNuevaConexionMismaIp)) {
-            if (esNuevaConexionMismaIp && nodoExistente.getProxy() != null) {
-                lobbyServidor.eliminarJugadorPorProxy(nodoExistente.getProxy());
-            }
-            String nombreTemporal = "Jugador_" + contadorJugadores++;
-            NodoCliente nuevoNodo = new NodoCliente(nombreTemporal, proxy, "no hay");
-            nodosPorIp.put(ip, nuevoNodo);
-            lobbyServidor.registrarNuevoJugadorTemporal(nuevoNodo);
-            System.out.println("[SERVER-PROXY] Jugador conectado temporalmente. Esperando mensaje de registro...");
-        }
-
-        if ("REGISTRO_JUGADOR".equals(mensaje.getTipo())
-                || "PETICION_CREAR_PARTIDA".equals(mensaje.getTipo())
-                || "PETICION_UNIRSE_PARTIDA".equals(mensaje.getTipo())
-                || "PETICION_LISTA_PARTIDAS".equals(mensaje.getTipo())
-                || "ACTUALIZAR_ESTADO_LISTO".equals(mensaje.getTipo())
-                || "INTENCION_INICIAR_PARTIDA".equals(mensaje.getTipo())
-                || "PETICION_JUGAR_CARTA".equals(mensaje.getTipo())
-                || "PETICION_TOMAR_CARTA".equals(mensaje.getTipo())
-                || "PETICION_GRITAR_UNO".equals(mensaje.getTipo())
-                || "PETICION_PASAR_TURNO".equals(mensaje.getTipo())) {
-            if (mensaje.getDatos() == null) {
-                mensaje.setDatos(new HashMap<>());
-            }
-            if (proxy != null) {
-                mensaje.getDatos().put("proxy", proxy);
-            }
-        }
+        registrarSesionSiEsNueva(idSesion);
 
         broker.publicar(mensaje.getTipo(), mensaje);
+    }
+
+    private void registrarSesionSiEsNueva(String idSesion) {
+        if (lobbyServidor.conoceSesion(idSesion)) {
+            return;
+        }
+        IProxy proxy = servidor.obtenerProxy(idSesion);
+        if (proxy == null) {
+            return;
+        }
+        String nombreTemporal = "Jugador_" + contadorJugadores.getAndIncrement();
+        lobbyServidor.registrarNuevoJugadorTemporal(
+                new NodoCliente(idSesion, proxy, nombreTemporal, "no hay"));
+        System.out.println("[SERVER-PROXY] Sesion " + idSesion
+                + " conectada como " + nombreTemporal + ". Esperando registro...");
     }
 }

@@ -10,81 +10,85 @@ import dtos.MensajeDesconexionDTO;
 import dtos.PartidaDTO;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import vista.podioView;
 
-public class GameController {
+public class GameController extends ControladorSuscriptor {
+
+    /** Errores que el servidor emite durante la partida (ver paquete comandos). */
+    private static final List<String> TIPOS_ERROR = List.of(
+            "ERROR_GENERAL", "ERROR_TOMAR_CARTA", "ERROR_PASAR_TURNO", "ERROR_GRITAR_UNO");
 
     private ClienteProxy proxy;
     private final IVista vista;
     private final String miNombre;
     private PartidaDTO estadoPartida;
 
-    private final Map<String, Consumer<MensajeDTO>> manejadoresEventos;
-
     public GameController(ClienteProxy proxy, IVista vista, String miNombre) {
-        if (proxy == null || vista == null) {
+        super(proxy != null ? proxy.getBroker() : null);
+        if (vista == null) {
             throw new IllegalArgumentException("proxy y vista son obligatorios");
         }
 
         this.proxy = proxy;
         this.vista = vista;
         this.miNombre = miNombre != null ? miNombre : "";
-        this.manejadoresEventos = new HashMap<>();
 
         inicializarComandos();
-        configurarReceptorRed();
-    }
-
-    private void configurarReceptorRed() {
-        this.proxy.setReceptor(mensaje -> {
-            procesarEventoRed(mensaje);
-        });
     }
 
     private void inicializarComandos() {
-        manejadoresEventos.put("PARTIDA_INICIADA", this::procesarActualizacionMesa);
-        manejadoresEventos.put("ACTUALIZACION_MESA", this::procesarActualizacionMesa);
-        manejadoresEventos.put("ACTUALIZACION_TABLERO", this::procesarActualizacionMesa);
-        manejadoresEventos.put("PARTIDA_FINALIZADA", this::procesarFinDePartida);
-        manejadoresEventos.put("UNO_GRITADO", this::procesarUnoGritado);
-        manejadoresEventos.put("VOLVER_A_LOBBY", this::procesarVolverAlLobby);
+        suscribir("PARTIDA_INICIADA", this::procesarActualizacionMesa);
+        suscribir("ACTUALIZACION_MESA", this::procesarActualizacionMesa);
+        suscribir("ACTUALIZACION_TABLERO", this::procesarActualizacionMesa);
+        suscribir("PARTIDA_FINALIZADA", this::procesarFinDePartida);
+        suscribir("UNO_GRITADO", this::procesarUnoGritado);
+        suscribir("VOLVER_A_LOBBY", this::procesarVolverAlLobby);
 
+        // Antes se detectaban con tipoMensaje.startsWith("ERROR_"), lo que el
+        // broker no permite: la suscripcion es por tipo exacto.
+        for (String tipoError : TIPOS_ERROR) {
+            suscribir(tipoError, this::procesarError);
+        }
     }
 
+    private void procesarError(MensajeDTO mensaje) {
+        String motivoTemp = "No se pudo completar la accion.";
+        if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
+            motivoTemp = String.valueOf(mensaje.getDatos().get("motivo"));
+        }
+        final String motivoFinal = motivoTemp;
+
+        if (vista != null) {
+            SwingUtilities.invokeLater(() -> vista.mostrarMensaje(motivoFinal));
+        }
+    }
+
+    /**
+     * Entrega directa de un mensaje ya recibido, sin pasar por el broker. La usa
+     * el LobbyController para reinyectar el PARTIDA_INICIADA que consumio antes
+     * de que este controlador existiera.
+     */
     public void procesarEventoRed(MensajeDTO mensaje) {
         if (mensaje == null || mensaje.getTipo() == null) {
             return;
         }
-
-        String tipoMensaje = mensaje.getTipo();
-
-        if (tipoMensaje.startsWith("ERROR_")) {
-            String motivoTemp = "No se pudo completar la accion.";
-            if (mensaje.getDatos() != null && mensaje.getDatos().get("motivo") != null) {
-                motivoTemp = String.valueOf(mensaje.getDatos().get("motivo"));
-            }
-            final String motivoFinal = motivoTemp;
-
-            if (vista != null) {
-                SwingUtilities.invokeLater(() -> vista.mostrarMensaje(motivoFinal));
-            }
+        if (TIPOS_ERROR.contains(mensaje.getTipo())) {
+            procesarError(mensaje);
             return;
         }
-
-        Consumer<MensajeDTO> manejador = manejadoresEventos.get(tipoMensaje);
-        if (manejador != null) {
-            manejador.accept(mensaje);
-        } else {
-            System.out.println("[GameController] Evento ignorado: " + tipoMensaje);
+        switch (mensaje.getTipo()) {
+            case "PARTIDA_INICIADA", "ACTUALIZACION_MESA", "ACTUALIZACION_TABLERO" ->
+                    procesarActualizacionMesa(mensaje);
+            case "PARTIDA_FINALIZADA" -> procesarFinDePartida(mensaje);
+            case "UNO_GRITADO" -> procesarUnoGritado(mensaje);
+            case "VOLVER_A_LOBBY" -> procesarVolverAlLobby(mensaje);
+            default -> System.out.println("[GameController] Evento ignorado: " + mensaje.getTipo());
         }
     }
 

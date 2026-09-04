@@ -1,6 +1,7 @@
 package cliente;
 
 import dtos.MensajeDTO;
+import Interfacez.IBroker;
 import Interfacez.IProxy;
 import Interfacez.ISerializador;
 import Lector.LectorConfiguracion;
@@ -11,8 +12,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.function.Consumer;
 
+/**
+ * Proxy del lado cliente del patron Broker: oculta el socket a la aplicacion.
+ *
+ * Todo lo que llega del servidor se publica en el IBroker del cliente, de modo
+ * que cualquier numero de controladores pueda suscribirse al mismo evento. Antes
+ * habia un unico Consumer receptor y los controladores se lo sobrescribian entre
+ * si, con lo que solo el ultimo registrado recibia mensajes.
+ */
 public class ClienteProxy extends Thread implements IProxy {
 
     private static ClienteProxy instance;
@@ -21,15 +29,14 @@ public class ClienteProxy extends Thread implements IProxy {
     private BufferedReader in;
     private PrintWriter out;
 
-    private boolean escuchando = false;
+    private volatile boolean escuchando = false;
     private ISerializador serializador;
-
-    private Consumer<MensajeDTO> accionAlRecibirMensaje;
+    private IBroker broker;
 
     private ClienteProxy() {
     }
     //singleton para tener una unica instancia hacia el server
-    public static ClienteProxy getInstance() {
+    public static synchronized ClienteProxy getInstance() {
         if (instance == null) {
             instance = new ClienteProxy();
         }
@@ -40,13 +47,21 @@ public class ClienteProxy extends Thread implements IProxy {
         this.serializador = serializador;
     }
 
-    public void setReceptor(Consumer<MensajeDTO> accion) {
-        this.accionAlRecibirMensaje = accion;
+    /** Bus donde se publican los mensajes entrantes. Lo inyecta el arranque del cliente. */
+    public void setBroker(IBroker broker) {
+        this.broker = broker;
+    }
+
+    public IBroker getBroker() {
+        return broker;
     }
 
     public void conectar() throws Exception {
         if (serializador == null) {
             throw new IllegalStateException("[Cliente-Proxy] ISerializador no configurado.");
+        }
+        if (broker == null) {
+            throw new IllegalStateException("[Cliente-Proxy] IBroker no configurado.");
         }
 
         if (socket == null || socket.isClosed()) {
@@ -86,22 +101,18 @@ public class ClienteProxy extends Thread implements IProxy {
         try {
             while (escuchando) {
                 String jsonRecibido = in.readLine();
-                System.out.println("[CLIENTE-PROXY] eh recibido el json colega: " + jsonRecibido);
                 if (jsonRecibido == null) {
-                    System.out.println("opa");
+                    System.out.println("[Cliente-Proxy] El servidor cerro la conexion.");
                     break;
                 }
 
                 MensajeDTO mensaje = serializador.desearealizar(jsonRecibido);
-
-                if (accionAlRecibirMensaje != null) {
-                    if (accionAlRecibirMensaje != null) {
-                        accionAlRecibirMensaje.accept(mensaje);
-                    }
-
-                } else {
+                if (mensaje == null || mensaje.getTipo() == null) {
                     System.out.println("[Cliente-Proxy] Se recibio un mensaje que no se pudo deserializar.");
+                    continue;
                 }
+
+                broker.publicar(mensaje.getTipo(), mensaje);
             }
         } catch (Exception e) {
             System.err.println("[Cliente-Proxy] Desconectado - " + e.getMessage());

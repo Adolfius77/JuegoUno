@@ -81,8 +81,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        txtNombreUsuario = new vista.DiseñosExtras.TextFieldRedondo();
-        btnEntrar = new vista.DiseñosExtras.botonCircular();
+        txtNombreUsuario = new vista.componentes.TextFieldRedondo();
+        btnEntrar = new vista.componentes.botonCircular();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelDinamicoAvatars = new javax.swing.JPanel();
         btnRetroseder = new javax.swing.JButton();
@@ -347,6 +347,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
             ClienteProxy proxy = ClienteProxy.getInstance();
             serealizador.serializador sere = new serealizador.serializador();
             proxy.setSerializador(sere);
+            proxy.setBroker(new broker.Broker());
             proxy.conectar();
 
             LobbyController controlador = new LobbyController(proxy, "", "", false, null);
@@ -365,7 +366,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAvanzar;
-    private vista.DiseñosExtras.botonCircular btnEntrar;
+    private vista.componentes.botonCircular btnEntrar;
     private javax.swing.JButton btnRetroseder;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -379,7 +380,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel panelDinamicoAvatars;
-    private vista.DiseñosExtras.TextFieldRedondo txtNombreUsuario;
+    private vista.componentes.TextFieldRedondo txtNombreUsuario;
     // End of variables declaration//GEN-END:variables
 
     @Override

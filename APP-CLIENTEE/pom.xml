@@ -19,11 +19,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>DOMINIO</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE250</version>
@@ -31,6 +26,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>CLIENTE-PROXY</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- El bus de eventos del cliente: mismo Broker que usa el servidor. -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>BROKER</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

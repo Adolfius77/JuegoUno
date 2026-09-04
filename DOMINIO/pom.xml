@@ -11,5 +11,14 @@
 
     <artifactId>DOMINIO</artifactId>
 
+    <dependencies>
+        <!-- Solo por los contratos Observer/IObservable, que vive en INTERFACES
+             para que el cliente pueda usarlos sin cargar las reglas del juego. -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>INTERFACES</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

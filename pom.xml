@@ -9,6 +9,7 @@
         <module>RED-COMUNICACION</module>
         <module>DTOS</module>
         <module>BROKER</module>
+        <module>SERVIDOR-JUEGO</module>
         <module>CLIENTE-PROXY</module>
         <module>SERVER-PROXY</module>
         <module>APP-CLIENTEE</module>
@@ -26,6 +27,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>

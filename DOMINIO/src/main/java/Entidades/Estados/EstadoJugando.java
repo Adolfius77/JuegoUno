@@ -6,6 +6,12 @@ import Entidades.Logica.Partida;
 import Entidades.fabricas.EstadoFactory;
 
 public class EstadoJugando implements IEstadoPartida {
+
+    @Override
+    public boolean estaEnCurso() {
+        return true;
+    }
+
     @Override
     public void agregarJugador(Partida partida, Jugador jugador) {
         System.out.println("la partida ya esta en curso espera a que termine");

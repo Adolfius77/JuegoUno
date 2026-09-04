@@ -66,7 +66,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
         jLabel6 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
-        botonCircular2 = new vista.DiseñosExtras.botonCircular();
+        botonCircular2 = new vista.componentes.botonCircular();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -77,9 +77,9 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
         panelDianamicoPartidas = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        txtCodigoSala = new vista.DiseñosExtras.TextFieldRedondo();
-        btnCancelar = new vista.DiseñosExtras.botonCircular();
-        btnUnirse = new vista.DiseñosExtras.botonCircular();
+        txtCodigoSala = new vista.componentes.TextFieldRedondo();
+        btnCancelar = new vista.componentes.botonCircular();
+        btnUnirse = new vista.componentes.botonCircular();
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/unoLogo2.png"))); // NOI18N
 
@@ -405,9 +405,9 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private vista.DiseñosExtras.botonCircular botonCircular2;
-    private vista.DiseñosExtras.botonCircular btnCancelar;
-    private vista.DiseñosExtras.botonCircular btnUnirse;
+    private vista.componentes.botonCircular botonCircular2;
+    private vista.componentes.botonCircular btnCancelar;
+    private vista.componentes.botonCircular btnUnirse;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -424,7 +424,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelAvatar;
     private javax.swing.JPanel panelDianamicoPartidas;
-    private vista.DiseñosExtras.TextFieldRedondo txtCodigoSala;
+    private vista.componentes.TextFieldRedondo txtCodigoSala;
     // End of variables declaration//GEN-END:variables
 
     @Override

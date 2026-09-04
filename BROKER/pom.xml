@@ -11,6 +11,12 @@
 
     <artifactId>BROKER</artifactId>
 
+    <!--
+        Middleware puro: solo el bus publicar/suscribir. No depende del dominio ni
+        de la logica de juego para que lo puedan reusar tanto el servidor como el
+        cliente. La logica del servidor vive en el modulo SERVIDOR-JUEGO.
+    -->
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -19,33 +25,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.itson</groupId>
-            <artifactId>DTOS</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>INTERFACES</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>DOMINIO</artifactId>
+            <artifactId>DTOS</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>MAPPERS</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 
 </project>
