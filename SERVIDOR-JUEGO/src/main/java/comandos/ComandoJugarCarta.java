@@ -71,28 +71,11 @@ public class ComandoJugarCarta implements IComandoServidor {
                 }
             }
 
+            // La difusion del nuevo estado la hace ObservadorPartidaRed, que ya
+            // esta suscrito a la Partida. Antes este comando volvia a difundir
+            // por su cuenta, asi que cada jugada mandaba el tablero tres veces:
+            // CARTA_JUGADA y TURNO_CAMBIADO desde el dominio, mas esta.
             partida.jugarCarta(carta, jugador);
-
-        String nombreGanador = juegoServidor.getFachadaJuego().verificarGanador();
-
-            if (nombreGanador != null) {
-                MensajeDTO mensajeVictoria = new MensajeDTO();
-                mensajeVictoria.setTipo("PARTIDA_FINALIZADA");
-                mensajeVictoria.setRemitente("SERVIDOR");
-                mensajeVictoria.getDatos().put("ganador", nombreGanador);
-                
-                manejadorNodos.notificarATodos(mensajeVictoria); 
-
-            } else {
-                dtos.PartidaDTO partidaActualizada = Mappers.PartidaMapper.toDTO(partida); 
-                
-                MensajeDTO mensajeActualizacion = new MensajeDTO();
-                mensajeActualizacion.setTipo("ACTUALIZACION_MESA");
-                mensajeActualizacion.setRemitente("SERVIDOR");
-                mensajeActualizacion.getDatos().put("partida", partidaActualizada);
-                
-                manejadorNodos.notificarATodos(mensajeActualizacion);
-            }
 
         } catch (Exception e) {
             enviarError(nodo, "ERROR_GENERAL", e.getMessage());

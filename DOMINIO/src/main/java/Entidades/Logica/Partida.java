@@ -33,6 +33,10 @@ public class Partida implements IObservable {
     private int turnoActual = 0;
     private List<IObserver> observadores;
 
+    /** Anidamiento de operaciones compuestas; ver notificarObservador. */
+    private transient int profundidadOperacion = 0;
+    private transient String eventoPendiente;
+
     public Partida(List<Jugador> jugadores, Mazo mazo, PilaCartas pilaCartas, IEstadoPartida estado) {
         this.jugadores = jugadores != null ? jugadores : new ArrayList<>();
         this.mazo = mazo;
@@ -69,9 +73,14 @@ public class Partida implements IObservable {
     }
 
     public void jugarCarta(Carta carta, Jugador jugador) {
-        estado.jugarCarta(this, jugador, carta);
-        jugador.setDijoUno(false);
-        verificarGanador();
+        iniciarOperacion();
+        try {
+            estado.jugarCarta(this, jugador, carta);
+            jugador.setDijoUno(false);
+            verificarGanador();
+        } finally {
+            terminarOperacion();
+        }
     }
 
     public void tomarCarta(Jugador jugador) {
@@ -259,8 +268,35 @@ public class Partida implements IObservable {
 
     @Override
     public void notificarObservador(String evento) {
+        // Dentro de una operacion compuesta los pasos internos no notifican por
+        // separado: se guarda el ultimo evento y se emite uno solo al terminar.
+        // Jugar una carta encadena varios pasos (efecto de la carta, carta
+        // jugada, cambio de turno) y antes cada uno difundia el tablero entero.
+        if (profundidadOperacion > 0) {
+            eventoPendiente = evento;
+            return;
+        }
+        emitir(evento);
+    }
+
+    private void emitir(String evento) {
         for (IObserver obs : observadores) {
             obs.actualizar(evento);
+        }
+    }
+
+    private void iniciarOperacion() {
+        profundidadOperacion++;
+    }
+
+    private void terminarOperacion() {
+        if (profundidadOperacion > 0) {
+            profundidadOperacion--;
+        }
+        if (profundidadOperacion == 0 && eventoPendiente != null) {
+            String evento = eventoPendiente;
+            eventoPendiente = null;
+            emitir(evento);
         }
     }
 
