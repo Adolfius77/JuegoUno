@@ -26,6 +26,7 @@ public class CrearPartida extends javax.swing.JFrame implements IVista {
 
     public CrearPartida() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
     }
 
     public CrearPartida(String nombreHost) {

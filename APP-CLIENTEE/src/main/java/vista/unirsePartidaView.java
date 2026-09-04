@@ -35,6 +35,7 @@ public class unirsePartidaView extends javax.swing.JFrame implements IVista {
 
     public unirsePartidaView(String nombreInvitado) {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         this.nombreInvitado = nombreInvitado;
         configurarPanelPartidas();
 

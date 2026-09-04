@@ -13,6 +13,8 @@ public class launcher {
     public static void main(String[] args) {
 
         try {
+            // Antes de crear cualquier ventana: sin esto Swing usa Metal.
+            vista.tema.Tema.instalar();
 
             // Punto de composicion del cliente: aqui se arma el proxy con su
             // serializador y el bus donde publicara lo que llegue del servidor.

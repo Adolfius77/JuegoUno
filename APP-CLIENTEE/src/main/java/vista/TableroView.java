@@ -49,6 +49,7 @@ public class TableroView extends javax.swing.JPanel {
      */
     public TableroView() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         panelFondo.setImagen("/img/juegoUno (2).jpg");
         panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -20, 10));
         btnJugarCarta.setEnabled(false);

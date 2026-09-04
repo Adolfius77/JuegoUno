@@ -1,123 +1,293 @@
 package vista.componentes;
 
 import dtos.CartaDTO;
+import vista.tema.Tema;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.RoundRectangle2D;
 
+/**
+ * Dibuja una carta de UNO.
+ *
+ * Antes las cartas de accion se resolvian con texto improvisado: "x" para
+ * SALTAR, "&lt;-" para REVERSA y "CC" para CAMBIO_COLOR. Ahora esos tres y los
+ * comodines se dibujan como simbolos vectoriales, que es como se ven en el juego
+ * real.
+ *
+ * La carta tambien conoce su estado (seleccionada / jugable) y lo dibuja ella
+ * misma; antes TableroView le ponia un borde dorado desde fuera.
+ */
 public class PanelCarta extends JPanel {
 
+    private static final int ANCHO = 78;
+    private static final int ALTO = 116;
+
     private CartaDTO carta;
+    private boolean seleccionada;
+    private boolean jugable = true;
 
     public PanelCarta(CartaDTO carta) {
         this.carta = carta;
-        setPreferredSize(new Dimension(75, 110)); 
+        setPreferredSize(new Dimension(ANCHO, ALTO));
         setOpaque(false);
+    }
+
+    public void setCarta(CartaDTO carta) {
+        this.carta = carta;
+        repaint();
+    }
+
+    public CartaDTO getCarta() {
+        return carta;
+    }
+
+    public void setSeleccionada(boolean seleccionada) {
+        if (this.seleccionada != seleccionada) {
+            this.seleccionada = seleccionada;
+            repaint();
+        }
+    }
+
+    public boolean isSeleccionada() {
+        return seleccionada;
+    }
+
+    public void setJugable(boolean jugable) {
+        if (this.jugable != jugable) {
+            this.jugable = jugable;
+            repaint();
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (carta == null) {
+            return;
+        }
 
-        if (carta == null) return;
-
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-        int ancho = getWidth();
-        int alto = getHeight();
-        
-        java.awt.Color colorFondo = obtenerColorSwing(carta.getColor());
+        int w = getWidth();
+        int h = getHeight();
 
-        // Borde exterior blanco de la carta
+        // La carta seleccionada se levanta unos pixeles en vez de recibir un
+        // borde: se lee mejor cuando las cartas estan solapadas en la mano.
+        int subida = seleccionada ? 10 : 0;
+        int margen = 4;
+        int cw = w - margen * 2;
+        int ch = h - margen * 2 - subida;
+        int cx = margen;
+        int cy = margen + (seleccionada ? 0 : subida);
+
+        dibujarSombra(g2, cx, cy, cw, ch, seleccionada ? 7 : 4);
+
+        Color base = colorDe(carta.getColor());
+        boolean comodin = esComodin();
+
+        // Cuerpo blanco de la carta
         g2.setColor(Color.WHITE);
-        g2.fillRoundRect(0, 0, ancho, alto, 15, 15);
+        g2.fill(new RoundRectangle2D.Float(cx, cy, cw, ch, 14, 14));
 
-        // Rectangulo interior de color
-        g2.setColor(colorFondo);
-        g2.fillRoundRect(5, 5, ancho - 10, alto - 10, 10, 10);
+        // Relleno de color, con un degradado suave que le da volumen
+        int p = 6;
+        Color arriba = aclarar(base, 0.18f);
+        g2.setPaint(new GradientPaint(cx, cy, arriba, cx, cy + ch, base));
+        g2.fill(new RoundRectangle2D.Float(cx + p, cy + p, cw - p * 2, ch - p * 2, 10, 10));
 
-        // Ovalo blanco inclinado en el centro
-        Graphics2D g2Oval = (Graphics2D) g2.create();
-        g2Oval.translate(ancho / 2.0, alto / 2.0); 
-        g2Oval.rotate(Math.toRadians(-25));
-        g2Oval.setColor(Color.WHITE);
-        
-        g2Oval.fillOval(-ancho / 2 + 8, -alto / 4 - 5, ancho - 16, alto / 2 + 10);
-        g2Oval.dispose();
+        // Ovalo blanco inclinado, la marca de la casa de UNO
+        Graphics2D go = (Graphics2D) g2.create();
+        go.translate(cx + cw / 2.0, cy + ch / 2.0);
+        go.rotate(Math.toRadians(-25));
+        go.setColor(Color.WHITE);
+        go.fill(new Ellipse2D.Float(-cw / 2f + 9, -ch / 4f - 4, cw - 18, ch / 2f + 8));
+        go.dispose();
 
-        // Obtener el texto de la carta basado en el DTO
-        String texto = obtenerTextoCarta();
-
-        // Dibujar números pequeños en las esquinas
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        // Esquina superior izquierda
-        g2.drawString(texto, 9, 22);
-
-        Graphics2D g2Esquina = (Graphics2D) g2.create();
-        g2Esquina.translate(ancho, alto);
-        g2Esquina.rotate(Math.toRadians(180));
-        g2Esquina.drawString(texto, 9, 22);
-        g2Esquina.dispose();
-
-        // Dibujar texto GIGANTE en el centro
-        int tamanoFuente = texto.length() > 1 ? 32 : 44; // Si es "+4" o "+2" hacemos la letra mas chica
-        g2.setFont(new Font("Arial", Font.BOLD, tamanoFuente));
-        
-        FontMetrics fm = g2.getFontMetrics();
-        int xCentro = (ancho - fm.stringWidth(texto)) / 2;
-        int yCentro = ((alto - fm.getHeight()) / 2) + fm.getAscent();
-
-        // Sombra del texto central 
-        g2.setColor(Color.BLACK);
-        g2.drawString(texto, xCentro + 2, yCentro + 2);
-
-        // Texto central 
-        if (colorFondo.equals(Color.BLACK)) {
-            g2.setColor(new Color(40, 40, 40)); 
+        if (comodin) {
+            dibujarRuedaColores(g2, cx + cw / 2, cy + ch / 2, Math.min(cw, ch) / 4);
+            if ("MAS_4".equals(carta.getValor())) {
+                dibujarTextoCentral(g2, "+4", cx, cy, cw, ch, base, 26);
+            }
         } else {
-            g2.setColor(colorFondo);
+            dibujarCentro(g2, cx, cy, cw, ch, base);
         }
-        g2.drawString(texto, xCentro, yCentro);
+
+        dibujarEsquinas(g2, cx, cy, cw, ch);
+
+        // Las cartas que no se pueden jugar se atenuan
+        if (!jugable) {
+            g2.setColor(new Color(255, 255, 255, 130));
+            g2.fill(new RoundRectangle2D.Float(cx, cy, cw, ch, 14, 14));
+        }
+
+        g2.dispose();
     }
 
-    /**
-     * Evalúa el valor en texto que trae el DTO y lo convierte en el símbolo visual.
-     */
-    private String obtenerTextoCarta() {
-        String valor = carta.getValor();
-        if (valor == null) return "";
+    // --- Piezas del dibujo -------------------------------------------------
 
-        // Ya no necesitamos instanceof, evaluamos directamente el String
+    private void dibujarSombra(Graphics2D g2, int x, int y, int w, int h, int capas) {
+        for (int i = capas; i > 0; i--) {
+            g2.setColor(new Color(0, 0, 0, 14));
+            g2.fill(new RoundRectangle2D.Float(x - i / 2f, y + i, w + i, h + i, 16, 16));
+        }
+    }
+
+    private void dibujarCentro(Graphics2D g2, int x, int y, int w, int h, Color base) {
+        String valor = carta.getValor() == null ? "" : carta.getValor();
+        int cx = x + w / 2;
+        int cy = y + h / 2;
         switch (valor) {
-            case "SALTAR": return "x"; 
-            case "REVERSA": return "<-";
-            case "MAS_2": return "+2";
-            case "MAS_4": return "+4";
-            case "CAMBIO_COLOR": return "CC";
-            default: return valor; // Si es un número del "0" al "9", lo devuelve tal cual
+            case "SALTAR" -> dibujarProhibido(g2, cx, cy, Math.min(w, h) / 4, base);
+            case "REVERSA" -> dibujarReversa(g2, cx, cy, Math.min(w, h) / 4, base);
+            case "MAS_2" -> dibujarTextoCentral(g2, "+2", x, y, w, h, base, 30);
+            default -> dibujarTextoCentral(g2, valor, x, y, w, h, base, 42);
         }
     }
 
-    /**
-     * Evalúa el color en texto que trae el DTO y lo convierte a un Color de Java AWT.
-     */
-    private java.awt.Color obtenerColorSwing(String colorStr) {
-        // Protegemos contra nulos o comodines sin color
-        if (colorStr == null || colorStr.equals("SIN_COLOR")) {
-            return java.awt.Color.BLACK; 
-        }
+    /** Circulo con barra diagonal: la carta de saltar turno. */
+    private void dibujarProhibido(Graphics2D g2, int cx, int cy, int r, Color base) {
+        g2.setColor(base);
+        g2.setStroke(new BasicStroke(7f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.draw(new Ellipse2D.Float(cx - r, cy - r, r * 2, r * 2));
+        double d = r * 0.78;
+        g2.drawLine((int) (cx - d), (int) (cy + d), (int) (cx + d), (int) (cy - d));
+    }
 
-        switch (colorStr) {
-            case "ROJO": return new java.awt.Color(237, 28, 36);   
-            case "AZUL": return new java.awt.Color(0, 114, 188);   
-            case "VERDE": return new java.awt.Color(80, 170, 68);  
-            case "AMARILLO": return new java.awt.Color(255, 204, 0); 
-            case "NEGRO": return new java.awt.Color(0,0,0); 
-            default: return java.awt.Color.BLACK;
+    /**
+     * Dos flechas paralelas apuntando en sentidos opuestos, como la carta real.
+     * Se dibujan rectas en vez de curvas porque a 78x116 los arcos se leian
+     * como dos letras C.
+     */
+    private void dibujarReversa(Graphics2D g2, int cx, int cy, int r, Color base) {
+        g2.setColor(base);
+        int largo = (int) (r * 1.7);
+        int sep = (int) (r * 0.55);
+
+        // Izquierda, hacia arriba
+        flechaVertical(g2, cx - sep, cy, largo, true);
+        // Derecha, hacia abajo
+        flechaVertical(g2, cx + sep, cy, largo, false);
+    }
+
+    private void flechaVertical(Graphics2D g2, int x, int cy, int largo, boolean haciaArriba) {
+        int mitad = largo / 2;
+        int grosor = 6;
+        int punta = 9;
+        int yIni = haciaArriba ? cy + mitad : cy - mitad;
+        int yFin = haciaArriba ? cy - mitad : cy + mitad;
+
+        g2.setStroke(new BasicStroke(grosor, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        g2.drawLine(x, yIni, x, yFin + (haciaArriba ? punta : -punta));
+
+        Path2D.Float p = new Path2D.Float();
+        p.moveTo(x - punta, yFin + (haciaArriba ? punta : -punta));
+        p.lineTo(x + punta, yFin + (haciaArriba ? punta : -punta));
+        p.lineTo(x, yFin);
+        p.closePath();
+        g2.fill(p);
+    }
+
+    /** Rueda de cuatro cuadrantes: los comodines. */
+    private void dibujarRuedaColores(Graphics2D g2, int cx, int cy, int r) {
+        Color[] colores = {Tema.ROJO, Tema.AMARILLO, Tema.VERDE, Tema.AZUL};
+        for (int i = 0; i < 4; i++) {
+            g2.setColor(colores[i]);
+            g2.fill(new Arc2D.Float(cx - r, cy - r, r * 2, r * 2, i * 90, 90, Arc2D.PIE));
         }
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2.5f));
+        g2.draw(new Ellipse2D.Float(cx - r, cy - r, r * 2, r * 2));
+    }
+
+    private void dibujarTextoCentral(Graphics2D g2, String texto, int x, int y, int w, int h,
+                                     Color base, int tamano) {
+        if (texto.isEmpty()) {
+            return;
+        }
+        g2.setFont(new Font(Tema.familia(), Font.BOLD, tamano));
+        FontMetrics fm = g2.getFontMetrics();
+        int tx = x + (w - fm.stringWidth(texto)) / 2;
+        int ty = y + (h - fm.getHeight()) / 2 + fm.getAscent();
+
+        g2.setColor(new Color(0, 0, 0, 45));
+        g2.drawString(texto, tx + 2, ty + 2);
+        g2.setColor(esComodin() ? Color.WHITE : base);
+        g2.drawString(texto, tx, ty);
+    }
+
+    /** Valor pequeno en las dos esquinas opuestas, como en la carta fisica. */
+    private void dibujarEsquinas(Graphics2D g2, int x, int y, int w, int h) {
+        String texto = textoCorto();
+        if (texto.isEmpty()) {
+            return;
+        }
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font(Tema.familia(), Font.BOLD, 14));
+        g2.drawString(texto, x + 8, y + 20);
+
+        Graphics2D ge = (Graphics2D) g2.create();
+        ge.translate(x + w, y + h);
+        ge.rotate(Math.PI);
+        ge.drawString(texto, 8, 20);
+        ge.dispose();
+    }
+
+    // --- Traduccion del DTO ------------------------------------------------
+
+    private boolean esComodin() {
+        String v = carta.getValor();
+        return "MAS_4".equals(v) || "CAMBIO_COLOR".equals(v);
+    }
+
+    /** Version corta para las esquinas, donde no cabe un simbolo dibujado. */
+    private String textoCorto() {
+        String valor = carta.getValor();
+        if (valor == null) {
+            return "";
+        }
+        return switch (valor) {
+            case "SALTAR" -> "Ø";
+            case "REVERSA" -> "⇄";
+            case "MAS_2" -> "+2";
+            case "MAS_4" -> "+4";
+            case "CAMBIO_COLOR" -> "";
+            default -> valor;
+        };
+    }
+
+    private Color colorDe(String colorStr) {
+        if (colorStr == null || "SIN_COLOR".equals(colorStr)) {
+            return new Color(0x20, 0x20, 0x24);
+        }
+        return switch (colorStr) {
+            case "ROJO" -> Tema.ROJO;
+            case "AZUL" -> Tema.AZUL;
+            case "VERDE" -> Tema.VERDE;
+            case "AMARILLO" -> Tema.AMARILLO;
+            case "NEGRO" -> new Color(0x20, 0x20, 0x24);
+            default -> new Color(0x20, 0x20, 0x24);
+        };
+    }
+
+    private static Color aclarar(Color c, float f) {
+        return new Color(
+                Math.min(255, (int) (c.getRed() + 255 * f)),
+                Math.min(255, (int) (c.getGreen() + 255 * f)),
+                Math.min(255, (int) (c.getBlue() + 255 * f)));
     }
 }

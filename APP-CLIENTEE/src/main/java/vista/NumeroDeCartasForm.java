@@ -14,6 +14,7 @@ public class NumeroDeCartasForm extends javax.swing.JPanel {
     
     public NumeroDeCartasForm() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         
         
     }

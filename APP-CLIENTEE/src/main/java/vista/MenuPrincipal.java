@@ -35,6 +35,7 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
         this.lobby = lobby;
         this.codigoSala = codigoSala;
         initComponents();
+        vista.tema.Tema.aplicar(this);
         this.setLocationRelativeTo(null);
         configurarVistaAvatar();
 
@@ -245,12 +246,21 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
     }// </editor-fold>//GEN-END:initComponents
 
     private void configurarVistaAvatar() {
+        // El visor tiene altura fija desde el editor: con el icono MAS el texto
+        // "Avatar N" debajo, el texto quedaba cortado. Solo se muestra el
+        // dibujo, que es lo que el jugador elige, y se ocultan las barras de
+        // desplazamiento porque siempre se ve un unico avatar.
+        jScrollPane1.setHorizontalScrollBarPolicy(
+                javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(
+                javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane1.setBorder(null);
+
         panelDinamicoAvatars.removeAll();
         panelDinamicoAvatars.setLayout(new BorderLayout());
+        panelDinamicoAvatars.setBackground(vista.tema.Tema.SUPERFICIE);
         etiquetaAvatar.setHorizontalAlignment(SwingConstants.CENTER);
         etiquetaAvatar.setVerticalAlignment(SwingConstants.CENTER);
-        etiquetaAvatar.setHorizontalTextPosition(SwingConstants.CENTER);
-        etiquetaAvatar.setVerticalTextPosition(SwingConstants.BOTTOM);
         etiquetaAvatar.setIcon(cargarAvatar(avatarSeleccionado));
         actualizarAvatarPreview();
         panelDinamicoAvatars.add(etiquetaAvatar, BorderLayout.CENTER);
@@ -266,7 +276,8 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
 
     private void actualizarAvatarPreview() {
         etiquetaAvatar.setIcon(cargarAvatar(avatarSeleccionado));
-        etiquetaAvatar.setText("Avatar " + (avatarSeleccionado + 1));
+        etiquetaAvatar.setText("");
+        etiquetaAvatar.setToolTipText("Avatar " + (avatarSeleccionado + 1));
     }
 
     private String obtenerAvatarSeleccionado() {
@@ -319,29 +330,10 @@ public class MenuPrincipal extends javax.swing.JFrame implements IVista {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+        // El Look and Feel lo instala Tema; antes habia aqui un bloque de Nimbus
+        // que nunca se ejecutaba, porque el punto de entrada real es
+        // Launcher.launcher, no este main.
+        vista.tema.Tema.instalar();
 
         /* Create and display the form */
         try {

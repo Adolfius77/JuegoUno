@@ -29,6 +29,7 @@ public class podioView extends javax.swing.JFrame implements IVista {
 
     public podioView() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         btnContinuar.addActionListener(e -> cerrarVista());
     }
 

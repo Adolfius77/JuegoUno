@@ -26,6 +26,7 @@ public class avatarForm extends javax.swing.JPanel {
 
     public avatarForm() {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         configurarIndicadorListo();
     }
 
@@ -35,6 +36,7 @@ public class avatarForm extends javax.swing.JPanel {
 
     public avatarForm(String nombreUsuario, String avatarUsuario, boolean estaListoUsuario) {
         initComponents();
+        vista.tema.Tema.aplicar(this);
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
         this.estaListoUsuario = estaListoUsuario;
