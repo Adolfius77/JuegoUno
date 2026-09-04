@@ -1,5 +1,5 @@
-red\Servidor.class
-factorys\ServerFactory.class
-Lector\LectorConfiguracion.class
-observador\observadorRed.class
-red\ProxyCliente.class
+red/Servidor.class
+factorys/ServerFactory.class
+Lector/LectorConfiguracion.class
+observador/observadorRed.class
+red/ProxyCliente.class
