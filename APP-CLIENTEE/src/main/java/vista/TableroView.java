@@ -56,9 +56,10 @@ public class TableroView extends javax.swing.JPanel {
         initComponents();
         vista.tema.Tema.aplicar(this);
         panelFondo.setImagen("/img/juegoUno (2).jpg");
-        // Sin margen vertical: el contenedor tiene altura fija y esos 10px de
-        // arriba y abajo eran justo los que cortaban las cartas.
-        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, -18, 0));
+        // Solo centra la mano: el solape entre cartas lo resuelve ManoDeCartas.
+        // Sin margen vertical, que el contenedor tiene altura fija y esos 10px
+        // de arriba y abajo eran justo los que cortaban las cartas.
+        panelJugadorPrincipal.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         btnJugarCarta.setEnabled(false);
         // El ancho del boton viene fijo del editor y con la fuente nueva el
         // texto largo salia como "Jugar C...".
@@ -149,20 +150,24 @@ public class TableroView extends javax.swing.JPanel {
             return;
         }
 
+        // Las cartas van dentro de ManoDeCartas, que las coloca por posicion y
+        // no por indice: asi traer una al frente al pasar el raton ya no la
+        // mueve de sitio.
+        vista.componentes.ManoDeCartas mano = new vista.componentes.ManoDeCartas();
+        List<PanelCarta> cartas = new ArrayList<>();
         for (int i = 0; i < cartasMiMano.size(); i++) {
-            CartaDTO carta = cartasMiMano.get(i);
-            boolean seleccionada = i == indiceSeleccionado;
-            JPanel cartaVisual = crearCartaSeleccionable(carta, seleccionada, i);
-            panelJugadorPrincipal.add(cartaVisual);
+            cartas.add(crearCartaSeleccionable(cartasMiMano.get(i), i == indiceSeleccionado, i, mano));
         }
+        mano.colocar(cartas);
 
+        panelJugadorPrincipal.add(mano);
         panelJugadorPrincipal.revalidate();
         panelJugadorPrincipal.repaint();
     }
 
-    private JPanel crearCartaSeleccionable(CartaDTO carta, boolean seleccionada, int indice) {
+    private PanelCarta crearCartaSeleccionable(CartaDTO carta, boolean seleccionada, int indice,
+                                               vista.componentes.ManoDeCartas mano) {
         PanelCarta cartaVisual = new PanelCarta(carta);
-        cartaVisual.setPreferredSize(new java.awt.Dimension(75, 112));
         // La carta ya se levanta sola al pasar el raton o al quedar elegida; el
         // borde dorado que se usaba antes sobra.
         cartaVisual.setInteractiva(true);
@@ -176,13 +181,8 @@ public class TableroView extends javax.swing.JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Las cartas de la mano se solapan: sin traerla al frente, la
-                // carta que sube quedaria parcialmente tapada por su vecina.
-                java.awt.Container padre = cartaVisual.getParent();
-                if (padre != null) {
-                    padre.setComponentZOrder(cartaVisual, 0);
-                    padre.repaint();
-                }
+                // Solo cambia quien se pinta encima; la posicion no se toca.
+                mano.traerAlFrente(cartaVisual);
             }
         });
         return cartaVisual;
