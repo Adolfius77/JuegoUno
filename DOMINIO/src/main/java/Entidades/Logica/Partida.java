@@ -163,29 +163,44 @@ public class Partida implements IObservable {
 
         Jugador jugadorAnterior = jugadores.get(turnoActual);
 
-        if (jugadorAnterior.getMano() != null && jugadorAnterior.getMano().getCartas().size() == 1) {
-            if (!jugadorAnterior.isDijoUno()) {
-                System.out.println("¡" + jugadorAnterior.getNombre() + " no dijo UNO! Castigo de "
-                        + CASTIGO_NO_GRITAR_UNO + " cartas.");
-
-                for (int i = 0; i < CASTIGO_NO_GRITAR_UNO; i++) {
-                    if (mazo.estaVacio()) {
-                        mazo.recargar(pilaCartas);
-                    }
-                    jugadorAnterior.recibirCarta(mazo.tomarCarta());
-                }
-            }
-        }
-
+        castigarSiNoGritoUno(jugadorAnterior);
         jugadorAnterior.setDijoUno(false);
 
         turnoActual = calcularSiguienteIndice();
 
         if (this.saltarTurno) {
             this.saltarTurno = false;
-            pasarTurno();
-        } else {
-            notificarObservador("TURNO_CAMBIADO");
+            // Al saltado se le brinca el turno y ya: no juega, asi que no se le
+            // castiga ni se le apaga su UNO. Antes esto se hacia llamando otra
+            // vez a pasarTurno(), y esa segunda vuelta trataba al saltado como
+            // si acabara de jugar: quien tenia una sola carta recibia el
+            // castigo por no gritar UNO sin haber tenido turno para gritarlo.
+            turnoActual = calcularSiguienteIndice();
+        }
+
+        notificarObservador("TURNO_CAMBIADO");
+    }
+
+    /** Tres cartas a quien termina su turno con una sola y no grito UNO. */
+    private void castigarSiNoGritoUno(Jugador jugador) {
+        if (jugador.getMano() == null || jugador.getMano().getCartas().size() != 1
+                || jugador.isDijoUno()) {
+            return;
+        }
+
+        System.out.println("¡" + jugador.getNombre() + " no dijo UNO! Castigo de "
+                + CASTIGO_NO_GRITAR_UNO + " cartas.");
+
+        for (int i = 0; i < CASTIGO_NO_GRITAR_UNO; i++) {
+            if (mazo.estaVacio()) {
+                mazo.recargar(pilaCartas);
+            }
+            // Mazo.tomarCarta revienta con el mazo vacio, y recargar no siempre
+            // trae nada: si no quedan cartas en ningun lado, no hay castigo.
+            if (mazo.estaVacio()) {
+                return;
+            }
+            jugador.recibirCarta(mazo.tomarCarta());
         }
     }
 
