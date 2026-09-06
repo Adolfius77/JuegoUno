@@ -14,8 +14,23 @@ class ManejadorNodosTest {
     /** Proxy de mentira: registra lo que se le manda, sin socket. */
     private static class ProxyEspia implements IProxy {
         final List<String> enviados = new ArrayList<>();
-        @Override public void enviarMensaje(MensajeDTO mensaje) { enviados.add(mensaje.getTipo()); }
+        final List<MensajeDTO> mensajes = new ArrayList<>();
+        @Override public void enviarMensaje(MensajeDTO mensaje) {
+            enviados.add(mensaje.getTipo());
+            mensajes.add(mensaje);
+        }
         @Override public void run() { }
+
+        @SuppressWarnings("unchecked")
+        List<java.util.Map<String, String>> ultimaLista() {
+            for (int i = mensajes.size() - 1; i >= 0; i--) {
+                MensajeDTO m = mensajes.get(i);
+                if ("LISTA_ACTUALIZADA".equals(m.getTipo()) && m.getDatos() != null) {
+                    return (List<java.util.Map<String, String>>) m.getDatos().get("jugadores");
+                }
+            }
+            return null;
+        }
     }
 
     private MensajeDTO mensaje(String tipo) {
@@ -156,5 +171,58 @@ class ManejadorNodosTest {
 
         assertEquals(1, m.obtenerNodosEnLobby().size());
         assertEquals("Beto", m.obtenerNodosEnLobby().get(0).getNombre());
+    }
+
+    @Test
+    void laListaDeLaSalaTraeNombreAvatarYSiEstaListo() {
+        ManejadorNodos manejador = new ManejadorNodos();
+        NodoCliente ana = new NodoCliente("S1", new ProxyEspia(), "Ana", "avatar1");
+        NodoCliente beto = new NodoCliente("S2", new ProxyEspia(), "Beto", "no hay");
+        ana.setCodigoSala("AAAA");
+        beto.setCodigoSala("AAAA");
+        ana.setEstaListo(true);
+        manejador.registrarNuevoJugador(ana);
+        manejador.registrarNuevoJugador(beto);
+
+        List<java.util.Map<String, String>> lista = manejador.construirListaJugadores("AAAA");
+
+        assertEquals(2, lista.size());
+        assertEquals("Ana", lista.get(0).get("nombre"));
+        assertEquals("avatar1", lista.get(0).get("avatar"));
+        assertEquals("true", lista.get(0).get("estaListo"));
+        assertEquals("pfp", lista.get(1).get("avatar"), "sin avatar propio se usa el de respaldo");
+        assertEquals("false", lista.get(1).get("estaListo"));
+    }
+
+    @Test
+    void alIrseUnJugadorSeAvisaALaSalaConQuienQueda() {
+        // Regresion: al salir alguien de la sala de espera no se difundia nada,
+        // asi que a los demas les seguia apareciendo su tarjeta y parecia que
+        // hubiera jugadores repetidos.
+        ManejadorNodos manejador = new ManejadorNodos();
+        ProxyEspia proxyAna = new ProxyEspia();
+        NodoCliente ana = new NodoCliente("S1", proxyAna, "Ana", "avatar1");
+        NodoCliente beto = new NodoCliente("S2", new ProxyEspia(), "Beto", "avatar2");
+        ana.setCodigoSala("AAAA");
+        beto.setCodigoSala("AAAA");
+        manejador.registrarNuevoJugador(ana);
+        manejador.registrarNuevoJugador(beto);
+
+        manejador.eliminarNodo("S2");
+        manejador.difundirListaDeSala("AAAA");
+
+        assertTrue(proxyAna.enviados.contains("LISTA_ACTUALIZADA"),
+                "a quien se queda hay que avisarle");
+        List<java.util.Map<String, String>> lista = proxyAna.ultimaLista();
+        assertNotNull(lista);
+        assertEquals(1, lista.size(), "Beto ya no esta en la sala");
+        assertEquals("Ana", lista.get(0).get("nombre"));
+    }
+
+    @Test
+    void difundirLaListaDeUnaSalaQueNoExisteNoRevienta() {
+        ManejadorNodos manejador = new ManejadorNodos();
+        assertDoesNotThrow(() -> manejador.difundirListaDeSala(null));
+        assertDoesNotThrow(() -> manejador.difundirListaDeSala("NADA"));
     }
 }

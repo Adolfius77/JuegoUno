@@ -88,6 +88,11 @@ public class LobbyServidor {
         if (codigoSala != null) {
             // Libera la plaza para que la sala no quede llena para siempre.
             gestorSalas.salirJugador(codigoSala);
+            // Y avisa a los que se quedan. Sin esto, el que se va seguia
+            // apareciendo en la sala de espera de los demas hasta que otra
+            // cosa cualquiera provocaba un refresco: si alguien entraba y
+            // salia varias veces, se veian varios jugadores que ya no estaban.
+            manejadorNodos.difundirListaDeSala(codigoSala);
         }
 
         try {
