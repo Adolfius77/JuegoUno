@@ -8,6 +8,10 @@ import controlador.bot.EstrategiaDificil;
 import controlador.bot.EstrategiaFacil;
 import serealizador.serializador;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Arranca un jugador automatico y lo sienta en una sala.
  *
@@ -15,42 +19,30 @@ import serealizador.serializador;
  * proxy con su serializador y su bus, y en vez de abrir ventanas engancha un
  * BotController.
  *
- *   java -cp JuegoUno.jar Launcher.BotMain Robo AB12 dificil
- *   java -cp JuegoUno.jar Launcher.BotMain Robo crear facil
+ *   java -cp Launcher/target/JuegoUno.jar Launcher.BotMain Robo AB12 dificil
+ *   java -cp Launcher/target/JuegoUno.jar Launcher.BotMain Robo crear facil
+ *   java -cp Launcher/target/JuegoUno.jar Launcher.BotMain
+ *
+ * Lo que no venga en los argumentos lo pregunta ConfiguracionBot.
  *
  * El servidor se toma de -Dservidor.ip y -Dservidor.puerto, que ya lee
  * LectorConfiguracion; por omision, el de esta misma maquina.
  */
 public class BotMain {
 
-    private static final String USO = """
-            Uso: java -cp JuegoUno.jar Launcher.BotMain <nombre> <sala> [facil|dificil]
-
-              <sala>  el codigo de una sala ya creada, o la palabra "crear"
-                      para que el bot abra la suya y te diga el codigo.
-            """;
-
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println(USO);
-            System.exit(2);
+        if (ConfiguracionBot.pidioAyuda(args)) {
+            System.out.println(ConfiguracionBot.USO);
+            System.exit(0);
         }
 
-        String nombre = args[0];
-        String codigoSala = args[1];
-        String nivel = args.length > 2 ? args[2].trim().toLowerCase() : "facil";
+        BufferedReader teclado = new BufferedReader(
+                new InputStreamReader(System.in, StandardCharsets.UTF_8));
+        ConfiguracionBot config = ConfiguracionBot.resolver(args, teclado, System.out);
 
-        EstrategiaBot estrategia = switch (nivel) {
-            case "facil" -> new EstrategiaFacil();
-            case "dificil" -> new EstrategiaDificil();
-            default -> null;
-        };
-        if (estrategia == null) {
-            System.err.println("Nivel desconocido: " + nivel);
-            System.err.println(USO);
-            System.exit(2);
-            return;
-        }
+        EstrategiaBot estrategia = config.esNivelDificil()
+                ? new EstrategiaDificil()
+                : new EstrategiaFacil();
 
         BotController bot = null;
         try {
@@ -61,7 +53,7 @@ public class BotMain {
 
             // Los avatares del juego son avatar1..avatar6; el bot se queda con
             // el ultimo para no pelearse con el que elijas tu.
-            bot = new BotController(proxy, nombre, codigoSala, "avatar6", estrategia);
+            bot = new BotController(proxy, config.nombre(), config.sala(), "avatar6", estrategia);
             bot.entrar();
             bot.esperarFinal();
 
@@ -69,6 +61,7 @@ public class BotMain {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
             System.err.println("El bot no pudo entrar: " + e.getMessage());
+            System.err.println("Comprueba que el servidor este encendido.");
             System.exit(1);
         } finally {
             if (bot != null) {
