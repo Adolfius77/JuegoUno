@@ -45,13 +45,22 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
             if (i < jugadores.size()) {
                 Map<String, String> d = jugadores.get(i);
+                paneles[i].setOpaque(true);
                 paneles[i].setBackground(vista.tema.Tema.SUPERFICIE);
                 boolean estaListo = Boolean.parseBoolean(d.getOrDefault("estaListo", "false"));
                 paneles[i].add(new avatarForm(d.get("nombre"), d.get("avatar"), estaListo), BorderLayout.CENTER);
             } else {
                 // Antes la plaza libre era un rectangulo blanco vacio, que no
                 // decia nada.
-                paneles[i].setBackground(new java.awt.Color(255, 255, 255, 38));
+                //
+                // El panel tiene que quedar NO opaco. Antes se le ponia un
+                // blanco traslucido dejandolo opaco, y un componente opaco le
+                // promete a Swing que pinta todos sus pixeles: Swing no
+                // repintaba el fondo de debajo y el relleno, al ser casi
+                // transparente, no borraba nada. Cuando un jugador se iba, su
+                // tarjeta se quedaba pegada en el hueco ya libre y parecia que
+                // hubiera jugadores repetidos.
+                paneles[i].setOpaque(false);
                 paneles[i].add(marcadorPlazaLibre(), BorderLayout.CENTER);
             }
             paneles[i].revalidate();
@@ -61,7 +70,17 @@ public class LobbyView extends javax.swing.JFrame implements IVista {
 
     /** Hueco de jugador todavia sin ocupar. */
     private JPanel marcadorPlazaLibre() {
-        JPanel hueco = new JPanel(new java.awt.GridBagLayout());
+        // Se pinta el lavado a mano en vez de dejarlo en el fondo del panel:
+        // asi el color con transparencia va encima de lo que Swing ya haya
+        // repintado, que es la unica forma de que no arrastre restos.
+        JPanel hueco = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                g.setColor(new java.awt.Color(255, 255, 255, 38));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
         hueco.setOpaque(false);
         hueco.setBorder(javax.swing.BorderFactory.createDashedBorder(
                 new java.awt.Color(255, 255, 255, 130), 2f, 6f, 4f, true));
