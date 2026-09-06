@@ -40,6 +40,13 @@
             <artifactId>flatlaf</artifactId>
             <version>3.5.4</version>
         </dependency>
+        <!-- Para probar la decision del bot sin levantar servidor. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
