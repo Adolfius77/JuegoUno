@@ -130,6 +130,39 @@ public class ManejadorNodos {
      * El avatar solo vivia aqui, en la sesion: al arrancar la partida se
      * enviaban unicamente los nombres, asi que el tablero nunca recibia la foto.
      */
+    /**
+     * Los jugadores de la sala tal y como los espera la pantalla de espera:
+     * nombre, avatar y si esta listo.
+     *
+     * Vivia copiado en cada comando que difundia la lista, y por eso el aviso
+     * de que alguien se habia ido nunca se llego a escribir: no habia de donde
+     * sacar la lista sin copiarla una vez mas.
+     */
+    public List<java.util.Map<String, String>> construirListaJugadores(String codigoSala) {
+        List<java.util.Map<String, String>> lista = new ArrayList<>();
+        for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {
+            java.util.Map<String, String> jugador = new java.util.HashMap<>();
+            jugador.put("nombre", nodo.getNombre());
+            String avatar = nodo.getAvatar();
+            jugador.put("avatar", (avatar != null && !avatar.equals("no hay")) ? avatar : "pfp");
+            jugador.put("estaListo", String.valueOf(nodo.isEstaListo()));
+            lista.add(jugador);
+        }
+        return lista;
+    }
+
+    /** Difunde a la sala la lista de quien sigue dentro. */
+    public void difundirListaDeSala(String codigoSala) {
+        if (codigoSala == null) {
+            return;
+        }
+        MensajeDTO aviso = new MensajeDTO();
+        aviso.setTipo("LISTA_ACTUALIZADA");
+        aviso.setRemitente("SERVIDOR");
+        aviso.getDatos().put("jugadores", construirListaJugadores(codigoSala));
+        notificarASala(codigoSala, aviso);
+    }
+
     public java.util.Map<String, String> obtenerAvataresDeSala(String codigoSala) {
         java.util.Map<String, String> avatares = new java.util.LinkedHashMap<>();
         for (NodoCliente nodo : obtenerNodosDeSala(codigoSala)) {

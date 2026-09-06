@@ -19,11 +19,11 @@ import servidor.GestorSalas;
  */
 public class ComandoUnirsePartida implements IComandoServidor {
 
-    private final ManejadorNodos ManejadorNodos;
+    private final ManejadorNodos manejadorNodos;
     private final GestorSalas gestorSalas;
 
-    public ComandoUnirsePartida(ManejadorNodos ManejadorNodos, GestorSalas gestorSalas) {
-        this.ManejadorNodos = ManejadorNodos;
+    public ComandoUnirsePartida(ManejadorNodos manejadorNodos, GestorSalas gestorSalas) {
+        this.manejadorNodos = manejadorNodos;
         this.gestorSalas = gestorSalas;
     }
 
@@ -57,7 +57,7 @@ public class ComandoUnirsePartida implements IComandoServidor {
 
         // El invitado entra a la sala antes de armar la lista, para que aparezca
         // en ella y para que los eventos siguientes le lleguen.
-        NodoCliente invitado = ManejadorNodos.obtenerNodoPorSesion(mensaje.getIdSesion());
+        NodoCliente invitado = manejadorNodos.obtenerNodoPorSesion(mensaje.getIdSesion());
         if (invitado == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class ComandoUnirsePartida implements IComandoServidor {
         invitado.setEstaListo(false);
 
         sala = gestorSalas.obtenerSala(codigoSala);
-        List<Map<String, String>> listaJugadoresConAvatar = construirListaJugadores(codigoSala);
+        List<Map<String, String>> listaJugadoresConAvatar = manejadorNodos.construirListaJugadores(codigoSala);
 
         respuesta.setTipo("UNIDO_EXITO");
         respuesta.getDatos().put("codigoSala", codigoSala);
@@ -85,26 +85,11 @@ public class ComandoUnirsePartida implements IComandoServidor {
         datosLista.put("jugadores", listaJugadoresConAvatar);
         notificacionLista.setDatos(datosLista);
 
-        ManejadorNodos.notificarASala(codigoSala, notificacionLista);
+        manejadorNodos.notificarASala(codigoSala, notificacionLista);
 
         notificarPartidasDisponibles();
     }
 
-    private List<Map<String, String>> construirListaJugadores(String codigoSala) {
-        List<Map<String, String>> listaJugadoresConAvatar = new java.util.ArrayList<>();
-        for (NodoCliente n : ManejadorNodos.obtenerNodosDeSala(codigoSala)) {
-            Map<String, String> datosJugador = new HashMap<>();
-            datosJugador.put("nombre", n.getNombre());
-            if (n.getAvatar() != null && !n.getAvatar().equals("no hay")) {
-                datosJugador.put("avatar", n.getAvatar());
-            } else {
-                datosJugador.put("avatar", "pfp");
-            }
-            datosJugador.put("estaListo", String.valueOf(n.isEstaListo()));
-            listaJugadoresConAvatar.add(datosJugador);
-        }
-        return listaJugadoresConAvatar;
-    }
 
     private String obtenerNombreJugador(Object valor) {
         if (valor instanceof String texto && !texto.isBlank()) {
@@ -122,7 +107,7 @@ public class ComandoUnirsePartida implements IComandoServidor {
 
     private void enviarRespuesta(String idSesion, MensajeDTO respuesta) {
         if (idSesion != null) {
-            ManejadorNodos.enviarNodo(idSesion, respuesta);
+            manejadorNodos.enviarNodo(idSesion, respuesta);
         }
     }
 
@@ -137,6 +122,6 @@ public class ComandoUnirsePartida implements IComandoServidor {
 
         // Alcance global a proposito: lo espera todo el que este eligiendo
         // partida en el lobby.
-        ManejadorNodos.notificarATodos(listaPartidas);
+        manejadorNodos.notificarATodos(listaPartidas);
     }
 }

@@ -72,7 +72,11 @@ public class TableroView extends javax.swing.JPanel {
         lblTemporizador.setFont(vista.tema.Tema.titulo(19));
         lblTemporizador.setHorizontalAlignment(SwingConstants.CENTER);
         lblTemporizador.setOpaque(true);
-        lblTemporizador.setBackground(new Color(0, 0, 0, 150));
+        // Color solido, no negro con transparencia: un componente opaco con un
+        // fondo traslucido no borra lo que tenia debajo, asi que el alpha se
+        // iba acumulando repintado tras repintado y la pildora se oscurecia
+        // sola segun avanzaba la partida.
+        lblTemporizador.setBackground(new Color(38, 24, 24));
         lblTemporizador.setBorder(BorderFactory.createEmptyBorder(4, 14, 4, 14));
         panelFondo.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 250, 220, 30));
 

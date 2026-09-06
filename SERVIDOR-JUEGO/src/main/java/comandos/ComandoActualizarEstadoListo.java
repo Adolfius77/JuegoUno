@@ -40,7 +40,7 @@ public class ComandoActualizarEstadoListo implements IComandoServidor {
         notificacionLista.setTipo("LISTA_ACTUALIZADA");
         notificacionLista.setRemitente("SERVIDOR");
         Map<String, Object> datosLista = new HashMap<>();
-        datosLista.put("jugadores", construirListaJugadores(nodo.getCodigoSala()));
+        datosLista.put("jugadores", manejadorNodos.construirListaJugadores(nodo.getCodigoSala()));
         notificacionLista.setDatos(datosLista);
 
         manejadorNodos.notificarASala(nodo.getCodigoSala(), notificacionLista);
@@ -56,15 +56,4 @@ public class ComandoActualizarEstadoListo implements IComandoServidor {
         return false;
     }
 
-    private List<Map<String, String>> construirListaJugadores(String codigoSala) {
-        List<Map<String, String>> lista = new ArrayList<>();
-        for (NodoCliente n : manejadorNodos.obtenerNodosDeSala(codigoSala)) {
-            Map<String, String> jugador = new HashMap<>();
-            jugador.put("nombre", n.getNombre());
-            jugador.put("avatar", (n.getAvatar() != null && !n.getAvatar().equals("no hay")) ? n.getAvatar() : "pfp");
-            jugador.put("estaListo", String.valueOf(n.isEstaListo()));
-            lista.add(jugador);
-        }
-        return lista;
-    }
 }
