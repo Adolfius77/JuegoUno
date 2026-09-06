@@ -7,8 +7,14 @@ import observador.observadorRed;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +60,7 @@ public class Servidor {
 
     public void iniciar() {
         try (ServerSocket serverSocket = new ServerSocket(puerto)) {
-            System.out.println("[Servidor Red] Servidor iniciado en el puerto: " + puerto + " y en la ip: " + ip);
+            anunciarDondeEscucha();
 
             while (escuchando) {
                 Socket socketCliente = serverSocket.accept();
@@ -81,6 +87,49 @@ public class Servidor {
             System.err.println("[Servidor Red] Error critico en el servidor en el puerto: " + puerto);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Dice por donde se le puede encontrar.
+     *
+     * Antes se imprimia el valor de configuracion ("y en la ip: localhost"),
+     * que no es donde escucha: el ServerSocket se abre sin atarlo a ninguna
+     * interfaz, asi que acepta conexiones por todas. Lo que hacia falta saber
+     * era que direccion darle a quien se quiere conectar desde fuera.
+     */
+    private void anunciarDondeEscucha() {
+        System.out.println("[Servidor Red] Escuchando en el puerto " + puerto + " (todas las interfaces).");
+        System.out.println("[Servidor Red] En esta misma maquina: localhost:" + puerto);
+
+        for (String direccion : direccionesDeLaMaquina()) {
+            System.out.println("[Servidor Red] En la red local:     " + direccion + ":" + puerto);
+        }
+        System.out.println("[Servidor Red] Si esto corre en la nube, reparte la IP publica"
+                + " que da el panel de tu proveedor: desde dentro no se ve.");
+    }
+
+    /** Las IPv4 de la maquina, sin contar la de loopback. */
+    private List<String> direccionesDeLaMaquina() {
+        List<String> direcciones = new ArrayList<>();
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface red = interfaces.nextElement();
+                if (!red.isUp() || red.isLoopback()) {
+                    continue;
+                }
+                Enumeration<InetAddress> ips = red.getInetAddresses();
+                while (ips.hasMoreElements()) {
+                    InetAddress ip = ips.nextElement();
+                    if (ip instanceof Inet4Address) {
+                        direcciones.add(ip.getHostAddress());
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            System.out.println("[Servidor Red] No se pudieron leer las interfaces: " + e.getMessage());
+        }
+        return direcciones;
     }
 
     private void escucharCliente(Socket socketCliente, String idSesion) {
